@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+/* ===============================================
+   🫧 Candy Hon — Glassmorphism / Dreamy Pastel Theme
+   Soft, Elegant, and Dreamy
+   =============================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Dreamy Pastel Colors */
+  --pink: #F48FB1;
+  --pink-light: #FCE4EC;
+  --pink-dark: #D81B60;
+  --pink-hover: #F06292;
+  --pink-soft: rgba(244, 143, 177, 0.15);
+
+  --blue: #81D4FA;
+  --blue-light: #E1F5FE;
+  --blue-dark: #0288D1;
+
+  --mint: #80CBC4;
+  --mint-light: #E0F2F1;
+
+  /* Mapped legacy variables */
+  --gold: var(--pink);
+  --gold-light: var(--pink-light);
+  --gold-dark: var(--pink-dark);
+  --gold-hover: var(--pink-hover);
+
+  /* Backgrounds */
+  --cream: #FFFBFE;
+  --cream-dark: #FDF5F8;
+
+  /* Text & Borders */
+  --text-primary: #37474F;
+  --text-secondary: #607D8B;
+  --text-muted: #B0BEC5;
+  --dark: #263238;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--cream);
+  color: var(--text-primary);
+  /* Soft animated gradient background */
+  background: linear-gradient(135deg, #FFFBFE 0%, #FDF5F8 50%, #F5FAFF 100%);
+  background-attachment: fixed;
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+::selection {
+  background: var(--pink-light);
+  color: var(--dark);
+}
+
+/* ===============================================
+   🫧 Glassmorphism Utility Classes
+   =============================================== */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  border-radius: 24px;
+}
+
+.glass-card-hover {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 15px 45px 0 rgba(31, 38, 135, 0.1);
+  border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.glass-button {
+  background: linear-gradient(135deg, rgba(244, 143, 177, 0.8) 0%, rgba(129, 212, 250, 0.8) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(244, 143, 177, 0.3);
+  color: white;
+  transition: all 0.3s ease;
+  border-radius: 9999px; /* Pill shape */
+}
+
+.glass-button:hover {
+  background: linear-gradient(135deg, rgba(244, 143, 177, 1) 0%, rgba(129, 212, 250, 1) 100%);
+  box-shadow: 0 6px 20px rgba(244, 143, 177, 0.5);
+  transform: translateY(-2px);
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: var(--dark);
+  border-radius: 12px;
+}
+
+/* Overriding old legacy animations to fit Glassmorphism */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    110deg,
+    var(--pink-dark) 0%,
+    var(--pink-hover) 25%,
+    var(--blue-dark) 50%,
+    var(--pink-hover) 75%,
+    var(--pink-dark) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+.gold-shimmer-bg {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 50%, var(--pink-hover) 100%);
+  background-size: 200% auto;
+  animation: shimmer 5s linear infinite;
+}
+
+.gold-glow {
+  box-shadow: 0 4px 20px rgba(244, 143, 177, 0.35), 0 2px 8px rgba(129, 212, 250, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.gold-glow:hover {
+  box-shadow: 0 6px 28px rgba(244, 143, 177, 0.5), 0 4px 12px rgba(129, 212, 250, 0.3);
+}
+
+/* ===============================================
+   🫧 Hero — عناصر زخرفية متحركة
+   =============================================== */
+@keyframes hero-bubble-rise {
+  0%   { transform: translateY(0) scale(1); opacity: 0.5; }
+  50%  { opacity: 0.8; }
+  100% { transform: translateY(-110vh) scale(1.15); opacity: 0; }
+}
+
+@keyframes hero-star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+  50%      { opacity: 1;   transform: scale(1.1) rotate(15deg); }
+}
+
+@keyframes hero-cloud-drift {
+  0%   { transform: translateX(0) translateY(0); }
+  50%  { transform: translateX(25px) translateY(-8px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes hero-candy-float {
+  0%   { transform: translateY(0) rotate(0deg); }
+  33%  { transform: translateY(-18px) rotate(12deg); }
+  66%  { transform: translateY(8px) rotate(-8deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes hero-sprinkle-fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.7; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
