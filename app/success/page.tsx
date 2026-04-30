@@ -17,6 +17,7 @@ function SuccessContent() {
   const router = useRouter();
 
   const [order, setOrder] = useState<any>(null);
+  const [hasPreorderItems, setHasPreorderItems] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -39,6 +40,14 @@ function SuccessContent() {
   const fetchOrderDetails = async () => {
     const { data } = await supabase.from('orders').select('*').eq('id', orderId).single();
     if (data) setOrder(data);
+
+    // فحص وجود عناصر Pre-order في هذا الطلب
+    const { data: items } = await supabase
+      .from('order_items')
+      .select('is_preorder')
+      .eq('order_id', orderId);
+    if (items) setHasPreorderItems(items.some((i: any) => i.is_preorder));
+
     setLoading(false);
   };
 
@@ -110,6 +119,10 @@ function SuccessContent() {
     loading: lang === 'ar' ? 'جاري تحميل الطلب...' : 'Loading order...',
     deliveryFee: lang === 'ar' ? 'رسوم التوصيل' : 'Delivery Fee',
     deliveryArea: lang === 'ar' ? 'منطقة التوصيل' : 'Delivery Area',
+    preorderTitle: lang === 'ar' ? 'تنبيه: طلبك يحتوي على منتجات مسبقة الطلب ⏳' : 'Notice: Your order contains pre-order items ⏳',
+    preorderDesc: lang === 'ar'
+      ? 'بعض المنتجات في طلبك غير متوفرة حالياً وستُشحن عند توفّرها. سنتواصل معك لتحديد موعد التسليم النهائي.'
+      : 'Some items in your order are currently out of stock and will be shipped when available. We will contact you to confirm the final delivery date.',
   };
 
   if (loading || !order) return (
@@ -157,13 +170,27 @@ function SuccessContent() {
 
         {/* الوصف */}
         <motion.p
-          className="text-[var(--text-muted)] mb-8 leading-relaxed font-medium text-sm md:text-base"
+          className="text-[var(--text-muted)] mb-6 leading-relaxed font-medium text-sm md:text-base"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
           {t.confirmedDesc}
         </motion.p>
+
+        {/* تنبيه Pre-order — يظهر فقط إذا الطلب يحتوي على منتجات مسبقة */}
+        {hasPreorderItems && (
+          <motion.div
+            className="bg-violet-50 border border-violet-200 rounded-2xl p-4 mb-6 text-right"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            dir={lang === 'ar' ? 'rtl' : 'ltr'}
+          >
+            <p className="text-violet-700 font-black text-sm mb-1">{t.preorderTitle}</p>
+            <p className="text-violet-600 text-xs leading-relaxed">{t.preorderDesc}</p>
+          </motion.div>
+        )}
 
         <motion.div
           className="bg-[var(--cream)] border border-[var(--cream-dark)] rounded-2xl p-6 mb-8"

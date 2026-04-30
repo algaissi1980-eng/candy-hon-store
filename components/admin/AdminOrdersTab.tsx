@@ -83,17 +83,19 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
         product_id: item.product_id,
         quantity: item.quantity,
         price: item.price,
-        note: item.note
+        note: item.note ?? null,
+        is_preorder: item.is_preorder ?? false,
       }));
       const { error: insertErr } = await supabase.from('order_items').insert(newItems);
       if (insertErr) throw insertErr;
       const { error: updateErr } = await supabase.from('orders').update({ total_amount: newTotal }).eq('id', editingOrderId);
       if (updateErr) throw updateErr;
 
-      // تحديث المخزون
+      // تحديث المخزون — Pre-order items لا تُخصم ولا تُعاد
       const order = orders.find(o => o.id === editingOrderId);
       if (order) {
         for (const oldItem of order.order_items) {
+          if (oldItem.is_preorder) continue;
           const newItem = editingItems.find((ni: any) => ni.product_id === oldItem.product_id);
           const oldQty = oldItem.quantity;
           const newQty = newItem ? newItem.quantity : 0;
@@ -235,7 +237,17 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                   ) : (
                     order.order_items.map((item: any, i: number) => (
                       <div key={i} className="mb-2 bg-gray-50 p-2 border border-gray-100 rounded">
-                        <span className="block font-bold">{item.products?.name} <span className="text-[var(--gold)]">({item.quantity}x)</span></span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold">{item.products?.name} <span className="text-[var(--gold)]">({item.quantity}x)</span></span>
+                          {item.is_preorder && (
+                            <span className="bg-violet-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md leading-none whitespace-nowrap">
+                              ⏳ {lang === 'ar' ? 'طلب مسبق' : 'Pre-order'}
+                            </span>
+                          )}
+                        </div>
+                        {item.note && (
+                          <span className="text-[10px] text-gray-400 block mt-0.5">📝 {item.note}</span>
+                        )}
                       </div>
                     ))
                   )}
