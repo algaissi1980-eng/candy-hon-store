@@ -38,15 +38,15 @@ const ZONE_B_CITIES: DeliveryCity[] = [
 export const DELIVERY_ZONES: DeliveryZone[] = [
   {
     id: 'zone_a',
-    name_ar: 'المنطقة A',
-    name_en: 'Zone A',
+    name_ar: 'توصيل — 3 دنانير',
+    name_en: 'Delivery — 3 JOD',
     fee: 3,
     cities: ZONE_A_CITIES,
   },
   {
     id: 'zone_b',
-    name_ar: 'المنطقة B',
-    name_en: 'Zone B',
+    name_ar: 'توصيل — 5 دنانير',
+    name_en: 'Delivery — 5 JOD',
     fee: 5,
     cities: ZONE_B_CITIES,
   },

@@ -80,27 +80,9 @@ export default function OrdersPage() {
   const handleCancelOrder = async (orderId: string) => {
     if (!window.confirm(t.confirmCancel)) return;
     try {
-      const { data: itemsToRestore } = await supabase
-        .from('order_items')
-        .select('product_id, quantity')
-        .eq('order_id', orderId);
-
-      if (itemsToRestore && itemsToRestore.length > 0) {
-        for (const item of itemsToRestore) {
-          const { data: productData } = await supabase
-            .from('products')
-            .select('stock')
-            .eq('id', item.product_id)
-            .single();
-
-          if (productData !== null) {
-            const updates: any = { stock: (productData.stock ?? 0) + item.quantity };
-            await supabase.from('products').update(updates).eq('id', item.product_id);
-          }
-        }
-      }
-      await supabase.from('order_items').delete().eq('order_id', orderId);
-      await supabase.from('orders').delete().eq('id', orderId);
+      const { error } = await supabase.rpc('cancel_order', { p_order_id: orderId });
+      if (error) throw error;
+      toast.success(lang === 'ar' ? 'تم إلغاء الطلب بنجاح' : 'Order cancelled successfully');
       if (userId) fetchMyOrders(userId);
     } catch (error: any) { toast.error('Error: ' + error.message); }
   };

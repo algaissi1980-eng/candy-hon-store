@@ -10,7 +10,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/admin')) return null;
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -48,6 +47,9 @@ export default function Navbar() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // إخفاء الـ Navbar في صفحة الإدارة — بعد كل الـ Hooks
+  if (pathname?.startsWith('/admin')) return null;
 
   const signOut = async () => {
     await supabase.auth.signOut();

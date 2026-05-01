@@ -17,7 +17,7 @@ const handleGoogleLogin = async () => {
     });
     
     if (error) {
-      console.error("Google Login Error:", error.message);
+      // خطأ في تسجيل الدخول — يتم التعامل معه عبر redirect
     }
   };
 

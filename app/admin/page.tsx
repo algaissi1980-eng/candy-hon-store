@@ -69,7 +69,7 @@ function AdminDashboardContent() {
   const fetchOrders = async () => {
     const { data } = await supabase
       .from('orders')
-      .select('id, total_amount, status, created_at, customer_name, customer_phone, delivery_address, delivery_city, delivery_fee, order_items(product_id, quantity, price, note, products(name))')
+      .select('id, total_amount, status, created_at, customer_name, customer_phone, delivery_address, delivery_city, delivery_fee, order_items(product_id, quantity, price, note, is_preorder, products(name))')
       .order('created_at', { ascending: false });
     if (data) setOrders(data);
   };

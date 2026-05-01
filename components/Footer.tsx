@@ -6,8 +6,10 @@ import Image from 'next/image';
 
 export default function Footer() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/admin')) return null;
   const { lang } = useLanguageStore();
+
+  // إخفاء الـ Footer في صفحة الإدارة — بعد تعريف كل الـ Hooks
+  if (pathname?.startsWith('/admin')) return null;
 
   const t = {
     desc: lang === 'ar'

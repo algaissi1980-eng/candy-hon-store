@@ -166,7 +166,6 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
     const { error } = await supabase.from('products').delete().eq('id', id);
 
     if (error) {
-      console.error('Delete error:', error);
       const isForeignKeyError = error.message?.includes('foreign key') || error.message?.includes('order_items');
       if (isForeignKeyError) {
         toast.error(

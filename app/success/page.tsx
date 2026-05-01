@@ -58,25 +58,17 @@ function SuccessContent() {
     setIsCancelling(true);
 
     try {
+      // نجلب عناصر الطلب أولاً لاستعادة السلة — قبل الحذف
       const { data: itemsToRestore } = await supabase.from('order_items')
         .select('product_id, quantity, price, note, is_preorder, products(name, image_url)')
         .eq('order_id', orderId);
 
+      // نستدعي RPC يتولى الحذف واسترجاع المخزون بصلاحيات كاملة
+      const { error: cancelError } = await supabase.rpc('cancel_order', { p_order_id: orderId });
+      if (cancelError) throw cancelError;
+
+      // استعادة السلة في المتصفح
       if (itemsToRestore && itemsToRestore.length > 0) {
-        // Pre-order items لم يُخصم مخزونها أصلاً — لا نعيده لتجنب إضافة رصيد وهمي
-        const regularItems = itemsToRestore.filter((item: any) => !item.is_preorder);
-        for (const item of regularItems) {
-          const { data: productData } = await supabase
-            .from('products')
-            .select('stock')
-            .eq('id', item.product_id)
-            .single();
-
-          if (productData !== null) {
-            await supabase.from('products').update({ stock: (productData.stock ?? 0) + item.quantity }).eq('id', item.product_id);
-          }
-        }
-
         const restoredCart = itemsToRestore.map((item: any) => ({
           id: item.product_id,
           cartItemId: Math.random().toString(36).substring(2, 9),
@@ -87,15 +79,8 @@ function SuccessContent() {
           note: item.note,
           is_preorder: item.is_preorder ?? false,
         }));
-
         useCartStore.setState({ items: restoredCart });
       }
-
-      await supabase.from('order_items').delete().eq('order_id', orderId);
-      // نسمح بإلغاء الطلبات بحالة confirmed فقط (قبل المعالجة من الإدارة)
-      const { error: deleteError } = await supabase.from('orders').delete().eq('id', orderId).eq('status', 'confirmed');
-
-      if (deleteError) throw deleteError;
 
       toast.success(lang === 'ar' ? 'تم إلغاء الطلب وإرجاع المنتجات للسلة' : 'Order cancelled and items restored to cart');
       router.push('/#menu');

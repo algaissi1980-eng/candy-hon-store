@@ -59,8 +59,6 @@ export async function GET(request: Request) {
 
       // زبون عادي — الـ response الأصلي يوجه لـ next (الرئيسية)
       return response;
-    } else {
-      console.error('Auth Error Details:', error.message);
     }
   }
 

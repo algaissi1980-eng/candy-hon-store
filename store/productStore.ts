@@ -46,8 +46,8 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
         categories: sData?.categories || [],
         lastFetchedAt: Date.now(),
       });
-    } catch (error) {
-      console.error('Error fetching products:', error);
+    } catch {
+      // خطأ في جلب المنتجات — يعيد المحاولة عند التنقل التالي
     } finally {
       set({ isLoading: false });
     }

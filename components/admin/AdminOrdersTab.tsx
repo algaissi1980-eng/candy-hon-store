@@ -273,7 +273,7 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                     {editingOrderId === order.id ? t.cancelEditBtn : t.editBtn}
                   </button>
                   <a
-                    href={`https://wa.me/962791875758?text=${encodeURIComponent(lang === 'ar' ? `مرحباً، نتواصل معك بخصوص طلبك رقم #${order.id.split('-')[0]} من Candy Hon 🍬` : `Hello, we're contacting you regarding your order #${order.id.split('-')[0]} from Candy Hon 🍬`)}`}
+                    href={`https://wa.me/962${order.customer_phone?.replace(/^0+/, '') || ''}?text=${encodeURIComponent(lang === 'ar' ? `مرحباً، نتواصل معك بخصوص طلبك رقم #${order.id.split('-')[0]} من Candy Hon 🍬` : `Hello, we're contacting you regarding your order #${order.id.split('-')[0]} from Candy Hon 🍬`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center hover:scale-110 hover:shadow-md transition-all duration-200"

@@ -32,7 +32,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
     unavailable: lang === 'ar' ? 'غير متوفر حالياً' : 'Currently Unavailable',
     successMsg: lang === 'ar' ? 'تمت إضافة المنتجات بنجاح!' : 'Items added successfully!',
     noteLabel: lang === 'ar' ? 'ملاحظات إضافية (اختياري):' : 'Additional Notes (Optional):',
-
+    notePlaceholder: lang === 'ar' ? 'مثال: أي حساسية؟' : 'ex: Any allergies?',
     addedMsg: lang === 'ar' ? 'تمت الإضافة!' : 'Added!',
     sale: lang === 'ar' ? 'عرض خاص' : 'SALE',
     preorderBadge: lang === 'ar' ? 'طلب مسبق' : 'PRE-ORDER',
@@ -191,7 +191,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                         <textarea
                           value={note}
                           onChange={(e) => setNote(e.target.value)}
-
+                          placeholder={t.notePlaceholder}
                           className="w-full border border-[var(--cream-dark)] p-3 rounded-xl font-medium text-sm outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold)]/20 bg-white resize-none min-h-[70px] transition-all"
                         />
                       </div>
