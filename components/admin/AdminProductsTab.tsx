@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
 import { getDaysUntilRestock, getTodayISO } from '../../lib/preorderUtils';
 import { toast } from 'sonner';
@@ -375,7 +376,7 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
     {products.map(product => (
       <div key={product.id} className="bg-white border border-gray-200 p-4 flex flex-col gap-3 shadow-sm rounded">
         <div className="flex gap-4">
-          <div className="w-16 h-16 bg-gray-100 flex-shrink-0 rounded overflow-hidden">
+          <div className="w-16 h-16 md:w-16 md:h-16 w-20 h-20 bg-gray-100 flex-shrink-0 rounded overflow-hidden">
             {product.image_url ? (
               <Image
                 src={product.image_url}
@@ -416,11 +417,22 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
         </div>
 
               <div className="flex gap-4 border-t border-gray-100 pt-3 mt-auto flex-wrap items-center">
+                {/* Toggle Switch */}
                 <button
                   onClick={() => handleToggleAvailability(product.id, product.is_available)}
-                  className={`text-xs font-bold px-2 py-1 rounded transition-colors ${product.is_available ? 'text-red-500 hover:bg-red-50' : 'text-green-500 hover:bg-green-50'}`}
+                  className="flex items-center gap-2 group"
+                  title={product.is_available ? t.stopBtn : t.activateBtn}
                 >
-                  {product.is_available ? t.stopBtn : t.activateBtn}
+                  <div dir="ltr" className={`relative w-11 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${product.is_available ? 'bg-green-500' : 'bg-gray-300'}`}>
+                    <motion.div
+                      className="absolute top-0.5 left-0 w-5 h-5 bg-white rounded-full shadow-sm"
+                      animate={{ x: product.is_available ? 22 : 2 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                    />
+                  </div>
+                  <span className={`text-xs font-bold transition-colors ${product.is_available ? 'text-green-600' : 'text-gray-400'}`}>
+                    {product.is_available ? (lang === 'ar' ? 'متاح' : 'Active') : (lang === 'ar' ? 'موقوف' : 'Off')}
+                  </span>
                 </button>
                 <div className={`flex gap-4 ${lang === 'ar' ? 'mr-auto' : 'ml-auto'}`}>
                   <button onClick={() => startEditing(product)} className="text-xs font-bold text-gray-400 hover:text-black">{t.editBtn}</button>

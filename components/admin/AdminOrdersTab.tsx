@@ -1,8 +1,11 @@
 'use client';
 import { useState } from 'react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { supabase } from '../../lib/supabase/client';
 import { toast } from 'sonner';
 import { getCityName } from '../../lib/deliveryAreas';
+import BottomSheet from './BottomSheet';
 
 interface AdminOrdersTabProps {
   orders: any[];
@@ -11,11 +14,193 @@ interface AdminOrdersTabProps {
   fetchOrders: () => void;
 }
 
+const STATUS_ORDER = ['confirmed', 'processing', 'completed'] as const;
+type OrderStatus = typeof STATUS_ORDER[number];
+
+const STATUS_STYLE: Record<string, string> = {
+  confirmed:  'bg-amber-100 text-amber-700',
+  processing: 'bg-blue-100 text-blue-700',
+  completed:  'bg-green-100 text-green-700',
+};
+
+const STATUS_RING: Record<string, string> = {
+  confirmed:  'ring-amber-300',
+  processing: 'ring-blue-300',
+  completed:  'ring-green-300',
+};
+
+// ─── بطاقة الطلب للموبايل مع سوايب ─────────────────────────────────
+function MobileOrderCard({ order, lang, statuses, unspecified, onDeleteRequest, onStatusChange }: {
+  order: any;
+  lang: 'ar' | 'en';
+  statuses: Record<string, string>;
+  unspecified: string;
+  onDeleteRequest: (id: string) => void;
+  onStatusChange: (id: string, status: string) => void;
+}) {
+  const x = useMotionValue(0);
+  const rightOpacity = useTransform(x, [0, 40, 120], [0, 0.6, 1]);
+  const leftOpacity  = useTransform(x, [-120, -40, 0], [1, 0.6, 0]);
+
+  const currentIdx = STATUS_ORDER.indexOf(order.status as OrderStatus);
+  const canAdvance = currentIdx < STATUS_ORDER.length - 1;
+  const canReverse = currentIdx > 0;
+
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    if (info.offset.x > 80 && canAdvance) {
+      onStatusChange(order.id, STATUS_ORDER[currentIdx + 1]);
+    } else if (info.offset.x < -80 && canReverse) {
+      onStatusChange(order.id, STATUS_ORDER[currentIdx - 1]);
+    }
+  };
+
+  return (
+    <div className="relative rounded-3xl overflow-hidden select-none">
+
+      {/* خلفية السوايب — يمين = تقدم */}
+      <motion.div
+        className="absolute inset-0 bg-green-100 rounded-3xl flex items-center justify-end px-6"
+        style={{ opacity: rightOpacity }}
+      >
+        <span className="text-green-600 font-black text-sm">
+          {canAdvance ? statuses[STATUS_ORDER[currentIdx + 1]] : ''} ✓
+        </span>
+      </motion.div>
+
+      {/* خلفية السوايب — يسار = رجوع */}
+      <motion.div
+        className="absolute inset-0 bg-red-100 rounded-3xl flex items-center justify-start px-6"
+        style={{ opacity: leftOpacity }}
+      >
+        <span className="text-red-500 font-black text-sm">
+          {canReverse ? statuses[STATUS_ORDER[currentIdx - 1]] : ''}
+        </span>
+      </motion.div>
+
+      {/* البطاقة الرئيسية */}
+      <motion.div
+        drag="x"
+        dragSnapToOrigin
+        dragConstraints={{ left: -120, right: 120 }}
+        dragElastic={0.2}
+        onDragEnd={handleDragEnd}
+        style={{ x }}
+        className="relative bg-white rounded-3xl border border-gray-100 shadow-sm p-5 touch-pan-y"
+      >
+        {/* رأس البطاقة */}
+        <div className="flex justify-between items-start mb-4">
+          <span className={`px-3 py-1.5 rounded-xl text-xs font-black ${STATUS_STYLE[order.status] || 'bg-gray-100 text-gray-600'}`}>
+            {statuses[order.status] || order.status}
+          </span>
+          <div className="text-right">
+            <div className="text-[10px] text-gray-400 font-mono">#{order.id.split('-')[0]}</div>
+            <div className="font-black text-xl" dir="ltr">{order.total_amount} JOD</div>
+          </div>
+        </div>
+
+        {/* معلومات الزبون */}
+        <div className="bg-gray-50 rounded-2xl p-3 mb-4 space-y-0.5">
+          <div className="font-bold text-gray-800 text-sm">{order.customer_name || unspecified}</div>
+          <div className="text-gray-500 text-xs font-medium" dir="ltr">{order.customer_phone || ''}</div>
+          {order.delivery_city && (
+            <div className="text-gray-400 text-xs">
+              {getCityName(order.delivery_city, lang)} · <span dir="ltr">{order.delivery_fee || 0} JOD</span>
+            </div>
+          )}
+        </div>
+
+        {/* المنتجات */}
+        <div className="space-y-1.5 mb-4 border-b border-gray-100 pb-4">
+          {order.order_items?.map((item: any, i: number) => (
+            <div key={i} className="flex items-center gap-2 text-sm">
+              <span className="text-gray-400 font-bold text-xs">{item.quantity}×</span>
+              <span className="font-bold text-gray-700">{item.products?.name}</span>
+              {item.is_preorder && (
+                <span className="bg-violet-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md leading-none">⏳</span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* أزرار الحالة */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {STATUS_ORDER.map(s => (
+            <button
+              key={s}
+              onClick={() => onStatusChange(order.id, s)}
+              className={`py-2.5 rounded-xl text-xs font-black transition-all ${
+                order.status === s
+                  ? `${STATUS_STYLE[s]} ring-2 ring-offset-1 ${STATUS_RING[s]}`
+                  : 'bg-gray-100 text-gray-400 active:bg-gray-200'
+              }`}
+            >
+              {statuses[s as keyof typeof statuses]}
+            </button>
+          ))}
+        </div>
+
+        {/* واتساب + حذف */}
+        <div className="flex gap-3">
+          <a
+            href={`https://wa.me/962${order.customer_phone?.replace(/^0+/, '') || ''}?text=${encodeURIComponent(
+              lang === 'ar'
+                ? `مرحباً، نتواصل معك بخصوص طلبك #${order.id.split('-')[0]} من Candy Hon 🍬`
+                : `Hello, regarding your order #${order.id.split('-')[0]} from Candy Hon 🍬`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-[#25D366] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-sm active:bg-[#1da851] transition-colors"
+          >
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white flex-shrink-0">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+            {lang === 'ar' ? 'واتساب' : 'WhatsApp'}
+          </a>
+          <button
+            onClick={() => onDeleteRequest(order.id)}
+            className="w-14 bg-red-50 text-red-400 rounded-2xl flex items-center justify-center text-xl active:bg-red-100 transition-colors"
+          >
+            🗑️
+          </button>
+        </div>
+
+        {/* تلميح السوايب — dir="ltr" ضروري لأن الـ drag يعمل بإحداثيات فيزيائية */}
+        {(canAdvance || canReverse) && (
+          <div className="flex justify-between items-center mt-3 px-1" dir="ltr">
+            <div className="flex items-center gap-1">
+              {canReverse && (
+                <>
+                  <span className="text-gray-300 text-base leading-none">←</span>
+                  <span className="text-[10px] text-gray-300 font-bold">
+                    {statuses[STATUS_ORDER[currentIdx - 1]]?.replace(/\s*[🆕👨‍🍳📦]\s*/g, '').trim()}
+                  </span>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              {canAdvance && (
+                <>
+                  <span className="text-[10px] text-gray-300 font-bold">
+                    {statuses[STATUS_ORDER[currentIdx + 1]]?.replace(/\s*[🆕👨‍🍳📦]\s*/g, '').trim()}
+                  </span>
+                  <span className="text-gray-300 text-base leading-none">→</span>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── المكوّن الرئيسي ──────────────────────────────────────────────────
 export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: AdminOrdersTabProps) {
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
   const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
   const [editingItems, setEditingItems] = useState<any[]>([]);
   const [isSavingOrder, setIsSavingOrder] = useState(false);
+  const [deleteSheetId, setDeleteSheetId] = useState<string | null>(null);
 
   const t = {
     col1: lang === 'ar' ? 'الطلب / الزبون' : 'Order / Customer',
@@ -35,14 +220,21 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
     newTotal: lang === 'ar' ? 'المجموع الجديد:' : 'New Total:',
     savingOrder: lang === 'ar' ? 'جاري الحفظ...' : 'Saving...',
     orderSaved: lang === 'ar' ? 'تم تحديث الطلب بنجاح! ✅' : 'Order updated successfully! ✅',
-    minOneItem: lang === 'ar' ? 'لا يمكن حذف جميع المنتجات! أبقِ منتجاً واحداً على الأقل.' : 'Cannot remove all items! Keep at least one.',
+    minOneItem: lang === 'ar' ? 'لا يمكن حذف جميع المنتجات!' : 'Cannot remove all items!',
     addProduct: lang === 'ar' ? 'إضافة منتج ➕' : 'Add Product ➕',
     selectProduct: lang === 'ar' ? 'اختر منتج...' : 'Select product...',
-    searchOrders: lang === 'ar' ? 'بحث برقم الطلب...' : 'Search by order #...',
+    searchOrders: lang === 'ar' ? 'بحث برقم الطلب أو الاسم...' : 'Search by order # or name...',
+    deleteConfirmTitle: lang === 'ar' ? 'حذف الطلب؟' : 'Delete Order?',
+    deleteConfirmDesc: lang === 'ar' ? 'لا يمكن التراجع عن هذا الإجراء.' : 'This action cannot be undone.',
+    deleteConfirmBtn: lang === 'ar' ? '🗑️ نعم، احذف الطلب' : '🗑️ Yes, Delete',
+    cancelBtn: lang === 'ar' ? 'إلغاء' : 'Cancel',
+    newOrders: lang === 'ar' ? 'جديد' : 'New',
+    totalOrders: lang === 'ar' ? 'إجمالي' : 'Total',
+    revenue: lang === 'ar' ? 'إيرادات' : 'Revenue',
     statuses: {
-      confirmed: lang === 'ar' ? 'مؤكد 🆕' : 'Confirmed 🆕',
+      confirmed:  lang === 'ar' ? 'مؤكد 🆕' : 'Confirmed 🆕',
       processing: lang === 'ar' ? 'قيد التجهيز 👨‍🍳' : 'Processing 👨‍🍳',
-      completed: lang === 'ar' ? 'مكتمل 📦' : 'Completed 📦',
+      completed:  lang === 'ar' ? 'مكتمل 📦' : 'Completed 📦',
     }
   };
 
@@ -91,20 +283,15 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
       const { error: updateErr } = await supabase.from('orders').update({ total_amount: newTotal }).eq('id', editingOrderId);
       if (updateErr) throw updateErr;
 
-      // تحديث المخزون — Pre-order items لا تُخصم ولا تُعاد
       const order = orders.find(o => o.id === editingOrderId);
       if (order) {
         for (const oldItem of order.order_items) {
           if (oldItem.is_preorder) continue;
           const newItem = editingItems.find((ni: any) => ni.product_id === oldItem.product_id);
-          const oldQty = oldItem.quantity;
-          const newQty = newItem ? newItem.quantity : 0;
-          const diff = oldQty - newQty;
+          const diff = oldItem.quantity - (newItem ? newItem.quantity : 0);
           if (diff !== 0) {
             const { data: pData } = await supabase.from('products').select('stock').eq('id', oldItem.product_id).single();
-            if (pData) {
-              await supabase.from('products').update({ stock: pData.stock + diff }).eq('id', oldItem.product_id);
-            }
+            if (pData) await supabase.from('products').update({ stock: pData.stock + diff }).eq('id', oldItem.product_id);
           }
         }
       }
@@ -119,7 +306,8 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
     }
   };
 
-  const handleDeleteOrder = async (id: string) => {
+  // للديسك توب — يستخدم window.confirm
+  const handleDeleteOrderDesktop = async (id: string) => {
     if (window.confirm(t.confirmDelete)) {
       await supabase.from('order_items').delete().eq('order_id', id);
       await supabase.from('orders').delete().eq('id', id);
@@ -127,15 +315,50 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
     }
   };
 
+  // للموبايل — يستخدم BottomSheet
+  const executeDelete = async () => {
+    if (!deleteSheetId) return;
+    await supabase.from('order_items').delete().eq('order_id', deleteSheetId);
+    await supabase.from('orders').delete().eq('id', deleteSheetId);
+    setDeleteSheetId(null);
+    fetchOrders();
+  };
+
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
     fetchOrders();
   };
 
-  const filteredOrders = orders.filter(o => !orderSearchQuery || o.id.toLowerCase().includes(orderSearchQuery.toLowerCase()) || o.customer_name?.toLowerCase().includes(orderSearchQuery.toLowerCase()) || o.customer_phone?.includes(orderSearchQuery));
+  const filteredOrders = orders.filter(o =>
+    !orderSearchQuery ||
+    o.id.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
+    o.customer_name?.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
+    o.customer_phone?.includes(orderSearchQuery)
+  );
+
+  const newOrdersCount = orders.filter(o => o.status === 'confirmed').length;
+  const totalRevenue = orders.reduce((s, o) => s + (Number(o.total_amount) || 0), 0);
 
   return (
-    <div>
+    <div className="pb-24 md:pb-0">
+
+      {/* بانر الإحصائيات السريعة — موبايل فقط */}
+      <div className="md:hidden grid grid-cols-3 gap-2 mb-5">
+        <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
+          <div className="text-2xl font-black text-black">{orders.length}</div>
+          <div className="text-[10px] text-gray-400 font-bold mt-0.5">{t.totalOrders}</div>
+        </div>
+        <div className={`rounded-2xl p-3 text-center border ${newOrdersCount > 0 ? 'bg-amber-50 border-amber-100' : 'bg-white border-gray-100'}`}>
+          <div className={`text-2xl font-black ${newOrdersCount > 0 ? 'text-amber-600' : 'text-gray-400'}`}>{newOrdersCount}</div>
+          <div className={`text-[10px] font-bold mt-0.5 ${newOrdersCount > 0 ? 'text-amber-400' : 'text-gray-400'}`}>{t.newOrders} 🆕</div>
+        </div>
+        <div className="bg-green-50 rounded-2xl p-3 text-center border border-green-100">
+          <div className="text-lg font-black text-green-600" dir="ltr">{totalRevenue.toFixed(0)}</div>
+          <div className="text-[10px] text-green-400 font-bold mt-0.5">{t.revenue} JD</div>
+        </div>
+      </div>
+
+      {/* حقل البحث */}
       <div className="mb-4">
         <input
           type="text"
@@ -146,7 +369,28 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
           dir="ltr"
         />
       </div>
-      <div className="bg-white border border-gray-200 overflow-x-auto shadow-sm">
+
+      {/* ─── بطاقات الموبايل ─────────────────────────────────── */}
+      <div className="md:hidden space-y-4">
+        {filteredOrders.length === 0 ? (
+          <div className="text-center py-16 text-gray-400 font-bold">
+            {lang === 'ar' ? 'لا توجد طلبات' : 'No orders found'}
+          </div>
+        ) : filteredOrders.map(order => (
+          <MobileOrderCard
+            key={order.id}
+            order={order}
+            lang={lang}
+            statuses={t.statuses}
+            unspecified={t.unspecified}
+            onDeleteRequest={setDeleteSheetId}
+            onStatusChange={updateOrderStatus}
+          />
+        ))}
+      </div>
+
+      {/* ─── جدول الديسك توب ─────────────────────────────────── */}
+      <div className="hidden md:block bg-white border border-gray-200 overflow-x-auto shadow-sm">
         <table className="w-full text-right min-w-[800px]" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
           <thead className="bg-gray-50 border-b border-gray-200 text-black">
             <tr>
@@ -165,7 +409,7 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                     <p><span className="font-bold text-gray-700">{t.name}</span> {order.customer_name || t.unspecified}</p>
                     <p><span className="font-bold text-gray-700">{t.phone}</span> <span dir="ltr">{order.customer_phone || t.unspecified}</span></p>
                     {order.delivery_city && (
-                      <p><span className="font-bold text-gray-700">{t.city}</span> {getCityName(order.delivery_city, lang)} <span className="text-[var(--gold)] font-bold" dir="ltr">({order.delivery_fee || 0} JOD {t.deliveryFeeLabel.replace(':', '')})</span></p>
+                      <p><span className="font-bold text-gray-700">{t.city}</span> {getCityName(order.delivery_city, lang)} <span className="text-[var(--gold)] font-bold" dir="ltr">({order.delivery_fee || 0} JOD)</span></p>
                     )}
                     <p><span className="font-bold text-gray-700">{t.address}</span> {order.delivery_address || t.unspecified}</p>
                   </div>
@@ -205,14 +449,7 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                             if (exists) {
                               setEditingItems(prev => prev.map(ei => ei.product_id === prod.id ? { ...ei, quantity: ei.quantity + 1 } : ei));
                             } else {
-                              setEditingItems(prev => [...prev, {
-                                product_id: prod.id,
-                                product_name: prod.name,
-                                price: Number(prod.price),
-                                quantity: 1,
-                                original_quantity: 0,
-                                note: null
-                              }]);
+                              setEditingItems(prev => [...prev, { product_id: prod.id, product_name: prod.name, price: Number(prod.price), quantity: 1, original_quantity: 0, note: null }]);
                             }
                             sel.value = '';
                           }}
@@ -240,14 +477,10 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold">{item.products?.name} <span className="text-[var(--gold)]">({item.quantity}x)</span></span>
                           {item.is_preorder && (
-                            <span className="bg-violet-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md leading-none whitespace-nowrap">
-                              ⏳ {lang === 'ar' ? 'طلب مسبق' : 'Pre-order'}
-                            </span>
+                            <span className="bg-violet-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md leading-none whitespace-nowrap">⏳ {lang === 'ar' ? 'طلب مسبق' : 'Pre-order'}</span>
                           )}
                         </div>
-                        {item.note && (
-                          <span className="text-[10px] text-gray-400 block mt-0.5">📝 {item.note}</span>
-                        )}
+                        {item.note && <span className="text-[10px] text-gray-400 block mt-0.5">📝 {item.note}</span>}
                       </div>
                     ))
                   )}
@@ -257,7 +490,7 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                     value={order.status}
                     onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                     className={`border p-2 font-bold outline-none cursor-pointer rounded transition-colors ${
-                      order.status === 'confirmed' ? 'border-blue-300 bg-blue-50 text-blue-800' :
+                      order.status === 'confirmed'  ? 'border-blue-300 bg-blue-50 text-blue-800' :
                       order.status === 'processing' ? 'border-purple-300 bg-purple-50 text-purple-800' :
                       'border-gray-300 bg-white text-gray-700'
                     }`}
@@ -277,19 +510,40 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center hover:scale-110 hover:shadow-md transition-all duration-200"
-                    title={lang === 'ar' ? 'تواصل عبر واتساب' : 'Chat on WhatsApp'}
                   >
                     <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                     </svg>
                   </a>
-                  <button onClick={() => handleDeleteOrder(order.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors">🗑️</button>
+                  <button onClick={() => handleDeleteOrderDesktop(order.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors">🗑️</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* ─── BottomSheet تأكيد الحذف (موبايل) ──────────────── */}
+      <BottomSheet
+        isOpen={!!deleteSheetId}
+        onClose={() => setDeleteSheetId(null)}
+        title={t.deleteConfirmTitle}
+      >
+        <p className="text-gray-400 text-sm text-center mb-6">{t.deleteConfirmDesc}</p>
+        <button
+          onClick={executeDelete}
+          className="w-full bg-red-500 text-white font-black py-4 rounded-2xl text-base mb-3 active:bg-red-600 transition-colors"
+        >
+          {t.deleteConfirmBtn}
+        </button>
+        <button
+          onClick={() => setDeleteSheetId(null)}
+          className="w-full bg-gray-100 text-gray-500 font-bold py-3.5 rounded-2xl text-sm active:bg-gray-200 transition-colors"
+        >
+          {t.cancelBtn}
+        </button>
+      </BottomSheet>
+
     </div>
   );
 }
