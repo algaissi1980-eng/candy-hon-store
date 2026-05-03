@@ -8,6 +8,7 @@ import AnnouncementBar from '@/components/AnnouncementBar';
 import { Toaster } from 'sonner';
 import { Analytics } from '@vercel/analytics/next';
 import PageTracker from '../components/PageTracker';
+import RealtimeSync from '../components/RealtimeSync';
 
 // خط Fredoka — مرح وعصري للعناوين الإنجليزية (يتناسب مع أجواء القطعة الحلوة)
 const fredoka = Fredoka({
@@ -56,6 +57,7 @@ export default function RootLayout({
             style: { fontFamily: 'inherit', direction: 'rtl' },
           }}
         />
+        <RealtimeSync />
         <PageTracker />
         <Analytics />
       </body>

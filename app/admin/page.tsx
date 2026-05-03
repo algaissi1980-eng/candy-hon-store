@@ -47,12 +47,23 @@ function AdminDashboardContent() {
 
   useEffect(() => {
     if (!isAdmin) return;
+
     const orderSubscription = supabase
       .channel('realtime-orders-channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
         fetchOrders();
       }).subscribe();
-    return () => { supabase.removeChannel(orderSubscription); };
+
+    const productSubscription = supabase
+      .channel('realtime-products-admin')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+        fetchProducts();
+      }).subscribe();
+
+    return () => {
+      supabase.removeChannel(orderSubscription);
+      supabase.removeChannel(productSubscription);
+    };
   }, [isAdmin]);
 
   const checkAdminAccess = async () => {
@@ -131,8 +142,7 @@ function AdminDashboardContent() {
   if (!isAdmin) return null;
 
   return (
-    <main className="p-6 pt-32 md:p-12 max-w-7xl mx-auto font-sans min-h-screen bg-[var(--cream)]" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="h-32 md:h-40 w-full shrink-0"></div>
+    <main className="p-6 pt-8 md:p-12 max-w-7xl mx-auto font-sans min-h-screen bg-[var(--cream)]" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
 
       <div className="flex flex-col sm:flex-row justify-between items-end border-b border-gray-200 pb-0 mb-10 gap-4">
         <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-4 pb-4">
@@ -228,11 +238,7 @@ function AdminDashboardContent() {
 // Suspense مطلوب لأن useSearchParams يحتاجه Next.js
 export default function AdminDashboard() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[var(--cream)]">
-        <div className="w-10 h-10 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
-      </div>
-    }>
+    <Suspense fallback={null}>
       <AdminDashboardContent />
     </Suspense>
   );

@@ -36,7 +36,7 @@ export default function ProductCard({ product, index = 0, onProductClick }: { pr
         {/* شارة العرض */}
         {hasOffer && !isUnavailable && (
           <motion.div
-            className={`absolute top-2 md:top-3 ${lang === 'ar' ? 'right-2 md:right-3' : 'left-2 md:left-3'} glass-badge text-[10px] md:text-xs font-black px-2.5 md:px-4 py-1 md:py-1.5 z-30 tracking-wide uppercase shadow-lg`}
+            className={`absolute top-2 md:top-3 ${lang === 'ar' ? 'right-2 md:right-3' : 'left-2 md:left-3'} bg-red-500 text-white rounded-full text-[10px] md:text-xs font-black px-3 md:px-4 py-1 md:py-1.5 z-30 tracking-wide uppercase shadow-md`}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
