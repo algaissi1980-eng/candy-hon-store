@@ -6,7 +6,6 @@ import { useLanguageStore } from '../store/languageStore';
 import { useProductStore } from '../store/productStore';
 import AnnouncementBar from '../components/AnnouncementBar';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { supabase } from '../lib/supabase/client';
 
 export default function Home() {
   const { lang } = useLanguageStore();

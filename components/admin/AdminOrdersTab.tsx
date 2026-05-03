@@ -306,22 +306,28 @@ export default function AdminOrdersTab({ orders, products, lang, fetchOrders }: 
     }
   };
 
+  // دالة مشتركة للحذف — تستخدم RPC لضمان إرجاع المخزون وتجاوز RLS
+  const deleteOrderById = async (id: string) => {
+    const { error } = await supabase.rpc('admin_delete_order', { p_order_id: id });
+    if (error) {
+      toast.error(lang === 'ar' ? `فشل الحذف: ${error.message}` : `Delete failed: ${error.message}`);
+      return false;
+    }
+    return true;
+  };
+
   // للديسك توب — يستخدم window.confirm
   const handleDeleteOrderDesktop = async (id: string) => {
-    if (window.confirm(t.confirmDelete)) {
-      await supabase.from('order_items').delete().eq('order_id', id);
-      await supabase.from('orders').delete().eq('id', id);
-      fetchOrders();
-    }
+    if (!window.confirm(t.confirmDelete)) return;
+    const ok = await deleteOrderById(id);
+    if (ok) fetchOrders();
   };
 
   // للموبايل — يستخدم BottomSheet
   const executeDelete = async () => {
     if (!deleteSheetId) return;
-    await supabase.from('order_items').delete().eq('order_id', deleteSheetId);
-    await supabase.from('orders').delete().eq('id', deleteSheetId);
-    setDeleteSheetId(null);
-    fetchOrders();
+    const ok = await deleteOrderById(deleteSheetId);
+    if (ok) { setDeleteSheetId(null); fetchOrders(); }
   };
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {

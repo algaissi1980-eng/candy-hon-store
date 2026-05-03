@@ -1,7 +1,7 @@
 'use client';
 import ProductCard from './ProductCard';
 import ProductModal from './ProductModal';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useLanguageStore } from '../store/languageStore';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -13,10 +13,8 @@ export default function ProductGallery({ products, storeCategories }: {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // قراءة الفلتر من URL أو الرجوع للـ "all" كافتراضي
   const activeCategory = searchParams.get('category') || 'all';
 
-  // تحديث فلتر التصنيف في URL
   const setActiveCategory = useCallback((cat: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (cat === 'all') params.delete('category');
@@ -26,8 +24,12 @@ export default function ProductGallery({ products, storeCategories }: {
   }, [searchParams, router]);
 
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [visibleCount, setVisibleCount] = useState(24);
 
-  // فلترة المنتجات حسب التصنيف
+  useEffect(() => {
+    setVisibleCount(24);
+  }, [activeCategory]);
+
   const filteredProducts = activeCategory === 'all'
     ? products
     : products.filter(p => p.category === activeCategory);
@@ -35,6 +37,9 @@ export default function ProductGallery({ products, storeCategories }: {
   const t = {
     all: lang === 'ar' ? 'الكل' : 'All',
     emptyMsg: lang === 'ar' ? 'لا توجد منتجات في هذا التصنيف حالياً ✨' : 'No products available in this category ✨',
+    loadMore: lang === 'ar' ? 'عرض المزيد ⬇️' : 'Load More ⬇️',
+    showing: lang === 'ar' ? 'عرض' : 'Showing',
+    outOf: lang === 'ar' ? 'من أصل' : 'out of',
   };
 
   const translateCategory = (cat: string) => {
@@ -53,7 +58,6 @@ export default function ProductGallery({ products, storeCategories }: {
 
   return (
     <div>
-      {/* أزرار التصنيفات */}
       <div className="flex flex-wrap justify-center gap-3 mb-12" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
         <button
           onClick={() => setActiveCategory('all')}
@@ -72,9 +76,8 @@ export default function ProductGallery({ products, storeCategories }: {
         ))}
       </div>
 
-      {/* شبكة المنتجات — عمودين على الموبايل */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8 w-full" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-        {filteredProducts.map((product: any, i: number) => (
+        {filteredProducts.slice(0, visibleCount).map((product: any, i: number) => (
           <ProductCard
             key={product.id}
             product={product}
@@ -84,13 +87,26 @@ export default function ProductGallery({ products, storeCategories }: {
         ))}
       </div>
 
+      {filteredProducts.length > visibleCount && (
+        <div className="flex flex-col items-center mt-12 gap-4">
+          <p className="text-xs font-bold text-[var(--text-muted)]">
+            {t.showing} {visibleCount} {t.outOf} {filteredProducts.length}
+          </p>
+          <button
+            onClick={() => setVisibleCount(prev => prev + 24)}
+            className="bg-white border-2 border-[var(--gold)] text-[var(--gold)] hover:bg-[var(--gold)] hover:text-white px-8 py-3 rounded-full font-black shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+          >
+            {t.loadMore}
+          </button>
+        </div>
+      )}
+
       {filteredProducts.length === 0 && (
         <div className="text-center text-[var(--text-muted)] font-bold pt-36 pb-20 text-lg">
           {t.emptyMsg}
         </div>
       )}
 
-      {/* Modal عرض تفاصيل المنتج */}
       <ProductModal
         product={selectedProduct}
         isOpen={!!selectedProduct}

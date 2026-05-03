@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase/client';
 import { getDaysUntilRestock, getTodayISO } from '../../lib/preorderUtils';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { useProductStore } from '../../store/productStore';
 
 interface AdminProductsTabProps {
   products: any[];
@@ -14,6 +15,7 @@ interface AdminProductsTabProps {
 }
 
 export default function AdminProductsTab({ products, categories, lang, fetchProducts }: AdminProductsTabProps) {
+  const invalidateProductCache = useProductStore(s => s.invalidate);
   const [productForm, setProductForm] = useState<{
     id: string;
     name_ar: string;
@@ -37,6 +39,7 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
   const [imageEntries, setImageEntries] = useState<{ url: string; file?: File }[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const t = {
     addTitle: lang === 'ar' ? 'إضافة منتج' : 'Add Product',
@@ -60,6 +63,7 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
     preorderLabel: lang === 'ar' ? 'السماح بالطلب المسبق عند نفاد المخزون' : 'Allow Pre-order when out of stock',
     restockDateLabel: lang === 'ar' ? 'تاريخ التوفر المتوقع:' : 'Expected restock date:',
     restockDateHint: lang === 'ar' ? 'سيُحسب عدد الأيام تلقائياً' : 'Days remaining will be calculated automatically',
+    searchPlace: lang === 'ar' ? 'ابحث عن منتج بالاسم...' : 'Search product by name...',
   };
 
   const resetForm = () => {
@@ -156,6 +160,7 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
       }
       toast.success(t.successAdd);
     }
+    invalidateProductCache();
     fetchProducts();
     resetForm();
     setIsSaving(false);
@@ -181,19 +186,28 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
     }
 
     toast.success(lang === 'ar' ? 'تم حذف المنتج بنجاح ✓' : 'Product deleted ✓');
+    invalidateProductCache();
     fetchProducts();
   };
 
   const handleToggleAvailability = async (id: string, currentStatus: boolean) => {
     const { error } = await supabase.from('products').update({ is_available: !currentStatus }).eq('id', id);
-    if (!error) fetchProducts();
+    if (!error) { invalidateProductCache(); fetchProducts(); }
   };
 
-  // دالة لعرض اسم المنتج حسب اللغة
   const getProductName = (product: any) => {
     if (lang === 'ar') return product.name_ar || product.name || '—';
     return product.name_en || product.name_ar || product.name || '—';
   };
+
+  const filteredProducts = products.filter(p => {
+    if (!searchQuery) return true;
+    const s = searchQuery.toLowerCase();
+    const nameAr = (p.name_ar || '').toLowerCase();
+    const nameEn = (p.name_en || '').toLowerCase();
+    const nameOrig = (p.name || '').toLowerCase();
+    return nameAr.includes(s) || nameEn.includes(s) || nameOrig.includes(s);
+  });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -371,12 +385,29 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
 
     {/* قائمة المنتجات */}
 <div className="lg:col-span-2">
-  <h2 className="text-xl font-black text-black mb-6">{t.listTitle}</h2>
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <h2 className="text-xl font-black text-black whitespace-nowrap">{t.listTitle}</h2>
+    
+    {/* شريط البحث */}
+    <div className="relative w-full sm:max-w-xs">
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder={t.searchPlace}
+        className={`w-full py-2 border border-gray-200 rounded text-sm outline-none focus:border-black transition-colors ${lang === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'}`}
+        dir={lang === 'ar' ? 'rtl' : 'ltr'}
+      />
+      <span className={`absolute top-1/2 -translate-y-1/2 text-gray-400 ${lang === 'ar' ? 'right-3' : 'left-3'}`}>
+        🔍
+      </span>
+    </div>
+  </div>
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    {products.map(product => (
+    {filteredProducts.map(product => (
       <div key={product.id} className="bg-white border border-gray-200 p-4 flex flex-col gap-3 shadow-sm rounded">
         <div className="flex gap-4">
-          <div className="w-16 h-16 md:w-16 md:h-16 w-20 h-20 bg-gray-100 flex-shrink-0 rounded overflow-hidden">
+          <div className="w-16 h-16 bg-gray-100 flex-shrink-0 rounded overflow-hidden">
             {product.image_url ? (
               <Image
                 src={product.image_url}
@@ -434,15 +465,27 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
                     {product.is_available ? (lang === 'ar' ? 'متاح' : 'Active') : (lang === 'ar' ? 'موقوف' : 'Off')}
                   </span>
                 </button>
-                <div className={`flex gap-4 ${lang === 'ar' ? 'mr-auto' : 'ml-auto'}`}>
-                  <button onClick={() => startEditing(product)} className="text-xs font-bold text-gray-400 hover:text-black">{t.editBtn}</button>
-                  <button onClick={() => handleDeleteProduct(product.id)} className="text-xs font-bold text-gray-400 hover:text-red-600">{t.deleteBtn}</button>
+
+                <div className="flex gap-2 mr-auto">
+                  <button
+                    onClick={() => startEditing(product)}
+                    className="text-xs font-bold px-3 py-1.5 rounded border border-gray-200 hover:border-black hover:bg-black hover:text-white transition-all"
+                  >
+                    {t.editBtn}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="text-xs font-bold px-3 py-1.5 rounded border border-red-200 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+                  >
+                    {t.deleteBtn}
+                  </button>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
       </div>
+    ))}
+  </div>
+</div>
+
     </div>
   );
 }
