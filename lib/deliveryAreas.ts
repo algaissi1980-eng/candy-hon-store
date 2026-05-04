@@ -74,3 +74,24 @@ export function getCityName(cityId: string, lang: 'ar' | 'en'): string {
   if (!city) return cityId;
   return lang === 'ar' ? city.name_ar : city.name_en;
 }
+
+// ====== دالة حساب رسوم التوصيل الفعلية (بعد تطبيق عرض الـ 30 JOD) ======
+// إذا كان مجموع المنتجات >= 30 JOD:
+//   — المنطقة A (3 JOD) → مجاني (0 JOD)
+//   — المنطقة B (5 JOD) → 1 JOD
+export function getEffectiveDeliveryFee(cityId: string, subtotal: number): number | null {
+  const baseFee = getDeliveryFee(cityId);
+  if (baseFee === null) return null;
+  if (subtotal >= 30) {
+    if (baseFee === 3) return 0;
+    if (baseFee === 5) return 1;
+  }
+  return baseFee;
+}
+
+// ====== هل يستحق الطلب خصم التوصيل؟ ======
+export function hasDeliveryDiscount(cityId: string, subtotal: number): boolean {
+  const baseFee = getDeliveryFee(cityId);
+  if (baseFee === null || subtotal < 30) return false;
+  return baseFee === 3 || baseFee === 5;
+}

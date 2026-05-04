@@ -8,9 +8,10 @@ import AdminProductsTab from '../../components/admin/AdminProductsTab';
 import AdminSettingsTab, { type StoreSettings } from '../../components/admin/AdminSettingsTab';
 import AdminAdminsTab from '../../components/admin/AdminAdminsTab';
 import AdminStatsTab from '../../components/admin/AdminStatsTab';
+import AdminPromoTab from '../../components/admin/AdminPromoTab';
 import { Suspense } from 'react';
 
-type TabType = 'orders' | 'products' | 'stats' | 'settings' | 'admins';
+type TabType = 'orders' | 'products' | 'stats' | 'settings' | 'admins' | 'promo';
 
 function AdminDashboardContent() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -22,7 +23,7 @@ function AdminDashboardContent() {
 
   // نقرأ الـ tab من الـ URL — لو ما في نرجع orders
   const tabFromUrl = (searchParams.get('tab') as TabType) || 'orders';
-  const validTabs: TabType[] = ['orders', 'products', 'stats', 'settings', 'admins'];
+  const validTabs: TabType[] = ['orders', 'products', 'stats', 'settings', 'admins', 'promo'];
   const activeTab: TabType = validTabs.includes(tabFromUrl) ? tabFromUrl : 'orders';
 
   // عند تغيير الـ tab نحدث الـ URL مباشرة
@@ -127,7 +128,8 @@ function AdminDashboardContent() {
       products: lang === 'ar' ? 'المنتجات' : 'Products',
       stats:    lang === 'ar' ? 'الإحصائيات 📊' : 'Statistics 📊',
       settings: lang === 'ar' ? 'الإعدادات ⚙️' : 'Settings ⚙️',
-      admins:   lang === 'ar' ? 'المدراء 👥' : 'Admins 👥'
+      admins:   lang === 'ar' ? 'المدراء 👥' : 'Admins 👥',
+      promo:    lang === 'ar' ? 'الكودات 🏷️' : 'Promo 🏷️'
     }
   };
 
@@ -165,7 +167,7 @@ function AdminDashboardContent() {
 
         {/* تبويبات الديسك توب — مخفية على الموبايل */}
         <div className="hidden md:flex gap-6 sm:gap-8 text-sm font-bold text-gray-400 overflow-x-auto w-full sm:w-auto hide-scrollbar">
-          {(['orders', 'products', 'stats', 'settings', 'admins'] as const).map(tab => (
+          {(['orders', 'products', 'stats', 'settings', 'admins', 'promo'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -190,6 +192,9 @@ function AdminDashboardContent() {
         )}
         {activeTab === 'stats' && (
           <AdminStatsTab orders={orders} lang={lang} />
+        )}
+        {activeTab === 'promo' && (
+          <AdminPromoTab lang={lang} />
         )}
         {activeTab === 'admins' && (
           <AdminAdminsTab adminsList={adminsList} currentUserEmail={currentUserEmail} lang={lang} fetchAdminsList={fetchAdminsList} />
