@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase/client';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 
 interface Offer {
   id: string;
@@ -12,24 +11,24 @@ interface Offer {
   product_id: string | null;
   product_name: string | null;
   product_image: string | null;
+  free_item_count: number | null;
   duration_days: number;
   starts_at: string;
   ends_at: string;
 }
 
 interface AdminOffersTabProps {
-  products: any[];
   lang: 'ar' | 'en';
 }
 
-export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) {
+export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
     type: 'sale_percent' as 'sale_percent' | 'free_item',
     discount_percentage: '',
-    product_id: '',
+    free_item_count: '1',
     duration_days: '',
   });
 
@@ -40,8 +39,7 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
     typeSale:        lang === 'ar' ? 'خصم % على الفاتورة' : 'Sale % on Invoice',
     typeFreeItem:    lang === 'ar' ? 'منتج مجاني' : 'Free Item',
     discountLabel:   lang === 'ar' ? 'نسبة الخصم %' : 'Discount %',
-    productLabel:    lang === 'ar' ? 'المنتج المجاني' : 'Free Product',
-    selectProduct:   lang === 'ar' ? 'اختر منتجاً...' : 'Select product...',
+    freeCountLabel:  lang === 'ar' ? 'عدد القطع المجانية' : 'Number of Free Items',
     daysLabel:       lang === 'ar' ? 'مدة العرض (أيام)' : 'Duration (days)',
     addBtn:          lang === 'ar' ? 'تفعيل العرض 🎉' : 'Activate Offer 🎉',
     saving:          lang === 'ar' ? 'جاري الحفظ...' : 'Saving...',
@@ -81,13 +79,14 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
     e.preventDefault();
     if (!form.duration_days) return toast.error(t.errorFill);
     if (form.type === 'sale_percent' && !form.discount_percentage) return toast.error(t.errorFill);
-    if (form.type === 'free_item' && !form.product_id) return toast.error(t.errorFill);
+    if (form.type === 'free_item' && !form.free_item_count) return toast.error(t.errorFill);
 
     setIsSaving(true);
     const { error } = await supabase.from('offers').insert({
       type: form.type,
       discount_percentage: form.type === 'sale_percent' ? parseInt(form.discount_percentage) : null,
-      product_id: form.type === 'free_item' ? form.product_id : null,
+      product_id: null,
+      free_item_count: form.type === 'free_item' ? parseInt(form.free_item_count) : null,
       duration_days: parseInt(form.duration_days),
       starts_at: new Date().toISOString(),
       is_active: true,
@@ -97,7 +96,7 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
       toast.error(error.message);
     } else {
       toast.success(t.successAdd);
-      setForm({ type: 'sale_percent', discount_percentage: '', product_id: '', duration_days: '' });
+      setForm({ type: 'sale_percent', discount_percentage: '', free_item_count: '1', duration_days: '' });
       fetchOffers();
     }
     setIsSaving(false);
@@ -125,7 +124,7 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
                 <button
                   key={type}
                   type="button"
-                  onClick={() => setForm({ ...form, type, discount_percentage: '', product_id: '' })}
+                  onClick={() => setForm({ ...form, type, discount_percentage: '', free_item_count: '1' })}
                   className={`py-2.5 px-3 rounded-lg text-xs font-black border transition-all ${
                     form.type === type
                       ? 'bg-black text-white border-black'
@@ -153,20 +152,15 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
             </div>
           ) : (
             <div>
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">{t.productLabel}</label>
-              <select
-                required
-                value={form.product_id}
-                onChange={e => setForm({ ...form, product_id: e.target.value })}
-                className="w-full border-b border-gray-300 p-2 outline-none focus:border-black bg-white text-sm"
-              >
-                <option value="">{t.selectProduct}</option>
-                {products.filter(p => p.is_available).map(p => (
-                  <option key={p.id} value={p.id}>
-                    {lang === 'ar' ? (p.name_ar || p.name) : (p.name_en || p.name_ar || p.name)}
-                  </option>
-                ))}
-              </select>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">{t.freeCountLabel}</label>
+              <input
+                type="number" min={1} required
+                value={form.free_item_count}
+                onChange={e => setForm({ ...form, free_item_count: e.target.value })}
+                placeholder="1"
+                dir="ltr"
+                className="w-full border-b border-gray-300 p-2 outline-none focus:border-black"
+              />
             </div>
           )}
 
@@ -215,15 +209,9 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
                 >
                   {/* أيقونة + معلومات */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {offer.type === 'free_item' && offer.product_image ? (
-                      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                        <Image src={offer.product_image} alt="" width={48} height={48} className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center text-2xl flex-shrink-0">
-                        {offer.type === 'sale_percent' ? '🏷️' : '🎁'}
-                      </div>
-                    )}
+                    <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0 bg-amber-50">
+                      {offer.type === 'sale_percent' ? '🏷️' : '🎁'}
+                    </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         {offer.type === 'sale_percent' ? (
@@ -232,7 +220,7 @@ export default function AdminOffersTab({ products, lang }: AdminOffersTabProps) 
                           </span>
                         ) : (
                           <span className="bg-green-100 text-green-700 text-xs font-black px-2.5 py-1 rounded-full">
-                            🎁 {t.freeLabel}: {lang === 'ar' ? offer.product_name : offer.product_name}
+                            🎁 {t.freeLabel} ×{offer.free_item_count || 1}
                           </span>
                         )}
                       </div>

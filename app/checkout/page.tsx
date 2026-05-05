@@ -149,8 +149,8 @@ export default function CheckoutPage() {
   const offerSaleDiscount = activeOffers
     .filter(o => o.type === 'sale_percent' && o.discount_percentage)
     .reduce((acc, o) => acc + Math.round(subtotal * o.discount_percentage) / 100, 0);
-  // المنتجات المجانية من العروض
-  const freeItems = activeOffers.filter(o => o.type === 'free_item' && o.product_id);
+  // العناصر المجانية من العروض
+  const freeItems = activeOffers.filter(o => o.type === 'free_item');
   const total = subtotal - discountAmount - offerSaleDiscount + (deliveryFee ?? 0);
 
   const handleApplyPromo = async () => {
@@ -240,17 +240,6 @@ export default function CheckoutPage() {
         is_preorder: item.is_preorder ?? false,
       }));
 
-      // إضافة المنتجات المجانية من العروض الفعّالة
-      for (const freeOffer of freeItems) {
-        items.push({
-          order_id: orderData.id,
-          product_id: freeOffer.product_id,
-          quantity: 1,
-          price: 0,
-          note: lang === 'ar' ? '🎁 هدية مجانية' : '🎁 Free gift',
-          is_preorder: false,
-        });
-      }
 
       const { error: itemsError } = await supabase.from('order_items').insert(items);
       if (itemsError) throw itemsError;
@@ -370,6 +359,17 @@ export default function CheckoutPage() {
               </div>
             </motion.div>
 
+            {freeItems.length > 0 && (
+              <motion.div
+                className="bg-green-50 border border-green-200 rounded-2xl p-3 text-center text-sm font-bold text-green-700"
+                initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+              >
+                🎁 {lang === 'ar'
+                  ? `مبروك! طلبك يشمل ${freeItems.reduce((s: number, o: any) => s + (o.free_item_count || 1), 0)} قطعة مجانية — سنختارها لك بكل حب 💛`
+                  : `Congrats! Your order includes ${freeItems.reduce((s: number, o: any) => s + (o.free_item_count || 1), 0)} free item(s) — we'll pick them for you with love 💛`
+                }
+              </motion.div>
+            )}
             {subtotal < 5 && subtotal > 0 && (
               <motion.div
                 className="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-center text-xs font-bold text-amber-700"
@@ -473,8 +473,8 @@ export default function CheckoutPage() {
               )}
               {freeItems.map((offer: any) => (
                 <div key={offer.id} className="flex justify-between text-sm text-green-600 font-bold">
-                  <span>{t.freeItem}: {offer.product_name}</span>
-                  <span dir="ltr">{lang === 'ar' ? 'مجاني' : 'Free'}</span>
+                  <span>{t.freeItem} ×{offer.free_item_count || 1}</span>
+                  <span dir="ltr">{lang === 'ar' ? 'مجاني 🎁' : 'Free 🎁'}</span>
                 </div>
               ))}
               <div className="flex justify-between text-xl md:text-2xl font-black pt-4 border-t border-[var(--cream-dark)]"><span className="text-[var(--dark)]">{t.total}</span><span className="gold-shimmer" dir="ltr">{total.toFixed(2)} JOD</span></div>

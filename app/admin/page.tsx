@@ -199,7 +199,7 @@ function AdminDashboardContent() {
           <AdminPromoTab lang={lang} />
         )}
         {activeTab === 'offers' && (
-          <AdminOffersTab products={products} lang={lang} />
+          <AdminOffersTab lang={lang} />
         )}
         {activeTab === 'admins' && (
           <AdminAdminsTab adminsList={adminsList} currentUserEmail={currentUserEmail} lang={lang} fetchAdminsList={fetchAdminsList} />
@@ -214,6 +214,8 @@ function AdminDashboardContent() {
           { tab: 'stats',    icon: '📊', labelAr: 'إحصائيات',   labelEn: 'Stats'    },
           { tab: 'settings', icon: '⚙️', labelAr: 'إعدادات',    labelEn: 'Settings' },
           { tab: 'admins',   icon: '👥', labelAr: 'المدراء',     labelEn: 'Admins'   },
+          { tab: 'promo',    icon: '🏷️', labelAr: 'الكودات',    labelEn: 'Promo'    },
+          { tab: 'offers',   icon: '🎉', labelAr: 'العروض',     labelEn: 'Offers'   },
         ] as const).map(({ tab, icon, labelAr, labelEn }) => {
           const isActive = activeTab === tab;
           return (
