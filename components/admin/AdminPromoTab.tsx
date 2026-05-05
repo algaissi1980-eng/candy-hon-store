@@ -11,6 +11,7 @@ interface PromoCode {
   max_uses: number;
   used_count: number;
   is_active: boolean;
+  min_order_amount: number;
   created_at: string;
 }
 
@@ -22,7 +23,7 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [form, setForm] = useState({ code: '', discount_percentage: '', max_uses: '' });
+  const [form, setForm] = useState({ code: '', discount_percentage: '', max_uses: '', min_order_amount: '' });
 
   const t = {
     title:          lang === 'ar' ? 'كودات الخصم' : 'Promo Codes',
@@ -30,6 +31,8 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
     codePlaceholder: lang === 'ar' ? 'الكود (مثال: SUMMER20)' : 'Code (e.g. SUMMER20)',
     discountLabel:  lang === 'ar' ? 'نسبة الخصم %' : 'Discount %',
     maxUsesLabel:   lang === 'ar' ? 'عدد الاستخدامات' : 'Max Uses',
+    minOrderLabel:  lang === 'ar' ? 'حد أدنى للطلب (JOD)' : 'Min Order (JOD)',
+    minOrderHint:   lang === 'ar' ? '0 = بدون حد أدنى' : '0 = no minimum',
     addBtn:         lang === 'ar' ? 'إضافة الكود ➕' : 'Add Code ➕',
     saving:         lang === 'ar' ? 'جاري الحفظ...' : 'Saving...',
     noPromos:       lang === 'ar' ? 'لا توجد كودات بعد' : 'No promo codes yet',
@@ -68,10 +71,12 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
     if (uses < 1) return toast.error(t.errorUses);
 
     setIsSaving(true);
+    const minOrder = parseFloat(form.min_order_amount) || 0;
     const { error } = await supabase.from('promo_codes').insert({
       code: form.code.toUpperCase().trim(),
       discount_percentage: pct,
       max_uses: uses,
+      min_order_amount: minOrder,
     });
 
     if (error) {
@@ -81,7 +86,7 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
       );
     } else {
       toast.success(t.successAdd);
-      setForm({ code: '', discount_percentage: '', max_uses: '' });
+      setForm({ code: '', discount_percentage: '', max_uses: '', min_order_amount: '' });
       fetchCodes();
     }
     setIsSaving(false);
@@ -150,6 +155,25 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
               />
             </div>
           </div>
+
+          {/* الحد الأدنى للطلب */}
+          <div>
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">
+              {t.minOrderLabel}
+            </label>
+            <input
+              type="number"
+              min={0}
+              step="0.5"
+              value={form.min_order_amount}
+              onChange={e => setForm({ ...form, min_order_amount: e.target.value })}
+              placeholder="0"
+              dir="ltr"
+              className="w-full border-b border-gray-300 p-2 outline-none focus:border-black"
+            />
+            <p className="text-[10px] text-gray-400 mt-1">{t.minOrderHint}</p>
+          </div>
+
           <button
             disabled={isSaving}
             className="w-full bg-black text-white font-bold py-4 mt-2 hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
@@ -199,6 +223,9 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
                     </div>
                     <p className="text-xs text-gray-400 mt-1 font-medium" dir="ltr">
                       {promo.used_count} / {promo.max_uses} {t.usedOf}
+                      {promo.min_order_amount > 0 && (
+                        <span className="mr-3 text-amber-500">· {lang === 'ar' ? `حد أدنى: ${promo.min_order_amount} JOD` : `Min: ${promo.min_order_amount} JOD`}</span>
+                      )}
                     </p>
                     {/* شريط الاستخدام */}
                     <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">

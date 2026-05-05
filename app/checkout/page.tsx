@@ -30,6 +30,14 @@ export default function CheckoutPage() {
   const [promoApplied, setPromoApplied] = useState(false);
   const [promoLoading, setPromoLoading] = useState(false);
 
+  // Active Offers
+  const [activeOffers, setActiveOffers] = useState<any[]>([]);
+  useEffect(() => {
+    supabase.rpc('get_active_offers').then(({ data }) => {
+      if (data) setActiveOffers(data);
+    });
+  }, []);
+
   // subtotalForFee — مجموع المنتجات قبل أي خصم (لحساب رسوم التوصيل)
   const subtotalForFee = cartData.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
 
@@ -94,6 +102,9 @@ export default function CheckoutPage() {
     promoApplied: lang === 'ar' ? 'تم تطبيق الكود ✓' : 'Code applied ✓',
     promoDiscount: lang === 'ar' ? 'خصم الكود' : 'Promo Discount',
     deliveryOffer: lang === 'ar' ? 'خصم عرض التوصيل 🎉' : 'Delivery Offer 🎉',
+    offerSale:     lang === 'ar' ? 'عرض خاص 🏷️' : 'Special Offer 🏷️',
+    freeItem:      lang === 'ar' ? 'هدية مجانية 🎁' : 'Free Gift 🎁',
+    minOrderMsg:   lang === 'ar' ? 'الحد الأدنى للطلب 5 JOD' : 'Minimum order 5 JOD',
     deliveryFreeMsg: lang === 'ar' ? 'مجاني' : 'Free',
     emptyCart: lang === 'ar' ? 'السلة فارغة' : 'Cart is Empty',
     backMenu: lang === 'ar' ? 'العودة للقائمة' : 'Back to Menu',
@@ -134,29 +145,47 @@ export default function CheckoutPage() {
 
   const subtotal = subtotalForFee;
   const discountAmount = promoApplied ? Math.round(subtotal * promoDiscount) / 100 : 0;
-  const total = subtotal - discountAmount + (deliveryFee ?? 0);
+  // خصم العروض التلقائية (sale_percent)
+  const offerSaleDiscount = activeOffers
+    .filter(o => o.type === 'sale_percent' && o.discount_percentage)
+    .reduce((acc, o) => acc + Math.round(subtotal * o.discount_percentage) / 100, 0);
+  // المنتجات المجانية من العروض
+  const freeItems = activeOffers.filter(o => o.type === 'free_item' && o.product_id);
+  const total = subtotal - discountAmount - offerSaleDiscount + (deliveryFee ?? 0);
 
   const handleApplyPromo = async () => {
     const code = promoInput.trim().toUpperCase();
     if (!code) return;
     setPromoLoading(true);
-    const { data, error } = await supabase.rpc('validate_promo_code', { p_code: code });
+    const { data, error } = await supabase.rpc('validate_promo_code', { p_code: code, p_subtotal: subtotal });
     setPromoLoading(false);
     if (error || !data) {
       toast.error(lang === 'ar' ? 'حدث خطأ، حاول مجدداً' : 'Something went wrong, try again');
       return;
     }
-    if (data === 0) {
-      toast.error(lang === 'ar' ? 'الكود غير صالح أو انتهت صلاحيته' : 'Invalid or expired promo code');
+    if (!data.valid) {
+      if (data.reason === 'min_not_met') {
+        toast.error(lang === 'ar'
+          ? `الحد الأدنى لاستخدام هذا الكود هو ${data.min} JOD`
+          : `Minimum order of ${data.min} JOD required for this code`
+        );
+      } else {
+        toast.error(lang === 'ar' ? 'الكود غير صالح أو انتهت صلاحيته' : 'Invalid or expired promo code');
+      }
       return;
     }
-    setPromoDiscount(data);
+    setPromoDiscount(data.discount);
     setPromoApplied(true);
-    toast.success(lang === 'ar' ? `تم تطبيق خصم ${data}% ✓` : `${data}% discount applied ✓`);
+    toast.success(lang === 'ar' ? `تم تطبيق خصم ${data.discount}% ✓` : `${data.discount}% discount applied ✓`);
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    // التحقق من الحد الأدنى للطلب (5 JOD بدون التوصيل)
+    if (subtotal < 5) {
+      return toast.error(lang === 'ar' ? 'الحد الأدنى للطلب هو 5 JOD (بدون رسوم التوصيل)' : 'Minimum order amount is 5 JOD (excluding delivery)');
+    }
 
     // التحقق من اختيار منطقة التوصيل
     if (!formData.deliveryCity || isCityUncovered) {
@@ -210,6 +239,18 @@ export default function CheckoutPage() {
         note: item.note ?? null,
         is_preorder: item.is_preorder ?? false,
       }));
+
+      // إضافة المنتجات المجانية من العروض الفعّالة
+      for (const freeOffer of freeItems) {
+        items.push({
+          order_id: orderData.id,
+          product_id: freeOffer.product_id,
+          quantity: 1,
+          price: 0,
+          note: lang === 'ar' ? '🎁 هدية مجانية' : '🎁 Free gift',
+          is_preorder: false,
+        });
+      }
 
       const { error: itemsError } = await supabase.from('order_items').insert(items);
       if (itemsError) throw itemsError;
@@ -329,8 +370,17 @@ export default function CheckoutPage() {
               </div>
             </motion.div>
 
+            {subtotal < 5 && subtotal > 0 && (
+              <motion.div
+                className="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-center text-xs font-bold text-amber-700"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              >
+                ⚠️ {t.minOrderMsg}
+              </motion.div>
+            )}
+
             <motion.button
-              disabled={isSubmitting || isCityUncovered}
+              disabled={isSubmitting || isCityUncovered || subtotal < 5}
               className="w-full gold-shimmer-bg gold-glow text-white font-bold py-4 md:py-5 rounded-2xl shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none text-sm md:text-base"
               whileHover={!isSubmitting ? { scale: 1.02 } : {}}
               whileTap={!isSubmitting ? { scale: 0.98 } : {}}
@@ -415,6 +465,18 @@ export default function CheckoutPage() {
                   <span dir="ltr">- {discountAmount.toFixed(2)} JOD</span>
                 </div>
               )}
+              {offerSaleDiscount > 0 && (
+                <div className="flex justify-between text-sm text-amber-600 font-bold">
+                  <span>{t.offerSale}</span>
+                  <span dir="ltr">- {offerSaleDiscount.toFixed(2)} JOD</span>
+                </div>
+              )}
+              {freeItems.map((offer: any) => (
+                <div key={offer.id} className="flex justify-between text-sm text-green-600 font-bold">
+                  <span>{t.freeItem}: {offer.product_name}</span>
+                  <span dir="ltr">{lang === 'ar' ? 'مجاني' : 'Free'}</span>
+                </div>
+              ))}
               <div className="flex justify-between text-xl md:text-2xl font-black pt-4 border-t border-[var(--cream-dark)]"><span className="text-[var(--dark)]">{t.total}</span><span className="gold-shimmer" dir="ltr">{total.toFixed(2)} JOD</span></div>
             </div>
           </div>

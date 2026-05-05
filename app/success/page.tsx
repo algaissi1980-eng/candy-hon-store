@@ -93,8 +93,8 @@ function SuccessContent() {
 
 
   const t = {
-    confirmedTitle: lang === 'ar' ? 'تم تأكيد طلبك! 🎉' : 'Order Confirmed! 🎉',
-    confirmedDesc: lang === 'ar' ? 'شكراً لك على طلبك! سنتواصل معك قريباً لترتيب التوصيل. يمكنك التواصل معنا على WhatsApp للمزيد من التفاصيل.' : 'Thank you for your order! We will contact you soon to arrange delivery. You can reach us on WhatsApp for more details.',
+    confirmedTitle: lang === 'ar' ? 'شكراً لطلبك! 🍬' : 'Thank You for Your Order! 🍬',
+    confirmedDesc: lang === 'ar' ? 'شكراً جزيلاً لثقتك بنا 💚 طلبك في طريقه إليك وسيصلك خلال 1-3 أيام عمل. بانتظارك!' : 'Thank you so much for your order! 💚 Your order is on its way and will arrive within 1-3 business days. We can\'t wait for you to enjoy it!',
     orderNum: lang === 'ar' ? 'رقم الطلب' : 'Order ID',
     totalAmount: lang === 'ar' ? 'المبلغ الكلي' : 'Total Amount',
     ordersBtn: lang === 'ar' ? 'متابعة طلباتي' : 'Track My Orders',
