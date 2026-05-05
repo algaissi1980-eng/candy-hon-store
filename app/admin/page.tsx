@@ -207,41 +207,45 @@ function AdminDashboardContent() {
       </div>
 
       {/* ─── Bottom Navigation Bar — موبايل فقط ──────────────── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 md:hidden flex items-center justify-around py-2 shadow-lg">
-        {([
-          { tab: 'orders',   icon: '🧾', labelAr: 'الطلبات',    labelEn: 'Orders'   },
-          { tab: 'products', icon: '🍬', labelAr: 'المنتجات',   labelEn: 'Products' },
-          { tab: 'stats',    icon: '📊', labelAr: 'إحصائيات',   labelEn: 'Stats'    },
-          { tab: 'settings', icon: '⚙️', labelAr: 'إعدادات',    labelEn: 'Settings' },
-          { tab: 'admins',   icon: '👥', labelAr: 'المدراء',     labelEn: 'Admins'   },
-          { tab: 'promo',    icon: '🏷️', labelAr: 'الكودات',    labelEn: 'Promo'    },
-          { tab: 'offers',   icon: '🎉', labelAr: 'العروض',     labelEn: 'Offers'   },
-        ] as const).map(({ tab, icon, labelAr, labelEn }) => {
-          const isActive = activeTab === tab;
-          return (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all relative"
-            >
-              {/* نقطة الإشعار للطلبات الجديدة */}
-              {tab === 'orders' && orders.filter(o => o.status === 'confirmed').length > 0 && (
-                <span className="absolute -top-0.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none">
-                  {orders.filter(o => o.status === 'confirmed').length}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 md:hidden shadow-lg">
+        {/* gradient hint — يوحي إن في تبويبات مخفية عند السحب */}
+        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white/90 to-transparent pointer-events-none z-10" />
+        <div className="flex items-center overflow-x-auto hide-scrollbar py-2 px-2 gap-1">
+          {([
+            { tab: 'orders',   icon: '🧾', labelAr: 'الطلبات',    labelEn: 'Orders'   },
+            { tab: 'products', icon: '🍬', labelAr: 'المنتجات',   labelEn: 'Products' },
+            { tab: 'stats',    icon: '📊', labelAr: 'إحصائيات',   labelEn: 'Stats'    },
+            { tab: 'settings', icon: '⚙️', labelAr: 'إعدادات',    labelEn: 'Settings' },
+            { tab: 'admins',   icon: '👥', labelAr: 'المدراء',     labelEn: 'Admins'   },
+            { tab: 'promo',    icon: '🏷️', labelAr: 'الكودات',    labelEn: 'Promo'    },
+            { tab: 'offers',   icon: '🎉', labelAr: 'العروض',     labelEn: 'Offers'   },
+          ] as const).map(({ tab, icon, labelAr, labelEn }) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="flex flex-col items-center gap-0.5 px-4 py-1 rounded-xl transition-all relative flex-shrink-0"
+              >
+                {/* نقطة الإشعار للطلبات الجديدة */}
+                {tab === 'orders' && orders.filter(o => o.status === 'confirmed').length > 0 && (
+                  <span className="absolute -top-0.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none">
+                    {orders.filter(o => o.status === 'confirmed').length}
+                  </span>
+                )}
+                <span className={`text-xl transition-transform duration-200 ${isActive ? 'scale-110' : 'scale-100 opacity-50'}`}>
+                  {icon}
                 </span>
-              )}
-              <span className={`text-xl transition-transform duration-200 ${isActive ? 'scale-110' : 'scale-100 opacity-50'}`}>
-                {icon}
-              </span>
-              <span className={`text-[9px] font-black transition-colors ${isActive ? 'text-black' : 'text-gray-400'}`}>
-                {lang === 'ar' ? labelAr : labelEn}
-              </span>
-              {isActive && (
-                <div className="w-4 h-0.5 bg-black rounded-full" />
-              )}
-            </button>
-          );
-        })}
+                <span className={`text-[9px] font-black transition-colors whitespace-nowrap ${isActive ? 'text-black' : 'text-gray-400'}`}>
+                  {lang === 'ar' ? labelAr : labelEn}
+                </span>
+                {isActive && (
+                  <div className="w-4 h-0.5 bg-black rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </nav>
     </main>
   );
