@@ -207,10 +207,12 @@ function AdminDashboardContent() {
       </div>
 
       {/* ─── Bottom Navigation Bar — موبايل فقط ──────────────── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 md:hidden shadow-lg">
-        {/* gradient hint — يوحي إن في تبويبات مخفية عند السحب */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white/90 to-transparent pointer-events-none z-10" />
-        <div className="flex items-center overflow-x-auto hide-scrollbar py-2 px-2 gap-1">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 md:hidden shadow-lg relative">
+        {/* fade + سهم على الطرف الأيسر — دليل بصري واضح على وجود المزيد */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-white via-white/80 to-transparent z-10 flex items-center justify-start ps-1">
+          <span className="text-gray-400 text-xs font-black animate-pulse">‹</span>
+        </div>
+        <div className="flex items-center overflow-x-auto hide-scrollbar py-2 ps-3 pe-4 gap-0">
           {([
             { tab: 'orders',   icon: '🧾', labelAr: 'الطلبات',    labelEn: 'Orders'   },
             { tab: 'products', icon: '🍬', labelAr: 'المنتجات',   labelEn: 'Products' },
@@ -225,7 +227,7 @@ function AdminDashboardContent() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="flex flex-col items-center gap-0.5 px-4 py-1 rounded-xl transition-all relative flex-shrink-0"
+                className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all relative flex-shrink-0 min-w-[56px]"
               >
                 {/* نقطة الإشعار للطلبات الجديدة */}
                 {tab === 'orders' && orders.filter(o => o.status === 'confirmed').length > 0 && (
