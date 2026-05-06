@@ -8,7 +8,6 @@ export const supabase = createBrowserClient(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storageKey: 'candy-hon-auth',
     },
     global: {
       fetch: (url: RequestInfo | URL, options?: RequestInit) => {

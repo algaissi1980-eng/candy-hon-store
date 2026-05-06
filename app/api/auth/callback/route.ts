@@ -35,8 +35,6 @@ export async function GET(request: Request) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-    console.error('AUTH CALLBACK ERROR:', JSON.stringify(error));
-
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser();
 
