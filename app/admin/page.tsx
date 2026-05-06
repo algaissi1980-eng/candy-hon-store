@@ -207,7 +207,7 @@ function AdminDashboardContent() {
       </div>
 
       {/* ─── Bottom Navigation Bar — موبايل فقط ──────────────── */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 md:hidden shadow-lg relative">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 md:hidden shadow-lg">
         {/* fade + سهم على الطرف الأيسر — دليل بصري واضح على وجود المزيد */}
         <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-white via-white/80 to-transparent z-10 flex items-center justify-start ps-1">
           <span className="text-gray-400 text-xs font-black animate-pulse">‹</span>

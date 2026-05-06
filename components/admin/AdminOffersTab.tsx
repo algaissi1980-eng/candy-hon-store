@@ -13,6 +13,7 @@ interface Offer {
   product_image: string | null;
   free_item_count: number | null;
   duration_days: number;
+  min_order_amount: number | null;
   starts_at: string;
   ends_at: string;
 }
@@ -30,6 +31,7 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
     discount_percentage: '',
     free_item_count: '1',
     duration_days: '',
+    min_order_amount: '',
   });
 
   const t = {
@@ -41,6 +43,8 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
     discountLabel:   lang === 'ar' ? 'نسبة الخصم %' : 'Discount %',
     freeCountLabel:  lang === 'ar' ? 'عدد القطع المجانية' : 'Number of Free Items',
     daysLabel:       lang === 'ar' ? 'مدة العرض (أيام)' : 'Duration (days)',
+    minOrderLabel:   lang === 'ar' ? 'الحد الأدنى للفاتورة (JOD)' : 'Minimum Order (JOD)',
+    minOrderHint:    lang === 'ar' ? 'القطعة المجانية تظهر عند بلوغ هذا المبلغ' : 'Free item appears when order reaches this amount',
     addBtn:          lang === 'ar' ? 'تفعيل العرض 🎉' : 'Activate Offer 🎉',
     saving:          lang === 'ar' ? 'جاري الحفظ...' : 'Saving...',
     noOffers:        lang === 'ar' ? 'لا توجد عروض فعّالة حالياً' : 'No active offers right now',
@@ -77,9 +81,10 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.duration_days) return toast.error(t.errorFill);
     if (form.type === 'sale_percent' && !form.discount_percentage) return toast.error(t.errorFill);
+    if (form.type === 'sale_percent' && !form.duration_days) return toast.error(t.errorFill);
     if (form.type === 'free_item' && !form.free_item_count) return toast.error(t.errorFill);
+    if (form.type === 'free_item' && !form.min_order_amount) return toast.error(t.errorFill);
 
     setIsSaving(true);
     const { error } = await supabase.from('offers').insert({
@@ -87,7 +92,8 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
       discount_percentage: form.type === 'sale_percent' ? parseInt(form.discount_percentage) : null,
       product_id: null,
       free_item_count: form.type === 'free_item' ? parseInt(form.free_item_count) : null,
-      duration_days: parseInt(form.duration_days),
+      duration_days: form.type === 'sale_percent' ? parseInt(form.duration_days) : 0,
+      min_order_amount: form.type === 'free_item' ? parseFloat(form.min_order_amount) : null,
       starts_at: new Date().toISOString(),
       is_active: true,
     });
@@ -96,7 +102,7 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
       toast.error(error.message);
     } else {
       toast.success(t.successAdd);
-      setForm({ type: 'sale_percent', discount_percentage: '', free_item_count: '1', duration_days: '' });
+      setForm({ type: 'sale_percent', discount_percentage: '', free_item_count: '1', duration_days: '', min_order_amount: '' });
       fetchOffers();
     }
     setIsSaving(false);
@@ -164,18 +170,36 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
             </div>
           )}
 
-          {/* مدة العرض */}
-          <div>
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">{t.daysLabel}</label>
-            <input
-              type="number" min={1} required
-              value={form.duration_days}
-              onChange={e => setForm({ ...form, duration_days: e.target.value })}
-              placeholder="3"
-              dir="ltr"
-              className="w-full border-b border-gray-300 p-2 outline-none focus:border-black"
-            />
-          </div>
+          {/* مدة العرض — لـ sale_percent فقط */}
+          {form.type === 'sale_percent' && (
+            <div>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">{t.daysLabel}</label>
+              <input
+                type="number" min={1} required
+                value={form.duration_days}
+                onChange={e => setForm({ ...form, duration_days: e.target.value })}
+                placeholder="3"
+                dir="ltr"
+                className="w-full border-b border-gray-300 p-2 outline-none focus:border-black"
+              />
+            </div>
+          )}
+
+          {/* الحد الأدنى للفاتورة — لـ free_item فقط */}
+          {form.type === 'free_item' && (
+            <div>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">{t.minOrderLabel}</label>
+              <input
+                type="number" min={1} step="0.5" required
+                value={form.min_order_amount}
+                onChange={e => setForm({ ...form, min_order_amount: e.target.value })}
+                placeholder="15"
+                dir="ltr"
+                className="w-full border-b border-gray-300 p-2 outline-none focus:border-black"
+              />
+              <p className="text-[10px] text-gray-400 mt-1">{t.minOrderHint}</p>
+            </div>
+          )}
 
           <button
             disabled={isSaving}
@@ -224,9 +248,15 @@ export default function AdminOffersTab({ lang }: AdminOffersTabProps) {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-400 mt-1 font-medium">
-                        ⏳ {t.endsIn} {getTimeRemaining(offer.ends_at)}
-                      </p>
+                      {offer.type === 'sale_percent' ? (
+                        <p className="text-xs text-gray-400 mt-1 font-medium">
+                          ⏳ {t.endsIn} {getTimeRemaining(offer.ends_at)}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-gray-400 mt-1 font-medium">
+                          🛒 {lang === 'ar' ? `عند فاتورة فوق ${offer.min_order_amount} JOD` : `On orders above ${offer.min_order_amount} JOD`}
+                        </p>
+                      )}
                     </div>
                   </div>
 

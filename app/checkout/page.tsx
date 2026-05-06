@@ -149,8 +149,10 @@ export default function CheckoutPage() {
   const offerSaleDiscount = activeOffers
     .filter(o => o.type === 'sale_percent' && o.discount_percentage)
     .reduce((acc, o) => acc + Math.round(subtotal * o.discount_percentage) / 100, 0);
-  // العناصر المجانية من العروض
-  const freeItems = activeOffers.filter(o => o.type === 'free_item');
+  // العناصر المجانية — تظهر فقط إذا الفاتورة بلغت الحد الأدنى الذي حدده المدير
+  const freeItems = activeOffers.filter(o => o.type === 'free_item' && subtotal >= (o.min_order_amount || 0));
+  // عروض free_item موجودة لكن لم يبلغ الزبون الحد الأدنى بعد
+  const pendingFreeItems = activeOffers.filter(o => o.type === 'free_item' && subtotal < (o.min_order_amount || 0));
   const total = subtotal - discountAmount - offerSaleDiscount + (deliveryFee ?? 0);
 
   const handleApplyPromo = async () => {
@@ -164,7 +166,7 @@ export default function CheckoutPage() {
       return;
     }
     if (!data.valid) {
-      if (data.reason === 'min_not_met') {
+      if (data.reason === 'min_order') {
         toast.error(lang === 'ar'
           ? `الحد الأدنى لاستخدام هذا الكود هو ${data.min} JOD`
           : `Minimum order of ${data.min} JOD required for this code`
@@ -367,6 +369,18 @@ export default function CheckoutPage() {
                 🎁 {lang === 'ar'
                   ? `مبروك! طلبك يشمل ${freeItems.reduce((s: number, o: any) => s + (o.free_item_count || 1), 0)} قطعة مجانية — سنختارها لك بكل حب 💛`
                   : `Congrats! Your order includes ${freeItems.reduce((s: number, o: any) => s + (o.free_item_count || 1), 0)} free item(s) — we'll pick them for you with love 💛`
+                }
+              </motion.div>
+            )}
+
+            {pendingFreeItems.length > 0 && freeItems.length === 0 && (
+              <motion.div
+                className="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-center text-xs font-bold text-amber-700"
+                initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+              >
+                🎁 {lang === 'ar'
+                  ? `أضف ${(pendingFreeItems[0].min_order_amount - subtotal).toFixed(2)} JOD أكثر وستحصل على ${pendingFreeItems[0].free_item_count || 1} قطعة مجانية! 🍬`
+                  : `Add ${(pendingFreeItems[0].min_order_amount - subtotal).toFixed(2)} JOD more to get ${pendingFreeItems[0].free_item_count || 1} free item(s)! 🍬`
                 }
               </motion.div>
             )}

@@ -8,10 +8,9 @@ interface PromoCode {
   id: string;
   code: string;
   discount_percentage: number;
-  max_uses: number;
-  used_count: number;
   is_active: boolean;
   min_order_amount: number;
+  expires_at: string | null;
   created_at: string;
 }
 
@@ -23,20 +22,21 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [form, setForm] = useState({ code: '', discount_percentage: '', max_uses: '', min_order_amount: '' });
+  const [form, setForm] = useState({ code: '', discount_percentage: '', duration_days: '', min_order_amount: '' });
 
   const t = {
     title:          lang === 'ar' ? 'كودات الخصم' : 'Promo Codes',
     addTitle:       lang === 'ar' ? 'إضافة كود جديد' : 'Add New Code',
     codePlaceholder: lang === 'ar' ? 'الكود (مثال: SUMMER20)' : 'Code (e.g. SUMMER20)',
     discountLabel:  lang === 'ar' ? 'نسبة الخصم %' : 'Discount %',
-    maxUsesLabel:   lang === 'ar' ? 'عدد الاستخدامات' : 'Max Uses',
+    daysLabel:      lang === 'ar' ? 'مدة الكود (أيام)' : 'Duration (days)',
     minOrderLabel:  lang === 'ar' ? 'حد أدنى للطلب (JOD)' : 'Min Order (JOD)',
     minOrderHint:   lang === 'ar' ? '0 = بدون حد أدنى' : '0 = no minimum',
     addBtn:         lang === 'ar' ? 'إضافة الكود ➕' : 'Add Code ➕',
     saving:         lang === 'ar' ? 'جاري الحفظ...' : 'Saving...',
     noPromos:       lang === 'ar' ? 'لا توجد كودات بعد' : 'No promo codes yet',
-    usedOf:         lang === 'ar' ? 'استخدام من' : 'used of',
+    expiresIn:      lang === 'ar' ? 'ينتهي خلال' : 'Expires in',
+    expired:        lang === 'ar' ? 'منتهي الصلاحية' : 'Expired',
     active:         lang === 'ar' ? 'فعّال' : 'Active',
     inactive:       lang === 'ar' ? 'موقوف' : 'Inactive',
     deleteBtn:      lang === 'ar' ? 'حذف' : 'Delete',
@@ -45,7 +45,14 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
     successDelete:  lang === 'ar' ? 'تم حذف الكود ✓' : 'Code deleted ✓',
     errorEmpty:     lang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields',
     errorPercent:   lang === 'ar' ? 'النسبة يجب أن تكون بين 1 و 100' : 'Percentage must be between 1 and 100',
-    errorUses:      lang === 'ar' ? 'عدد الاستخدامات يجب أن يكون 1 على الأقل' : 'Max uses must be at least 1',
+    errorDays:      lang === 'ar' ? 'مدة الكود يجب أن تكون يوم واحد على الأقل' : 'Duration must be at least 1 day',
+  };
+
+  const getDaysRemaining = (expiresAt: string | null) => {
+    if (!expiresAt) return null;
+    const diff = new Date(expiresAt).getTime() - Date.now();
+    if (diff <= 0) return 0;
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
   const fetchCodes = async () => {
@@ -62,31 +69,33 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.code || !form.discount_percentage || !form.max_uses) {
+    if (!form.code || !form.discount_percentage || !form.duration_days) {
       return toast.error(t.errorEmpty);
     }
     const pct = parseInt(form.discount_percentage);
-    const uses = parseInt(form.max_uses);
+    const days = parseInt(form.duration_days);
     if (pct < 1 || pct > 100) return toast.error(t.errorPercent);
-    if (uses < 1) return toast.error(t.errorUses);
+    if (days < 1) return toast.error(t.errorDays);
 
     setIsSaving(true);
+    const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+
     const minOrder = parseFloat(form.min_order_amount) || 0;
     const { error } = await supabase.from('promo_codes').insert({
       code: form.code.toUpperCase().trim(),
       discount_percentage: pct,
-      max_uses: uses,
       min_order_amount: minOrder,
+      expires_at: expiresAt,
     });
 
     if (error) {
-      toast.error(error.message.includes('unique') 
+      toast.error(error.message.includes('unique')
         ? (lang === 'ar' ? 'هذا الكود موجود مسبقاً' : 'This code already exists')
         : error.message
       );
     } else {
       toast.success(t.successAdd);
-      setForm({ code: '', discount_percentage: '', max_uses: '', min_order_amount: '' });
+      setForm({ code: '', discount_percentage: '', duration_days: '', min_order_amount: '' });
       fetchCodes();
     }
     setIsSaving(false);
@@ -128,10 +137,7 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
                 {t.discountLabel}
               </label>
               <input
-                type="number"
-                required
-                min={1}
-                max={100}
+                type="number" required min={1} max={100}
                 value={form.discount_percentage}
                 onChange={e => setForm({ ...form, discount_percentage: e.target.value })}
                 placeholder="10"
@@ -141,15 +147,13 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
             </div>
             <div>
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block mb-1">
-                {t.maxUsesLabel}
+                {t.daysLabel}
               </label>
               <input
-                type="number"
-                required
-                min={1}
-                value={form.max_uses}
-                onChange={e => setForm({ ...form, max_uses: e.target.value })}
-                placeholder="50"
+                type="number" required min={1}
+                value={form.duration_days}
+                onChange={e => setForm({ ...form, duration_days: e.target.value })}
+                placeholder="7"
                 dir="ltr"
                 className="w-full border-b border-gray-300 p-2 outline-none focus:border-black"
               />
@@ -162,9 +166,7 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
               {t.minOrderLabel}
             </label>
             <input
-              type="number"
-              min={0}
-              step="0.5"
+              type="number" min={0} step="0.5"
               value={form.min_order_amount}
               onChange={e => setForm({ ...form, min_order_amount: e.target.value })}
               placeholder="0"
@@ -213,27 +215,28 @@ export default function AdminPromoTab({ lang }: AdminPromoTabProps) {
                       <span className="bg-[var(--gold)] text-white text-xs font-black px-2.5 py-1 rounded-full">
                         {promo.discount_percentage}% OFF
                       </span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                        promo.is_active && promo.used_count < promo.max_uses
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-400'
-                      }`}>
-                        {promo.is_active && promo.used_count < promo.max_uses ? t.active : t.inactive}
-                      </span>
+                      {(() => {
+                        const days = getDaysRemaining(promo.expires_at);
+                        const isExpired = days !== null && days <= 0;
+                        const isActive = promo.is_active && !isExpired;
+                        return (
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
+                            {isActive ? t.active : isExpired ? t.expired : t.inactive}
+                          </span>
+                        );
+                      })()}
                     </div>
-                    <p className="text-xs text-gray-400 mt-1 font-medium" dir="ltr">
-                      {promo.used_count} / {promo.max_uses} {t.usedOf}
+                    <p className="text-xs text-gray-400 mt-1 font-medium">
+                      {promo.expires_at && (() => {
+                        const days = getDaysRemaining(promo.expires_at);
+                        if (days === null) return null;
+                        if (days <= 0) return <span className="text-red-400">⏰ {t.expired}</span>;
+                        return <span>⏳ {t.expiresIn} {days} {lang === 'ar' ? (days === 1 ? 'يوم' : 'أيام') : (days === 1 ? 'day' : 'days')}</span>;
+                      })()}
                       {promo.min_order_amount > 0 && (
-                        <span className="mr-3 text-amber-500">· {lang === 'ar' ? `حد أدنى: ${promo.min_order_amount} JOD` : `Min: ${promo.min_order_amount} JOD`}</span>
+                        <span className="mx-2 text-amber-500">· {lang === 'ar' ? `حد أدنى: ${promo.min_order_amount} JOD` : `Min: ${promo.min_order_amount} JOD`}</span>
                       )}
                     </p>
-                    {/* شريط الاستخدام */}
-                    <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">
-                      <div
-                        className="bg-[var(--gold)] h-1.5 rounded-full transition-all"
-                        style={{ width: `${Math.min((promo.used_count / promo.max_uses) * 100, 100)}%` }}
-                      />
-                    </div>
                   </div>
 
                   {/* أزرار التحكم */}
