@@ -78,11 +78,11 @@ export default function ProductGallery({ products, storeCategories }: {
   return (
     <div>
       {/* ─── شريط البحث ─── */}
-      <div className="max-w-md mx-auto mb-8" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="max-w-xl mx-auto mb-10" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
         <div className="relative group">
           {/* أيقونة البحث */}
-          <div className={`absolute top-1/2 -translate-y-1/2 ${lang === 'ar' ? 'right-4' : 'left-4'} pointer-events-none text-[var(--text-muted)] group-focus-within:text-[var(--pink)] transition-colors`}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+          <div className={`absolute top-1/2 -translate-y-1/2 ${lang === 'ar' ? 'right-5' : 'left-5'} pointer-events-none text-[var(--pink)]/60 group-focus-within:text-[var(--pink)] transition-colors`}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
           </div>
@@ -92,7 +92,7 @@ export default function ProductGallery({ products, storeCategories }: {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-[var(--cream-dark)] rounded-2xl ${lang === 'ar' ? 'pr-12 pl-12' : 'pl-12 pr-12'} py-3.5 text-sm font-medium text-[var(--dark)] placeholder:text-[var(--text-muted)]/60 outline-none focus:border-[var(--pink)] focus:ring-2 focus:ring-[var(--pink)]/15 transition-all shadow-sm hover:shadow-md`}
+            className={`w-full bg-white border-2 border-[var(--pink)]/25 rounded-2xl ${lang === 'ar' ? 'pr-14 pl-14' : 'pl-14 pr-14'} py-4 md:py-5 text-base font-bold text-[var(--dark)] placeholder:text-[var(--text-muted)]/50 placeholder:font-medium outline-none focus:border-[var(--pink)] focus:ring-4 focus:ring-[var(--pink)]/10 transition-all shadow-md hover:shadow-lg hover:border-[var(--pink)]/40`}
           />
           {/* زر المسح — يظهر فقط عند وجود نص */}
           <AnimatePresence>
@@ -103,9 +103,9 @@ export default function ProductGallery({ products, storeCategories }: {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.15 }}
                 onClick={() => { setSearchQuery(''); searchInputRef.current?.focus(); }}
-                className={`absolute top-1/2 -translate-y-1/2 ${lang === 'ar' ? 'left-4' : 'right-4'} w-6 h-6 rounded-full bg-[var(--cream-dark)] hover:bg-[var(--pink)]/20 flex items-center justify-center transition-colors`}
+                className={`absolute top-1/2 -translate-y-1/2 ${lang === 'ar' ? 'left-5' : 'right-5'} w-8 h-8 rounded-full bg-[var(--pink)]/10 hover:bg-[var(--pink)]/20 flex items-center justify-center transition-colors`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5 text-[var(--text-muted)]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-[var(--pink)]">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </motion.button>
