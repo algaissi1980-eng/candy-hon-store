@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
+// عمر الـ cookie — 400 يوم
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 400;
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
@@ -24,9 +27,12 @@ export async function GET(request: Request) {
             }).filter(c => c.name);
           },
           setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-            // كتابة الـ Cookies مباشرة في الـ Response — هذا هو السحر
+            // كتابة الـ Cookies مع maxAge عشان تبقى حتى بعد إغلاق المتصفح
             cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2]);
+              response.cookies.set(name, value, {
+                ...(options as Parameters<typeof response.cookies.set>[2]),
+                maxAge: (options as any).maxAge ?? COOKIE_MAX_AGE,
+              });
             });
           },
         },

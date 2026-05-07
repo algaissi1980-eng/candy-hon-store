@@ -7,6 +7,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 // (Next.js 16: middleware → proxy)
 // =============================================
 
+// عمر الـ cookie — 400 يوم (أقصى حد يسمح به المتصفح)
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 400;
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
@@ -28,7 +31,11 @@ export async function proxy(request: NextRequest) {
             request: { headers: request.headers },
           });
           cookiesToSet.forEach(({ name, value, options }: { name: string; value: string; options: CookieOptions }) => {
-            response.cookies.set(name, value, options);
+            // نضمن أن كل cookie يحصل على maxAge كافي عشان ما ينمسح عند إغلاق المتصفح
+            response.cookies.set(name, value, {
+              ...options,
+              maxAge: options.maxAge ?? COOKIE_MAX_AGE,
+            });
           });
         },
       },
