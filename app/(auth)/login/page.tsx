@@ -43,7 +43,7 @@ const handleGoogleLogin = async () => {
           transition={{ delay: 0.3 }}
         >
           <motion.img
-            src="/logo.png"
+            src="/logo.webp"
             alt="Candy Hon"
             className="w-20 h-20 object-contain rounded-full shadow-md"
             style={{ background: 'rgba(255,255,255,0.95)', padding: '3px' }}

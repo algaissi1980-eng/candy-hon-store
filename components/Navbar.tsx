@@ -82,7 +82,7 @@ export default function Navbar() {
         {/* الشعار — اللوقو كبير ونظيف بدون حواف سوداء */}
         <Link href="/" className="hover:scale-[1.03] transition-transform flex items-center gap-3 shrink-0">
           <motion.img
-            src="/logo.png"
+            src="/logo.webp"
             alt="Candy Hon"
             className={`object-contain rounded-full transition-all duration-500 ${
               scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'

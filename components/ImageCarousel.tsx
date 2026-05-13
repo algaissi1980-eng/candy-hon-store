@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { optimizeCardImage, optimizeFullImage } from '../lib/optimizeImage';
 
 interface ImageCarouselProps {
   images: string[];
@@ -112,7 +113,7 @@ export default function ImageCarousel({
           className="absolute inset-0"
         >
           <Image
-            src={images[currentIndex]}
+            src={isCard ? optimizeCardImage(images[currentIndex]) : optimizeFullImage(images[currentIndex])}
             alt={`${alt} — ${currentIndex + 1}`}
             fill
             className={`object-contain bg-white transition-all duration-300 ${isUnavailable ? 'grayscale opacity-70' : ''}`}

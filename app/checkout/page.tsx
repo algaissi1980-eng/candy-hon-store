@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { optimizeThumbnail } from '../../lib/optimizeImage';
 import { DELIVERY_ZONES, ALL_CITIES, getDeliveryFee, getCityName, getEffectiveDeliveryFee, hasDeliveryDiscount } from '../../lib/deliveryAreas';
 import { getDaysUntilRestock } from '../../lib/preorderUtils';
 
@@ -428,7 +429,7 @@ export default function CheckoutPage() {
                   >
 
                     {item.image_url && (
-                      <Image src={item.image_url} alt="Product thumbnail" width={40} height={40} className="w-10 h-10 rounded-xl object-cover flex-shrink-0 shadow-sm" />
+                      <Image src={optimizeThumbnail(item.image_url)} alt="Product thumbnail" width={40} height={40} className="w-10 h-10 rounded-xl object-cover flex-shrink-0 shadow-sm" />
                     )}
                     <div className="flex-1 pr-2">
                       <div className="flex items-center gap-1.5 flex-wrap">

@@ -22,8 +22,8 @@ interface ProductStore {
   unsubscribeRealtime: () => void;
 }
 
-// مدة صلاحية الكاش: 2 دقيقة (بالمللي ثانية)
-const CACHE_DURATION = 2 * 60 * 1000;
+// مدة صلاحية الكاش: 5 دقائق (بالمللي ثانية) — أطول لتقليل استهلاك الباندويث
+const CACHE_DURATION = 5 * 60 * 1000;
 
 export const useProductStore = create<ProductStore>()((set, get) => ({
   products: [],

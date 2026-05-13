@@ -240,7 +240,7 @@ export default function Home() {
 
           {/* اللوقو الكبير */}
           <motion.img
-            src="/logo.png"
+            src="/logo.webp"
             alt="Candy Hon"
             className="w-24 h-24 md:w-36 md:h-36 mx-auto mb-6 object-contain rounded-full shadow-lg"
             style={{ background: 'white', padding: '4px' }}

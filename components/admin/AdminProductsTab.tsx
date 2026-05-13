@@ -6,6 +6,8 @@ import { getDaysUntilRestock, getTodayISO } from '../../lib/preorderUtils';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { useProductStore } from '../../store/productStore';
+import { compressImage } from '../../lib/compressImage';
+import { optimizeThumbnail } from '../../lib/optimizeImage';
 
 interface AdminProductsTabProps {
   products: any[];
@@ -109,12 +111,14 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
     setIsSaving(true);
 
     // رفع الصور الجديدة (التي لها file) والإبقاء على الروابط الموجودة كما هي
+    // 🗜️ يتم ضغط الصور تلقائياً قبل الرفع لتقليل استهلاك الباندويث
     const uploadedUrls: string[] = [];
     for (const entry of imageEntries) {
       if (entry.file) {
-        const fileExt = entry.file.name.split('.').pop();
+        const compressed = await compressImage(entry.file);
+        const fileExt = compressed.name.split('.').pop() || 'webp';
         const fileName = `${Math.random().toString(36).slice(2)}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from('product-images').upload(fileName, entry.file);
+        const { error: uploadError } = await supabase.storage.from('product-images').upload(fileName, compressed);
         if (!uploadError) {
           const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
           uploadedUrls.push(publicUrlData.publicUrl);
@@ -410,7 +414,7 @@ export default function AdminProductsTab({ products, categories, lang, fetchProd
           <div className="w-16 h-16 bg-gray-100 flex-shrink-0 rounded overflow-hidden">
             {product.image_url ? (
               <Image
-                src={product.image_url}
+                src={optimizeThumbnail(product.image_url)}
                 alt={product.name_ar || product.name || "صورة المنتج"}
                 width={64}
                 height={64}

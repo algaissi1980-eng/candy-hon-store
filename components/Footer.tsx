@@ -35,7 +35,7 @@ export default function Footer() {
           <div>
   <Link href="/" className="flex items-center gap-3 mb-5">
     <Image
-      src="/logo.png"
+      src="/logo.webp"
       alt="Candy Hon"
       width={56}
       height={56}

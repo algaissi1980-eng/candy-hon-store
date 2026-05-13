@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { optimizeThumbnail } from '../../lib/optimizeImage';
 
 export default function OrdersPage() {
   const { lang } = useLanguageStore();
@@ -197,7 +198,7 @@ export default function OrdersPage() {
                       <div className="w-14 h-14 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-[var(--cream-dark)]">
   {item.products?.image_url ? (
     <Image
-      src={item.products.image_url}
+      src={optimizeThumbnail(item.products.image_url)}
       alt={item.products?.name || "صورة المنتج"}
       width={56}
       height={56}
