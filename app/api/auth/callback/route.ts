@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-
-// عمر الـ cookie — 400 يوم
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 400;
+import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -10,8 +8,7 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/';
 
   if (code) {
-    // إنشاء Response مبدئي — سنضيف عليه الـ Cookies لاحقاً
-    const response = NextResponse.redirect(`${origin}${next}`);
+    const cookieStore = await cookies();
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,21 +16,17 @@ export async function GET(request: Request) {
       {
         cookies: {
           getAll() {
-            // قراءة الـ Cookies من الطلب الوارد
-            const cookieHeader = request.headers.get('cookie') ?? '';
-            return cookieHeader.split(';').map(c => {
-              const [name, ...rest] = c.trim().split('=');
-              return { name, value: rest.join('=') };
-            }).filter(c => c.name);
+            return cookieStore.getAll();
           },
           setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-            // كتابة الـ Cookies مع maxAge عشان تبقى حتى بعد إغلاق المتصفح
-            cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, {
-                ...(options as Parameters<typeof response.cookies.set>[2]),
-                maxAge: (options as any).maxAge ?? COOKIE_MAX_AGE,
+            try {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set(name, value, options);
               });
-            });
+            } catch (error) {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing user sessions.
+            }
           },
         },
       }
@@ -54,17 +47,12 @@ export async function GET(request: Request) {
 
         // 3. الشرط: إذا كان هو المالك أو موجوداً في جدول المدراء
         if (userEmail === OWNER_EMAIL || isAdmin === true) {
-          // نعيد بناء الـ Redirect مع الحفاظ على الـ Cookies اللي تمت كتابتها
-          const adminResponse = NextResponse.redirect(`${origin}/admin`);
-          response.cookies.getAll().forEach(cookie => {
-            adminResponse.cookies.set(cookie.name, cookie.value);
-          });
-          return adminResponse;
+          return NextResponse.redirect(`${origin}/admin`);
         }
       }
 
-      // زبون عادي — الـ response الأصلي يوجه لـ next (الرئيسية)
-      return response;
+      // زبون عادي — يوجه لـ next (الرئيسية)
+      return NextResponse.redirect(`${origin}${next}`);
     }
   }
 
