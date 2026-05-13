@@ -43,7 +43,9 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
 
     try {
       const [{ data: pData }, { data: sData }] = await Promise.all([
-        supabase.from('products').select('*'),
+        supabase.from('products').select(
+          'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
+        ),
         supabase.from('store_settings').select('categories').eq('id', 1).single(),
       ]);
 
