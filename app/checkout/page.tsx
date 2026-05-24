@@ -24,6 +24,7 @@ export default function CheckoutPage() {
   const hasHydrated = useCartStore((state: any) => state._hasHydrated);
   const [formData, setFormData] = useState({ fullName: '', phone: '', address: '', notes: '', deliveryCity: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'cliq'>('cod');
 
   // Promo Code states
   const [promoInput, setPromoInput] = useState('');
@@ -218,6 +219,11 @@ export default function CheckoutPage() {
         await supabase.rpc('use_promo_code', { p_code: promoInput.trim().toUpperCase() });
       }
 
+      const paymentLabel = paymentMethod === 'cliq' ? 'Cliq' : (lang === 'ar' ? 'الدفع عند الاستلام' : 'Cash on Delivery');
+      const finalNotes = formData.notes 
+        ? `[Payment: ${paymentLabel}] - ${formData.notes}`
+        : `[Payment: ${paymentLabel}]`;
+
       const { data: orderData, error: orderError } = await supabase.from('orders').insert({
         customer_name: formData.fullName,
         customer_phone: formData.phone,
@@ -227,7 +233,7 @@ export default function CheckoutPage() {
         total_amount: total,
         user_id: user?.id,
         status: 'confirmed',
-        notes: formData.notes || null,
+        notes: finalNotes,
         promo_code: promoApplied ? promoInput.trim().toUpperCase() : null,
         discount_amount: discountAmount,
       }).select().single();
@@ -393,6 +399,62 @@ export default function CheckoutPage() {
                 ⚠️ {t.minOrderMsg}
               </motion.div>
             )}
+
+            {/* Payment Method Selection */}
+            <motion.div
+              className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-[var(--cream-dark)] space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h3 className="font-bold text-[var(--dark)] mb-2">{lang === 'ar' ? 'طريقة الدفع' : 'Payment Method'}</h3>
+              <div className="flex flex-col gap-4">
+                <label className="flex items-center gap-3 cursor-pointer p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
+                    onChange={() => setPaymentMethod('cod')}
+                    className="w-5 h-5 accent-[var(--gold)] cursor-pointer"
+                  />
+                  <span className="font-medium text-sm md:text-base">{lang === 'ar' ? 'الدفع عند الاستلام' : 'Cash on Delivery'}</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cliq"
+                    checked={paymentMethod === 'cliq'}
+                    onChange={() => setPaymentMethod('cliq')}
+                    className="w-5 h-5 accent-[var(--gold)] cursor-pointer"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-sm md:text-base">Cliq</span>
+                  </div>
+                </label>
+              </div>
+              <AnimatePresence>
+                {paymentMethod === 'cliq' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm overflow-hidden"
+                  >
+                    <p className="text-blue-800 font-bold mb-2">
+                      {lang === 'ar' ? 'يرجى تحويل المبلغ إلى الرقم التالي عبر Cliq:' : 'Please transfer the amount to the following number via Cliq:'}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <p className="text-blue-900 font-black text-xl tracking-wider bg-white px-4 py-2 rounded-xl shadow-sm border border-blue-100" dir="ltr">00962798127208</p>
+                    </div>
+                    <p className="text-blue-700 mt-3 text-xs">
+                      {lang === 'ar' ? 'سيتم تأكيد طلبك فور استلام الحوالة.' : 'Your order will be confirmed upon receiving the transfer.'}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
             <motion.button
               disabled={isSubmitting || isCityUncovered || subtotal < 5}
