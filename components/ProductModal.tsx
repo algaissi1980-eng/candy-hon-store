@@ -55,7 +55,6 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
 
   const isPreorderable =
     product.is_available !== false &&
-    product.stock <= 0 &&
     product.allow_preorder === true;
   const isPurchasable = (product.is_available && product.stock > 0) || isPreorderable;
 

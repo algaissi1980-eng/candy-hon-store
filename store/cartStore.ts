@@ -18,10 +18,7 @@ export const useCartStore = create<CartStore>()(
         const currentItems = get().items;
 
         // تحديد ما إذا كان المنتج طلباً مسبقاً (Pre-order)
-        const isPreorder =
-          product.stock !== undefined &&
-          product.stock <= 0 &&
-          product.allow_preorder === true;
+        const isPreorder = product.allow_preorder === true;
 
         // التحقق من وجود نفس المنتج بنفس الملاحظة
         const existingItem = currentItems.find(

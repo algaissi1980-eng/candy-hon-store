@@ -8,7 +8,7 @@ export default function ProductCard({ product, index = 0, onProductClick }: { pr
   const { lang } = useLanguageStore();
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
-  const isPreorderable = isOutOfStock && product.allow_preorder === true && product.is_available !== false;
+  const isPreorderable = product.allow_preorder === true && product.is_available !== false;
   const isUnavailable = !product.is_available || (isOutOfStock && !isPreorderable);
 
   const currentPrice = Number(product.price) || 0;
