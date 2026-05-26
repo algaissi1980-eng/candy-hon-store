@@ -10,7 +10,7 @@ interface AdminAdminsTabProps {
   fetchAdminsList: () => void;
 }
 
-const OWNER_EMAIL = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'algaissi1980@gmail.com';
+const OWNER_EMAIL = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'candyhon762@gmail.com';
 
 export default function AdminAdminsTab({ adminsList, currentUserEmail, lang, fetchAdminsList }: AdminAdminsTabProps) {
   const [newAdminEmail, setNewAdminEmail] = useState('');

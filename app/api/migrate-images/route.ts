@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     }
 
     const { data: isAdmin } = await supabase.rpc('is_admin');
-    const OWNER_EMAIL = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'algaissi1980@gmail.com';
+    const OWNER_EMAIL = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'candyhon762@gmail.com';
     if (user.email !== OWNER_EMAIL && !isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -111,7 +111,7 @@ function AdminDashboardContent() {
       setAdminsList(data);
     } else {
       // fallback: لو الـ RPC مو موجودة، نضيف المالك يدوياً على الأقل
-      const ownerEmail = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'algaissi1980@gmail.com';
+      const ownerEmail = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'candyhon762@gmail.com';
       setAdminsList([{ email: ownerEmail, created_at: new Date().toISOString() }]);
     }
   };

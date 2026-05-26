@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     const userEmail = user?.email;
     if (userEmail) {
       // 1. المالك الأساسي (Master Admin)
-      const OWNER_EMAIL = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'algaissi1980@gmail.com';
+      const OWNER_EMAIL = process.env.NEXT_PUBLIC_OWNER_EMAIL || 'candyhon762@gmail.com';
 
       // 2. فحص المدير عبر RPC (يتجاوز RLS)
       const { data: isAdmin } = await supabase.rpc('is_admin');
