@@ -53,14 +53,12 @@ export default function OrdersPage() {
     orderId: lang === 'ar' ? 'رقم الطلب' : 'Order ID',
     orderDate: lang === 'ar' ? 'تاريخ الطلب' : 'Order Date',
     total: lang === 'ar' ? 'المجموع الكلي' : 'Total Amount',
-    cancel: lang === 'ar' ? 'إلغاء الطلب' : 'Cancel Order',
     payBtn: lang === 'ar' ? 'إتمام الدفع' : 'Pay Now',
     whatsappHelp: lang === 'ar' ? 'تواصل معنا' : 'Contact Us',
     items: lang === 'ar' ? 'محتويات الطلب:' : 'Order Content:',
     qty: lang === 'ar' ? 'الكمية:' : 'Qty:',
     delivery: lang === 'ar' ? 'التوصيل:' : 'Delivery:',
     loading: lang === 'ar' ? 'جاري تحميل الطلبات...' : 'Loading orders...',
-    confirmCancel: lang === 'ar' ? 'هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟' : 'Are you sure you want to cancel this order?',
     statuses: {
       confirmed: lang === 'ar' ? 'مؤكد' : 'Confirmed',
       processing: lang === 'ar' ? 'قيد التجهيز' : 'Processing',
@@ -76,16 +74,6 @@ export default function OrdersPage() {
       completed: 'bg-green-50 text-green-700 border-green-200'
     };
     return <span className={`${colors[status] || 'bg-gray-50 border-gray-200'} px-4 py-1.5 rounded-xl text-xs font-bold border`}>{s}</span>;
-  };
-
-  const handleCancelOrder = async (orderId: string) => {
-    if (!window.confirm(t.confirmCancel)) return;
-    try {
-      const { error } = await supabase.rpc('cancel_order', { p_order_id: orderId });
-      if (error) throw error;
-      toast.success(lang === 'ar' ? 'تم إلغاء الطلب بنجاح' : 'Order cancelled successfully');
-      if (userId) fetchMyOrders(userId);
-    } catch (error: any) { toast.error('Error: ' + error.message); }
   };
 
   if (loading) return (
@@ -161,14 +149,6 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     {getStatusBadge(order.status)}
-
-                    {order.status === 'confirmed' && (
-                      <>
-                        <button onClick={() => handleCancelOrder(order.id)} className="text-red-500 bg-red-50 hover:bg-red-500 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                          {t.cancel}
-                        </button>
-                      </>
-                    )}
 
                     <a
                       href={`https://wa.me/962791875758?text=${encodeURIComponent(lang === 'ar' ? `مرحباً، لدي استفسار بخصوص الطلب رقم #${order.id.split('-')[0]}` : `Hello, I have a question about order #${order.id.split('-')[0]}`)}`}

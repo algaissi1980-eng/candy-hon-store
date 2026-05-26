@@ -2,13 +2,11 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 import { supabase } from '../../lib/supabase/client';
 import { useLanguageStore } from '../../store/languageStore';
-import { useCartStore } from '../../store/cartStore';
 import { getCityName } from '../../lib/deliveryAreas';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 function SuccessContent() {
   const { lang } = useLanguageStore();
@@ -19,7 +17,6 @@ function SuccessContent() {
   const [order, setOrder] = useState<any>(null);
   const [hasPreorderItems, setHasPreorderItems] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isCancelling, setIsCancelling] = useState(false);
 
 
   useEffect(() => {
@@ -51,45 +48,6 @@ function SuccessContent() {
     setLoading(false);
   };
 
-  const handleCancelOrder = async () => {
-    const confirmMsg = lang === 'ar' ? 'هل أنت متأكد من رغبتك في إلغاء الطلب والتعديل عليه؟' : 'Are you sure you want to cancel and edit this order?';
-    if (!window.confirm(confirmMsg)) return;
-
-    setIsCancelling(true);
-
-    try {
-      // نجلب عناصر الطلب أولاً لاستعادة السلة — قبل الحذف
-      const { data: itemsToRestore } = await supabase.from('order_items')
-        .select('product_id, quantity, price, note, is_preorder, products(name, image_url)')
-        .eq('order_id', orderId);
-
-      // نستدعي RPC يتولى الحذف واسترجاع المخزون بصلاحيات كاملة
-      const { error: cancelError } = await supabase.rpc('cancel_order', { p_order_id: orderId });
-      if (cancelError) throw cancelError;
-
-      // استعادة السلة في المتصفح
-      if (itemsToRestore && itemsToRestore.length > 0) {
-        const restoredCart = itemsToRestore.map((item: any) => ({
-          id: item.product_id,
-          cartItemId: Math.random().toString(36).substring(2, 9),
-          name: item.products?.name || 'منتج',
-          price: item.price,
-          quantity: item.quantity,
-          image_url: item.products?.image_url || '',
-          note: item.note,
-          is_preorder: item.is_preorder ?? false,
-        }));
-        useCartStore.setState({ items: restoredCart });
-      }
-
-      toast.success(lang === 'ar' ? 'تم إلغاء الطلب وإرجاع المنتجات للسلة' : 'Order cancelled and items restored to cart');
-      router.push('/#menu');
-
-    } catch (error: any) {
-      toast.error((lang === 'ar' ? 'حدث خطأ: ' : 'Error: ') + error.message);
-      setIsCancelling(false);
-    }
-  };
 
 
   const t = {
@@ -99,8 +57,6 @@ function SuccessContent() {
     totalAmount: lang === 'ar' ? 'المبلغ الكلي' : 'Total Amount',
     ordersBtn: lang === 'ar' ? 'متابعة طلباتي' : 'Track My Orders',
     whatsappBtn: lang === 'ar' ? 'تواصل عبر WhatsApp' : 'Contact on WhatsApp',
-    cancelBtn: lang === 'ar' ? 'إلغاء الطلب وتعديل المنتجات' : 'Cancel & Edit Order',
-    cancellingTxt: lang === 'ar' ? 'جاري الإلغاء والاستعادة...' : 'Restoring cart...',
     loading: lang === 'ar' ? 'جاري تحميل الطلب...' : 'Loading order...',
     deliveryFee: lang === 'ar' ? 'رسوم التوصيل' : 'Delivery Fee',
     deliveryArea: lang === 'ar' ? 'منطقة التوصيل' : 'Delivery Area',
@@ -118,8 +74,6 @@ function SuccessContent() {
       </div>
     </div>
   );
-
-  const isConfirmed = order.status === 'confirmed';
 
   return (
     <main className="min-h-screen bg-[var(--cream)] flex flex-col items-center justify-center pt-32 pb-12 px-4 sm:px-6 font-sans relative overflow-hidden" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -213,18 +167,6 @@ function SuccessContent() {
         >
           <a href="https://wa.me/962791875758" target="_blank" rel="noopener noreferrer" className="w-full bg-green-500 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-green-600 transition-all uppercase tracking-widest text-sm text-center">{t.whatsappBtn}</a>
           <Link href="/orders" className="w-full bg-[var(--dark)] text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-black transition-all uppercase tracking-widest text-sm text-center">{t.ordersBtn}</Link>
-
-          {isConfirmed && (
-            <motion.button
-              onClick={handleCancelOrder}
-              disabled={isCancelling}
-              className="w-full bg-white text-red-500 border border-red-100 font-bold py-4 rounded-2xl hover:bg-red-50 transition-all text-xs disabled:opacity-50"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {isCancelling ? t.cancellingTxt : t.cancelBtn}
-            </motion.button>
-          )}
         </motion.div>
       </motion.div>
     </main>
