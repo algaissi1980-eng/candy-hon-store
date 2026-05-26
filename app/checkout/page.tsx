@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { optimizeThumbnail } from '../../lib/optimizeImage';
-import { DELIVERY_ZONES, ALL_CITIES, getDeliveryFee, getCityName, getEffectiveDeliveryFee, hasDeliveryDiscount } from '../../lib/deliveryAreas';
+import { DELIVERY_ZONES, ALL_CITIES, getDeliveryFee, getCityName, getEffectiveDeliveryFee } from '../../lib/deliveryAreas';
 import { getDaysUntilRestock } from '../../lib/preorderUtils';
 
 
@@ -43,11 +43,9 @@ export default function CheckoutPage() {
   // subtotalForFee — مجموع المنتجات قبل أي خصم (لحساب رسوم التوصيل)
   const subtotalForFee = cartData.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
 
-  // حساب رسوم التوصيل بناءً على المدينة المختارة (مع عرض الـ 30 JOD)
+  // حساب رسوم التوصيل بناءً على المدينة المختارة
   const deliveryFee = formData.deliveryCity ? getEffectiveDeliveryFee(formData.deliveryCity, subtotalForFee) : null;
-  const baseFee = formData.deliveryCity ? getDeliveryFee(formData.deliveryCity) : null;
   const isCityUncovered = formData.deliveryCity === '__other__';
-  const deliveryDiscounted = formData.deliveryCity ? hasDeliveryDiscount(formData.deliveryCity, subtotalForFee) : false;
 
   const alertShown = useRef(false);
 
@@ -520,22 +518,10 @@ export default function CheckoutPage() {
               {deliveryFee !== null && (
                 <div className="flex justify-between text-sm text-[var(--text-muted)]">
                   <span>{t.deliveryFee} ({getCityName(formData.deliveryCity, lang)})</span>
-                  <div dir="ltr" className="flex items-center gap-2">
-                    {deliveryDiscounted && baseFee !== deliveryFee && (
-                      <span className="line-through text-gray-300 text-xs">{baseFee} JOD</span>
-                    )}
-                    <span className={`font-bold ${deliveryFee === 0 ? 'text-green-600' : ''}`}>
-                      {deliveryFee === 0 ? t.deliveryFreeMsg : `${deliveryFee} JOD`}
-                    </span>
-                  </div>
+                  <span className="font-bold" dir="ltr">{deliveryFee} JOD</span>
                 </div>
               )}
-              {deliveryDiscounted && (
-                <div className="flex justify-between text-xs text-green-600 font-bold">
-                  <span>🎉 {t.deliveryOffer}</span>
-                  <span dir="ltr">- {(baseFee ?? 0) - (deliveryFee ?? 0)} JOD</span>
-                </div>
-              )}
+
               {promoApplied && discountAmount > 0 && (
                 <div className="flex justify-between text-sm text-green-600 font-bold">
                   <span>🏷 {t.promoDiscount} ({promoDiscount}%)</span>
