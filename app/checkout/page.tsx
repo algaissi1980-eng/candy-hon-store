@@ -50,7 +50,7 @@ export default function CheckoutPage() {
   const alertShown = useRef(false);
 
   useEffect(() => {
-    const checkAuthAndPendingOrders = async () => {
+    const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
@@ -61,27 +61,9 @@ export default function CheckoutPage() {
         }
         return;
       }
-
-      const { data: pendingOrders } = await supabase
-        .from('orders')
-        .select('id')
-        .eq('user_id', session.user.id)
-        .in('status', ['confirmed'])
-        .limit(1);
-
-      if (pendingOrders && pendingOrders.length > 0) {
-        if (!alertShown.current) {
-          alertShown.current = true;
-          toast.error(lang === 'ar'
-            ? 'لديك طلب قيد المعالجة! يرجى إلغاء الطلب السابق قبل إنشاء طلب جديد'
-            : 'You have an active order! Please cancel it before creating a new one'
-          );
-          router.push(`/success?orderId=${pendingOrders[0].id}`);
-        }
-      }
     };
 
-    checkAuthAndPendingOrders();
+    checkAuth();
   }, [router, lang]);
 
   useEffect(() => { setMounted(true); }, []);
