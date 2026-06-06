@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useCartStore } from '../store/cartStore';
 import { useLanguageStore } from '../store/languageStore';
@@ -8,9 +9,17 @@ import Link from 'next/link';
 
 export default function FloatingCart() {
   const pathname = usePathname();
+  const { items, isOpen, toggleCart, removeFromCart, updateQuantity, _hasHydrated: cartHydrated } = useCartStore();
+  const { lang, _hasHydrated: langHydrated } = useLanguageStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (pathname?.startsWith('/admin')) return null;
-  const { items, isOpen, toggleCart, removeFromCart, updateQuantity } = useCartStore();
-  const { lang } = useLanguageStore();
+  if (!mounted || !cartHydrated || !langHydrated) return null;
+
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);

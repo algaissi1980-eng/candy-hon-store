@@ -83,6 +83,8 @@ export interface CartStore {
 // 🟢 متجر اللغة (Language Store)
 export interface LanguageStore {
   lang: 'ar' | 'en';
+  _hasHydrated: boolean;
+  setHasHydrated: (val: boolean) => void;
   toggleLanguage: () => void;
 }
 

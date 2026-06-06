@@ -13,10 +13,15 @@ export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const { lang, toggleLanguage } = useLanguageStore();
+  const { lang, toggleLanguage, _hasHydrated: langHydrated } = useLanguageStore();
   const clearCart = useCartStore((state: any) => state.clearCart);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // تتبع التمرير لتغيير مظهر Navbar
   useEffect(() => {
@@ -50,6 +55,7 @@ export default function Navbar() {
 
   // إخفاء الـ Navbar في صفحة الإدارة — بعد كل الـ Hooks
   if (pathname?.startsWith('/admin')) return null;
+  if (!mounted || !langHydrated) return null;
 
   const signOut = async () => {
     await supabase.auth.signOut();
