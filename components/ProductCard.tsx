@@ -26,8 +26,9 @@ export default function ProductCard({ product, index = 0, onProductClick }: { pr
       className="relative group flex flex-col font-sans h-full glass-card glass-card-hover overflow-hidden"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-120px' }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.3, delay: Math.min(index * 0.04, 0.15), ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: 'transform' }}
     >
 
       {/* حاوية الصورة — مربعة على الموبايل، 4/5 على الشاشات الكبيرة */}

@@ -77,7 +77,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
         <>
           {/* الخلفية المعتمة */}
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] cursor-pointer"
+            className="fixed inset-0 bg-black/65 z-[60] cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

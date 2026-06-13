@@ -60,7 +60,7 @@ export default function FloatingCart() {
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={toggleCart} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 cursor-pointer" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={toggleCart} className="fixed inset-0 bg-black/60 z-40 cursor-pointer" />
             <motion.div
               initial={{ x: lang === 'ar' ? '-100%' : '100%' }}
               animate={{ x: 0 }}

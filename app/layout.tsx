@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import FloatingCart from "../components/FloatingCart";
 import Footer from "../components/Footer";
-import AnnouncementBar from '@/components/AnnouncementBar';
 import { Toaster } from 'sonner';
 import { Analytics } from '@vercel/analytics/next';
 import PageTracker from '../components/PageTracker';

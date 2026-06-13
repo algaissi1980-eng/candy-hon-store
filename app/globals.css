@@ -62,11 +62,11 @@ body {
    =============================================== */
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  /* backdrop-filter removed — was causing GPU freeze on mid-range phones
+     with many cards rendered simultaneously. Solid bg looks nearly identical. */
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   border-radius: 24px;
 }
 
@@ -82,26 +82,25 @@ body {
 }
 
 .glass-button {
-  background: linear-gradient(135deg, rgba(244, 143, 177, 0.8) 0%, rgba(129, 212, 250, 0.8) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  /* Removed backdrop-filter — not needed on a button, hurts perf */
+  background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 4px 15px rgba(244, 143, 177, 0.3);
   color: white;
   transition: all 0.3s ease;
-  border-radius: 9999px; /* Pill shape */
+  border-radius: 9999px;
 }
 
 .glass-button:hover {
-  background: linear-gradient(135deg, rgba(244, 143, 177, 1) 0%, rgba(129, 212, 250, 1) 100%);
+  background: linear-gradient(135deg, var(--pink-hover) 0%, var(--blue-dark) 100%);
   box-shadow: 0 6px 20px rgba(244, 143, 177, 0.5);
   transform: translateY(-2px);
 }
 
 .glass-badge {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  /* Removed backdrop-filter — badges are small, solid bg is fine */
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   color: var(--dark);
   border-radius: 12px;
 }

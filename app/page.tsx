@@ -60,7 +60,7 @@ export default function Home() {
       <section className="relative w-full h-[100vh] flex items-center justify-center overflow-hidden">
 
         {/* ─── خلفية Gradient غزل البنات مع Parallax ─── */}
-        <motion.div className="absolute inset-0 z-0 scale-110" style={{ y: heroImgY }}>
+        <motion.div className="absolute inset-0 z-0 scale-110" style={{ y: heroImgY, willChange: 'transform' }}>
           <div className="absolute inset-0" style={{
             background: `
               radial-gradient(ellipse 80% 60% at 20% 30%, rgba(248,187,208,0.6) 0%, transparent 60%),
@@ -74,17 +74,14 @@ export default function Home() {
           <div className="absolute inset-0 backdrop-blur-[0.5px]" style={{ background: 'rgba(255,251,254,0.15)' }} />
         </motion.div>
 
-        {/* ─── فقاعات ملونة تطفو للأعلى ─── */}
+        {/* ─── فقاعات ملونة تطفو للأعلى ─── reduced from 8→5 for perf */}
         <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
           {[
-            { size: 14, left: '8%', color: '#E91E90', delay: '0s', dur: '12s' },
-            { size: 10, left: '22%', color: '#4FC3F7', delay: '2s', dur: '14s' },
-            { size: 18, left: '35%', color: '#F8BBD0', delay: '4s', dur: '16s' },
-            { size: 8, left: '52%', color: '#80CBC4', delay: '1s', dur: '11s' },
-            { size: 12, left: '68%', color: '#B3E5FC', delay: '3s', dur: '13s' },
-            { size: 16, left: '82%', color: '#E91E90', delay: '5s', dur: '15s' },
-            { size: 6, left: '92%', color: '#4FC3F7', delay: '0.5s', dur: '10s' },
-            { size: 10, left: '45%', color: '#F8BBD0', delay: '6s', dur: '17s' },
+            { size: 14, left: '8%',  color: '#E91E90', delay: '0s',  dur: '12s' },
+            { size: 10, left: '30%', color: '#4FC3F7', delay: '2s',  dur: '14s' },
+            { size: 18, left: '52%', color: '#F8BBD0', delay: '4s',  dur: '16s' },
+            { size: 8,  left: '70%', color: '#80CBC4', delay: '1s',  dur: '11s' },
+            { size: 12, left: '88%', color: '#B3E5FC', delay: '3s',  dur: '13s' },
           ].map((b, i) => (
             <div
               key={`bubble-${i}`}
@@ -96,6 +93,7 @@ export default function Home() {
                 boxShadow: `inset -2px -2px 4px ${b.color}20, 0 0 8px ${b.color}15`,
                 animation: `hero-bubble-rise ${b.dur} ease-in infinite`,
                 animationDelay: b.delay,
+                willChange: 'transform, opacity',
               }}
             />
           ))}
@@ -125,17 +123,14 @@ export default function Home() {
           </svg>
         </div>
 
-        {/* ─── نجوم صغيرة متلألئة ─── */}
+        {/* ─── نجوم صغيرة متلألئة ─── reduced from 8→5 for perf */}
         <div className="absolute inset-0 z-[3] pointer-events-none">
           {[
-            { x: '12%', y: '18%', s: 12, color: '#E91E90', d: '0s', dur: '3s' },
-            { x: '28%', y: '12%', s: 8, color: '#4FC3F7', d: '1s', dur: '4s' },
+            { x: '12%', y: '18%', s: 12, color: '#E91E90', d: '0s',   dur: '3s'   },
             { x: '75%', y: '22%', s: 10, color: '#F8BBD0', d: '0.5s', dur: '3.5s' },
-            { x: '88%', y: '35%', s: 7, color: '#80CBC4', d: '2s', dur: '4.5s' },
-            { x: '55%', y: '8%', s: 9, color: '#E91E90', d: '1.5s', dur: '3.2s' },
-            { x: '40%', y: '30%', s: 6, color: '#4FC3F7', d: '0.8s', dur: '5s' },
-            { x: '18%', y: '45%', s: 8, color: '#B3E5FC', d: '3s', dur: '4.2s' },
-            { x: '65%', y: '40%', s: 7, color: '#F8BBD0', d: '2.5s', dur: '3.8s' },
+            { x: '88%', y: '35%', s: 7,  color: '#80CBC4', d: '2s',   dur: '4.5s' },
+            { x: '55%', y: '8%',  s: 9,  color: '#E91E90', d: '1.5s', dur: '3.2s' },
+            { x: '40%', y: '30%', s: 6,  color: '#4FC3F7', d: '0.8s', dur: '5s'   },
           ].map((star, i) => (
             <svg
               key={`star-${i}`}
@@ -146,6 +141,7 @@ export default function Home() {
                 left: star.x, top: star.y,
                 animation: `hero-star-twinkle ${star.dur} ease-in-out infinite`,
                 animationDelay: star.d,
+                willChange: 'opacity, transform',
               }}
             >
               <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z" fill={star.color} opacity="0.6" />
@@ -208,15 +204,12 @@ export default function Home() {
           </svg>
         </div>
 
-        {/* ─── حبيبات ملونة (Sprinkles) ─── */}
+        {/* ─── حبيبات ملونة (Sprinkles) ─── reduced from 6→3 for perf */}
         <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
           {[
             { x: '10%', color: '#E91E90', d: '0s', dur: '18s', rot: 45 },
-            { x: '25%', color: '#4FC3F7', d: '3s', dur: '22s', rot: -30 },
             { x: '42%', color: '#80CBC4', d: '6s', dur: '20s', rot: 60 },
-            { x: '58%', color: '#F8BBD0', d: '1s', dur: '24s', rot: -45 },
-            { x: '73%', color: '#B3E5FC', d: '4s', dur: '19s', rot: 30 },
-            { x: '90%', color: '#E91E90', d: '7s', dur: '21s', rot: -60 },
+            { x: '75%', color: '#B3E5FC', d: '4s', dur: '19s', rot: 30 },
           ].map((s, i) => (
             <div
               key={`sprinkle-${i}`}
@@ -230,18 +223,21 @@ export default function Home() {
                 transform: `rotate(${s.rot}deg)`,
                 animation: `hero-sprinkle-fall ${s.dur} linear infinite`,
                 animationDelay: s.d,
+                willChange: 'transform, opacity',
               }}
             />
           ))}
         </div>
 
         {/* ─── المحتوى الرئيسي مع Parallax + Fade ─── */}
-        <motion.div className="relative z-10 max-w-5xl mx-auto px-4 w-full text-center" style={{ y: heroContentY, opacity: heroOpacity }}>
+        <motion.div className="relative z-10 max-w-5xl mx-auto px-4 w-full text-center" style={{ y: heroContentY, opacity: heroOpacity, willChange: 'transform, opacity' }}>
 
           {/* اللوقو الكبير */}
           <motion.img
             src="/logo.webp"
             alt="Candy Hon"
+            loading="eager"
+            fetchPriority="high"
             className="w-24 h-24 md:w-36 md:h-36 mx-auto mb-6 object-contain rounded-full shadow-lg"
             style={{ background: 'white', padding: '4px' }}
             initial={{ scale: 0.5, opacity: 0 }}
