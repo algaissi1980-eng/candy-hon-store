@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useLanguageStore } from '../store/languageStore';
 import { useCartStore } from '../store/cartStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -87,22 +88,27 @@ export default function Navbar() {
 
         {/* الشعار — اللوقو كبير ونظيف بدون حواف سوداء */}
         <Link href="/" className="hover:scale-[1.03] transition-transform flex items-center gap-3 shrink-0">
-          <motion.img
-            src="/logo.webp"
-            alt="Candy Hon"
-            loading="eager"
-            fetchPriority="high"
-            className={`object-contain rounded-full transition-all duration-500 ${
-              scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'
+          <motion.div
+            className={`relative transition-all duration-500 ${
+              scrolled ? 'w-10 h-10 md:w-12 md:h-12' : 'w-12 h-12 md:w-16 md:h-16'
             }`}
             style={{
               filter: 'drop-shadow(0 2px 8px rgba(212,175,55,0.15))',
               background: 'white',
               padding: '2px',
+              borderRadius: '9999px',
             }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             whileHover={{ rotate: [0, -3, 3, 0], transition: { duration: 0.5 } }}
-          />
+          >
+            <Image
+              src="/logo.webp"
+              alt="Candy Hon"
+              fill
+              priority
+              className="object-contain rounded-full"
+              sizes="(max-width: 768px) 64px, 64px"
+            />
+          </motion.div>
           <div className={`flex flex-col transition-all duration-500 ${scrolled ? 'gap-0' : 'gap-0.5'}`}>
             <span className={`font-black text-[var(--dark)] leading-none transition-all duration-500 ${scrolled ? 'text-sm md:text-base' : 'text-base md:text-xl'}`} style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}>
               <span className="gold-shimmer">Candy</span> Hon

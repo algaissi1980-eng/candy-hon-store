@@ -3,15 +3,20 @@ import ProductCard from './ProductCard';
 import ProductModal from './ProductModal';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useLanguageStore } from '../store/languageStore';
+import { useProductStore } from '../store/productStore';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function ProductGallery({ products, storeCategories }: {
   products: any[];
   storeCategories: string[];
 }) {
   const { lang } = useLanguageStore();
+  const { isLoading, error, retry, lastFetchedAt } = useProductStore();
   const searchParams = useSearchParams();
+
+  const isInitialLoad = products.length === 0 && lastFetchedAt === null && !error;
+  const showLoading = (isLoading && products.length === 0) || isInitialLoad;
   const router = useRouter();
 
   const activeCategory = searchParams.get('category') || 'all';
@@ -59,6 +64,9 @@ export default function ProductGallery({ products, storeCategories }: {
     outOf: lang === 'ar' ? 'من أصل' : 'out of',
     searchPlaceholder: lang === 'ar' ? 'ابحث عن منتج...' : 'Search products...',
     resultsCount: lang === 'ar' ? 'نتيجة' : 'results',
+    errorTitle: lang === 'ar' ? 'حدث خطأ في تحميل المنتجات' : 'Failed to load products',
+    retryBtn: lang === 'ar' ? 'إعادة المحاولة' : 'Retry',
+    loadingMsg: lang === 'ar' ? 'جاري تحميل المنتجات...' : 'Loading products...',
   };
 
   const translateCategory = (cat: string) => {
@@ -74,6 +82,47 @@ export default function ProductGallery({ products, storeCategories }: {
     if (cat.includes('الكل')) return 'All';
     return cat;
   };
+
+  // ─── حالة الخطأ — عرض رسالة مع زر إعادة محاولة ───
+  if (error && products.length === 0) {
+    return (
+      <div className="text-center py-20" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="text-5xl mb-6 opacity-40">⚠️</div>
+        <h3 className="text-xl font-black text-[var(--dark)] mb-3">{t.errorTitle}</h3>
+        <p className="text-sm text-[var(--text-muted)] mb-6 max-w-md mx-auto font-medium">{error}</p>
+        <button
+          onClick={retry}
+          className="bg-[var(--dark)] text-white font-bold px-8 py-3 rounded-2xl hover:bg-[var(--pink)] transition-all shadow-lg text-sm"
+        >
+          {t.retryBtn}
+        </button>
+      </div>
+    );
+  }
+
+  // ─── حالة التحميل — عرض skeleton ───
+  if (showLoading) {
+    return (
+      <div dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8 w-full">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="glass-card overflow-hidden animate-pulse">
+              <div className="aspect-square md:aspect-[4/5] bg-[var(--cream-dark)]" />
+              <div className="p-3 md:p-5 space-y-3">
+                <div className="h-4 bg-[var(--cream-dark)] rounded-lg w-3/4" />
+                <div className="h-3 bg-[var(--cream-dark)] rounded-lg w-1/2" />
+                <div className="flex justify-between items-center pt-2">
+                  <div className="h-6 bg-[var(--cream-dark)] rounded-lg w-20" />
+                  <div className="h-8 bg-[var(--cream-dark)] rounded-xl w-20" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-[var(--text-muted)] font-bold text-sm mt-8">{t.loadingMsg}</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -173,7 +222,7 @@ export default function ProductGallery({ products, storeCategories }: {
       )}
 
       {/* رسالة فارغة — تختلف بين البحث والتصنيف */}
-      {filteredProducts.length === 0 && (
+      {filteredProducts.length === 0 && !showLoading && !error && (
         <div className="text-center text-[var(--text-muted)] font-bold pt-36 pb-20 text-lg">
           {searchQuery.trim()
             ? `${t.noResults} "${searchQuery}" 🔍`

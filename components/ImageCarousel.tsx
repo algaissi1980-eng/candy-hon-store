@@ -30,6 +30,7 @@ export default function ImageCarousel({
 }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [imageLoading, setImageLoading] = useState(true);
   const pointerStartX = useRef(0);
   const pointerStartY = useRef(0);
   const isDragging = useRef(false);
@@ -40,6 +41,7 @@ export default function ImageCarousel({
   const goTo = (index: number, dir: number) => {
     setDirection(dir);
     setCurrentIndex(index);
+    setImageLoading(true);
   };
 
   const goPrev = (e: React.MouseEvent) => {
@@ -101,6 +103,31 @@ export default function ImageCarousel({
       onPointerUp={handlePointerUp}
       style={{ touchAction: 'pan-y' }}
     >
+      {/* ─── Loading spinner — only when no placeholder available ─── */}
+      {imageLoading && isCard && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--cream)]">
+          <div className="w-8 h-8 border-3 border-[var(--cream-dark)] border-t-[var(--pink)] rounded-full animate-spin" />
+        </div>
+      )}
+
+      {/* ─── Full-view: show low-res instantly as placeholder while hi-res loads ─── */}
+      {!isCard && imageLoading && (
+        <div className="absolute inset-0 z-[5]">
+          <Image
+            src={optimizeCardImage(images[currentIndex])}
+            alt={alt}
+            fill
+            className="object-contain bg-white scale-100 blur-[2px]"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority
+          />
+          {/* spinner overlay on top of blurry preview */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 border-3 border-white/40 border-t-[var(--pink)] rounded-full animate-spin" />
+          </div>
+        </div>
+      )}
+
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={currentIndex}
@@ -119,6 +146,7 @@ export default function ImageCarousel({
             className={`object-contain bg-white transition-all duration-300 ${isUnavailable ? 'grayscale opacity-70' : ''}`}
             sizes={isCard ? '(max-width: 768px) 50vw, 300px' : '(max-width: 768px) 100vw, 50vw'}
             draggable={false}
+            onLoad={() => setImageLoading(false)}
           />
         </motion.div>
       </AnimatePresence>

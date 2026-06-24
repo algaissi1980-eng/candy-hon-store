@@ -13,11 +13,13 @@ interface ProductStore {
   products: any[];
   categories: string[];
   isLoading: boolean;
+  error: string | null;
   lastFetchedAt: number | null;
   _channel: RealtimeChannel | null;
 
   fetchProducts: () => Promise<void>;
   invalidate: () => void;
+  retry: () => Promise<void>;
   subscribeRealtime: () => void;
   unsubscribeRealtime: () => void;
 }
@@ -29,6 +31,7 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
   products: [],
   categories: [],
   isLoading: false,
+  error: null,
   lastFetchedAt: null,
   _channel: null,
 
@@ -39,23 +42,33 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
     if (isLoading) return;
     if (lastFetchedAt && Date.now() - lastFetchedAt < CACHE_DURATION) return;
 
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
 
     try {
-      const [{ data: pData }, { data: sData }] = await Promise.all([
+      const [productsResult, settingsResult] = await Promise.all([
         supabase.from('products').select(
           'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
         ),
         supabase.from('store_settings').select('categories').eq('id', 1).single(),
       ]);
 
+      // ✅ فحص أخطاء Supabase — بدلاً من تجاهلها
+      if (productsResult.error) {
+        throw new Error(productsResult.error.message || 'Failed to fetch products');
+      }
+
       set({
-        products: pData || [],
-        categories: sData?.categories || [],
+        products: productsResult.data || [],
+        categories: settingsResult.data?.categories || [],
+        // ✅ نضع lastFetchedAt فقط عند النجاح — لا نكاش نتيجة فاشلة
         lastFetchedAt: Date.now(),
       });
-    } catch {
-      // خطأ في جلب المنتجات — يعيد المحاولة عند التنقل التالي
+    } catch (err: any) {
+      console.error('[ProductStore] Error fetching products:', err);
+      set({
+        error: err?.message || 'حدث خطأ في تحميل المنتجات',
+        // ✅ لا نضع lastFetchedAt — حتى يعيد المحاولة عند التنقل التالي
+      });
     } finally {
       set({ isLoading: false });
     }
@@ -63,6 +76,12 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
 
   // إبطال الكاش — يُستخدم بعد تعديل المنتجات من لوحة الإدارة
   invalidate: () => set({ lastFetchedAt: null }),
+
+  // ✅ إعادة المحاولة — يمسح الخطأ والكاش ويعيد الجلب
+  retry: async () => {
+    set({ lastFetchedAt: null, error: null });
+    await get().fetchProducts();
+  },
 
   // ─── Realtime Subscription ───────────────────────────────────────────
   // يستمع لتغييرات جدول products مباشرة من Supabase
@@ -109,3 +128,4 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
     }
   },
 }));
+
