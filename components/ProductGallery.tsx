@@ -49,24 +49,21 @@ export default function ProductGallery({ products, storeCategories }: {
   // ✅ #2 Debounce — ينتظر 300ms بعد ما يوقف المستخدم كتابة
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  // ✅ #5 Infinite Scroll — IntersectionObserver على sentinel element
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!sentinelRef.current) return;
+  // ✅ #5 Infinite Scroll — Callback Ref (أكثر موثوقية من useEffect)
+  const observer = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useCallback((node: HTMLDivElement | null) => {
+    if (isLoadingMore) return;
+    if (observer.current) observer.current.disconnect();
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // لما الـ sentinel يظهر بالشاشة، نجلب المزيد
-        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !debouncedSearch.trim() && activeCategory === 'all') {
+    if (node) {
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore && !debouncedSearch.trim() && activeCategory === 'all') {
           fetchMore();
         }
-      },
-      { rootMargin: '400px' } // نبدأ التحميل قبل ما يوصل المستخدم بـ 400px
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, isLoadingMore, fetchMore, debouncedSearch, activeCategory]);
+      }, { rootMargin: '400px' });
+      observer.current.observe(node);
+    }
+  }, [isLoadingMore, hasMore, debouncedSearch, activeCategory, fetchMore]);
 
   // تصفية حسب التصنيف أولاً
   const categoryFiltered = activeCategory === 'all'
@@ -91,7 +88,6 @@ export default function ProductGallery({ products, storeCategories }: {
     noResults: lang === 'ar' ? 'لا توجد نتائج لـ' : 'No results for',
     loadingMore: lang === 'ar' ? 'جاري التحميل...' : 'Loading...',
     showing: lang === 'ar' ? 'عرض' : 'Showing',
-    outOf: lang === 'ar' ? 'من أصل' : 'out of',
     searchPlaceholder: lang === 'ar' ? 'ابحث عن منتج...' : 'Search products...',
     resultsCount: lang === 'ar' ? 'نتيجة' : 'results',
     errorTitle: lang === 'ar' ? 'حدث خطأ في تحميل المنتجات' : 'Failed to load products',
@@ -239,17 +235,16 @@ export default function ProductGallery({ products, storeCategories }: {
 
       {/* ✅ #5 Infinite Scroll — sentinel + loading indicator */}
       {hasMore && !debouncedSearch.trim() && activeCategory === 'all' && (
-        <div ref={sentinelRef} className="flex flex-col items-center mt-12 gap-4">
-          {totalCount !== null && (
-            <p className="text-xs font-bold text-[var(--text-muted)]">
-              {t.showing} {products.length} {t.outOf} {totalCount}
-            </p>
-          )}
-          {isLoadingMore && (
+        <div ref={sentinelRef} className="flex flex-col items-center mt-12 gap-4 h-20 justify-center">
+          {isLoadingMore ? (
             <div className="flex items-center gap-2 text-sm font-bold text-[var(--text-muted)]">
               <span className="w-5 h-5 border-2 border-[var(--cream-dark)] border-t-[var(--pink)] rounded-full animate-spin" />
               {t.loadingMore}
             </div>
+          ) : (
+             <div className="text-xs font-bold text-[var(--text-muted)] opacity-50">
+               {t.showing} {products.length} ...
+             </div>
           )}
         </div>
       )}

@@ -62,39 +62,39 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
     }
 
     try {
-      const [productsResult, settingsResult, countResult] = await Promise.all([
+      // نجلب (حجم الصفحة + 1) عشان نعرف إذا فيه صفحة بعدها بدون الحاجة لـ count query
+      const [productsResult, settingsResult] = await Promise.all([
         supabase
           .from('products')
           .select(
             'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
           )
-          .range(0, PAGE_SIZE - 1),
+          .range(0, PAGE_SIZE), // نجلب 25 عنصر
         supabase.from('store_settings').select('categories').eq('id', 1).single(),
-        // جلب العدد الكلي بشكل مستقل (head request — لا ينقل بيانات)
-        supabase.from('products').select('id', { count: 'exact', head: true }),
       ]);
 
-      // ✅ فحص أخطاء Supabase
       if (productsResult.error) {
         throw new Error(productsResult.error.message || 'Failed to fetch products');
       }
 
-      const fetchedProducts = productsResult.data || [];
-      const total = countResult.count ?? fetchedProducts.length;
+      let fetchedProducts = productsResult.data || [];
+      const hasMoreData = fetchedProducts.length > PAGE_SIZE;
+
+      // إذا رجع 25، نحذف الأخير لأننا بدنا نعرض بس 24
+      if (hasMoreData) {
+        fetchedProducts = fetchedProducts.slice(0, PAGE_SIZE);
+      }
 
       set({
         products: fetchedProducts,
         categories: settingsResult.data?.categories || [],
-        totalCount: total,
-        hasMore: fetchedProducts.length >= PAGE_SIZE && fetchedProducts.length < total,
-        // ✅ نضع lastFetchedAt فقط عند النجاح
+        hasMore: hasMoreData,
         lastFetchedAt: Date.now(),
       });
     } catch (err: any) {
       console.error('[ProductStore] Error fetching products:', err);
       set({
         error: err?.message || 'حدث خطأ في تحميل المنتجات',
-        // ✅ لا نضع lastFetchedAt — حتى يعيد المحاولة عند التنقل التالي
       });
     } finally {
       set({ isLoading: false });
@@ -105,14 +105,13 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
   fetchMore: async () => {
     const { isLoadingMore, isLoading, hasMore, products } = get();
 
-    // لا نطلب إذا فيه طلب حالي أو ما في منتجات إضافية
     if (isLoadingMore || isLoading || !hasMore) return;
 
     set({ isLoadingMore: true });
 
     try {
       const from = products.length;
-      const to = from + PAGE_SIZE - 1;
+      const to = from + PAGE_SIZE; // نجلب 25 عنصر إضافي
 
       const { data, error } = await supabase
         .from('products')
@@ -125,27 +124,30 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
         throw new Error(error.message || 'Failed to fetch more products');
       }
 
-      const newProducts = data || [];
-      const totalCount = get().totalCount ?? 0;
+      let newProducts = data || [];
+      const hasMoreData = newProducts.length > PAGE_SIZE;
+
+      if (hasMoreData) {
+        newProducts = newProducts.slice(0, PAGE_SIZE);
+      }
 
       set({
         products: [...products, ...newProducts],
-        hasMore: newProducts.length >= PAGE_SIZE && (products.length + newProducts.length) < totalCount,
+        hasMore: hasMoreData,
       });
     } catch (err: any) {
       console.error('[ProductStore] Error fetching more products:', err);
-      // لا نمسح المنتجات الموجودة — فقط نوقف التحميل
     } finally {
       set({ isLoadingMore: false });
     }
   },
 
   // إبطال الكاش — يُستخدم بعد تعديل المنتجات من لوحة الإدارة
-  invalidate: () => set({ lastFetchedAt: null, hasMore: true, totalCount: null }),
+  invalidate: () => set({ lastFetchedAt: null, hasMore: true }),
 
   // ✅ إعادة المحاولة — يمسح الخطأ والكاش ويعيد الجلب
   retry: async () => {
-    set({ lastFetchedAt: null, error: null, hasMore: true, totalCount: null });
+    set({ lastFetchedAt: null, error: null, hasMore: true });
     await get().fetchProducts();
   },
 
