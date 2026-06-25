@@ -1,10 +1,14 @@
 'use client';
 
+import { useRef, useCallback } from 'react';
 import { useLanguageStore } from '../store/languageStore';
 import ImageCarousel, { getProductImages } from './ImageCarousel';
+import { optimizeFullImage } from '../lib/optimizeImage';
 
 export default function ProductCard({ product, index = 0, onProductClick }: { product: any; index?: number; onProductClick?: (product: any) => void }) {
   const { lang } = useLanguageStore();
+  const prefetchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prefetched = useRef(false);
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
   const isPreorderable = product.allow_preorder === true && product.is_available !== false;
@@ -20,6 +24,27 @@ export default function ProductCard({ product, index = 0, onProductClick }: { pr
     }
   };
 
+  // ✅ #1 Prefetch on hover — تحميل الصورة الكاملة بالخلفية بعد 200ms hover
+  // لما المستخدم يضغط على المنتج، الصورة تكون جاهزة بالكاش
+  const handlePointerEnter = useCallback(() => {
+    if (prefetched.current) return;
+    prefetchTimer.current = setTimeout(() => {
+      const images = getProductImages(product);
+      if (images.length > 0) {
+        const img = new window.Image();
+        img.src = optimizeFullImage(images[0]);
+        prefetched.current = true;
+      }
+    }, 200);
+  }, [product]);
+
+  const handlePointerLeave = useCallback(() => {
+    if (prefetchTimer.current) {
+      clearTimeout(prefetchTimer.current);
+      prefetchTimer.current = null;
+    }
+  }, []);
+
   // ✅ CSS fade-in بدل Framer Motion whileInView — يوفر 24 IntersectionObserver
   const animDelay = `${Math.min(index * 0.04, 0.15)}s`;
 
@@ -27,6 +52,8 @@ export default function ProductCard({ product, index = 0, onProductClick }: { pr
     <div
       className="relative group flex flex-col font-sans h-full glass-card glass-card-hover overflow-hidden card-fade-in"
       style={{ animationDelay: animDelay }}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
     >
 
       {/* حاوية الصورة — مربعة على الموبايل، 4/5 على الشاشات الكبيرة */}

@@ -9,58 +9,85 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 // ويدعم Realtime لتحديث المخزون فورياً
 // =============================================
 
+// حجم الصفحة — كم منتج نجلب من Supabase في كل طلب
+const PAGE_SIZE = 24;
+
+// مدة صلاحية الكاش: 5 دقائق (بالمللي ثانية)
+const CACHE_DURATION = 5 * 60 * 1000;
+
 interface ProductStore {
   products: any[];
   categories: string[];
   isLoading: boolean;
+  isLoadingMore: boolean;
   error: string | null;
   lastFetchedAt: number | null;
+  hasMore: boolean;
+  totalCount: number | null;
   _channel: RealtimeChannel | null;
 
   fetchProducts: () => Promise<void>;
+  fetchMore: () => Promise<void>;
   invalidate: () => void;
   retry: () => Promise<void>;
   subscribeRealtime: () => void;
   unsubscribeRealtime: () => void;
 }
 
-// مدة صلاحية الكاش: 5 دقائق (بالمللي ثانية) — أطول لتقليل استهلاك الباندويث
-const CACHE_DURATION = 5 * 60 * 1000;
-
 export const useProductStore = create<ProductStore>()((set, get) => ({
   products: [],
   categories: [],
   isLoading: false,
+  isLoadingMore: false,
   error: null,
   lastFetchedAt: null,
+  hasMore: true,
+  totalCount: null,
   _channel: null,
 
+  // ─── جلب الصفحة الأولى من المنتجات ───
+  // ✅ Stale-While-Revalidate: إذا عندنا بيانات قديمة، نعرضها فوراً ونحدّث بالخلفية
   fetchProducts: async () => {
-    const { lastFetchedAt, isLoading } = get();
+    const { lastFetchedAt, isLoading, products } = get();
 
-    // إذا البيانات محملة وما زالت ضمن مدة الصلاحية — لا نطلب من جديد
     if (isLoading) return;
+
+    // الكاش لسه صالح — لا نطلب
     if (lastFetchedAt && Date.now() - lastFetchedAt < CACHE_DURATION) return;
 
-    set({ isLoading: true, error: null });
+    // ✅ SWR: إذا عندنا منتجات قديمة، لا نعرض skeleton — نحدّث بصمت
+    const isBackgroundRefresh = products.length > 0;
+    if (!isBackgroundRefresh) {
+      set({ isLoading: true, error: null });
+    }
 
     try {
-      const [productsResult, settingsResult] = await Promise.all([
-        supabase.from('products').select(
-          'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
-        ),
+      const [productsResult, settingsResult, countResult] = await Promise.all([
+        supabase
+          .from('products')
+          .select(
+            'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
+          )
+          .range(0, PAGE_SIZE - 1),
         supabase.from('store_settings').select('categories').eq('id', 1).single(),
+        // جلب العدد الكلي بشكل مستقل (head request — لا ينقل بيانات)
+        supabase.from('products').select('id', { count: 'exact', head: true }),
       ]);
 
-      // ✅ فحص أخطاء Supabase — بدلاً من تجاهلها
+      // ✅ فحص أخطاء Supabase
       if (productsResult.error) {
         throw new Error(productsResult.error.message || 'Failed to fetch products');
       }
 
+      const fetchedProducts = productsResult.data || [];
+      const total = countResult.count ?? fetchedProducts.length;
+
       set({
-        products: productsResult.data || [],
+        products: fetchedProducts,
         categories: settingsResult.data?.categories || [],
-        // ✅ نضع lastFetchedAt فقط عند النجاح — لا نكاش نتيجة فاشلة
+        totalCount: total,
+        hasMore: fetchedProducts.length >= PAGE_SIZE && fetchedProducts.length < total,
+        // ✅ نضع lastFetchedAt فقط عند النجاح
         lastFetchedAt: Date.now(),
       });
     } catch (err: any) {
@@ -74,20 +101,56 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
     }
   },
 
+  // ─── جلب المزيد من المنتجات (الصفحة التالية) ───
+  fetchMore: async () => {
+    const { isLoadingMore, isLoading, hasMore, products } = get();
+
+    // لا نطلب إذا فيه طلب حالي أو ما في منتجات إضافية
+    if (isLoadingMore || isLoading || !hasMore) return;
+
+    set({ isLoadingMore: true });
+
+    try {
+      const from = products.length;
+      const to = from + PAGE_SIZE - 1;
+
+      const { data, error } = await supabase
+        .from('products')
+        .select(
+          'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
+        )
+        .range(from, to);
+
+      if (error) {
+        throw new Error(error.message || 'Failed to fetch more products');
+      }
+
+      const newProducts = data || [];
+      const totalCount = get().totalCount ?? 0;
+
+      set({
+        products: [...products, ...newProducts],
+        hasMore: newProducts.length >= PAGE_SIZE && (products.length + newProducts.length) < totalCount,
+      });
+    } catch (err: any) {
+      console.error('[ProductStore] Error fetching more products:', err);
+      // لا نمسح المنتجات الموجودة — فقط نوقف التحميل
+    } finally {
+      set({ isLoadingMore: false });
+    }
+  },
+
   // إبطال الكاش — يُستخدم بعد تعديل المنتجات من لوحة الإدارة
-  invalidate: () => set({ lastFetchedAt: null }),
+  invalidate: () => set({ lastFetchedAt: null, hasMore: true, totalCount: null }),
 
   // ✅ إعادة المحاولة — يمسح الخطأ والكاش ويعيد الجلب
   retry: async () => {
-    set({ lastFetchedAt: null, error: null });
+    set({ lastFetchedAt: null, error: null, hasMore: true, totalCount: null });
     await get().fetchProducts();
   },
 
   // ─── Realtime Subscription ───────────────────────────────────────────
-  // يستمع لتغييرات جدول products مباشرة من Supabase
-  // ويُحدّث المنتج المتغير في الذاكرة دون إعادة جلب الكل
   subscribeRealtime: () => {
-    // لا تُنشئ subscription جديد إذا كان موجوداً
     if (get()._channel) return;
 
     const channel = supabase
@@ -97,21 +160,24 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
         { event: '*', schema: 'public', table: 'products' },
         (payload) => {
           const { eventType, new: newRow, old: oldRow } = payload;
-          const { products } = get();
+          const { products, totalCount } = get();
 
           if (eventType === 'UPDATE') {
-            // استبدل المنتج المُحدَّث في المصفوفة مباشرة
             set({
               products: products.map((p) =>
                 p.id === newRow.id ? { ...p, ...newRow } : p
               ),
             });
           } else if (eventType === 'INSERT') {
-            // أضف المنتج الجديد في البداية (ترتيب أحدث أولاً)
-            set({ products: [newRow, ...products] });
+            set({
+              products: [newRow, ...products],
+              totalCount: (totalCount ?? 0) + 1,
+            });
           } else if (eventType === 'DELETE') {
-            // احذف المنتج من المصفوفة
-            set({ products: products.filter((p) => p.id !== oldRow.id) });
+            set({
+              products: products.filter((p) => p.id !== oldRow.id),
+              totalCount: Math.max(0, (totalCount ?? 1) - 1),
+            });
           }
         }
       )
@@ -128,4 +194,3 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
     }
   },
 }));
-

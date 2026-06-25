@@ -37,7 +37,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning>
+      {/* ─── #4 Preconnect — يبدأ المتصفح DNS+TLS قبل ما يحتاجهم ─── */}
+      <head>
+        <link rel="preconnect" href="https://ghjefvviapljgwyujwak.supabase.co" />
+        <link rel="preconnect" href="https://images.weserv.nl" />
+        <link rel="dns-prefetch" href="https://ghjefvviapljgwyujwak.supabase.co" />
+        <link rel="dns-prefetch" href="https://images.weserv.nl" />
+      </head>
       <body
         className={`${fredoka.variable} ${tajawal.variable} min-w-[320px] antialiased bg-[var(--cream)] text-[var(--text-primary)] flex flex-col min-h-screen font-[var(--font-tajawal)]`}
       >

@@ -1,18 +1,31 @@
 'use client';
 import ProductCard from './ProductCard';
-import ProductModal from './ProductModal';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useLanguageStore } from '../store/languageStore';
 import { useProductStore } from '../store/productStore';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+// ✅ Dynamic import — ProductModal لا يتم تحميله إلا عند النقر على منتج
+const ProductModal = dynamic(() => import('./ProductModal'), { ssr: false });
+
+// ✅ #2 Debounce hook — يأخر التنفيذ حتى يتوقف المستخدم عن الكتابة
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debouncedValue;
+}
 
 export default function ProductGallery({ products, storeCategories }: {
   products: any[];
   storeCategories: string[];
 }) {
   const { lang } = useLanguageStore();
-  const { isLoading, error, retry, lastFetchedAt } = useProductStore();
+  const { isLoading, isLoadingMore, error, retry, lastFetchedAt, hasMore, fetchMore, totalCount } = useProductStore();
   const searchParams = useSearchParams();
 
   const isInitialLoad = products.length === 0 && lastFetchedAt === null && !error;
@@ -30,23 +43,40 @@ export default function ProductGallery({ products, storeCategories }: {
   }, [searchParams, router]);
 
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [visibleCount, setVisibleCount] = useState(24);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // ✅ #2 Debounce — ينتظر 300ms بعد ما يوقف المستخدم كتابة
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // ✅ #5 Infinite Scroll — IntersectionObserver على sentinel element
+  const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setVisibleCount(24);
-  }, [activeCategory, searchQuery]);
+    if (!sentinelRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // لما الـ sentinel يظهر بالشاشة، نجلب المزيد
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !debouncedSearch.trim() && activeCategory === 'all') {
+          fetchMore();
+        }
+      },
+      { rootMargin: '400px' } // نبدأ التحميل قبل ما يوصل المستخدم بـ 400px
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingMore, fetchMore, debouncedSearch, activeCategory]);
 
   // تصفية حسب التصنيف أولاً
   const categoryFiltered = activeCategory === 'all'
     ? products
     : products.filter(p => p.category === activeCategory);
 
-  // ثم تصفية حسب البحث
-  const filteredProducts = searchQuery.trim()
+  // ✅ تصفية حسب البحث — يستخدم القيمة المُؤجلة (debounced)
+  const filteredProducts = debouncedSearch.trim()
     ? categoryFiltered.filter(p => {
-        const q = searchQuery.trim().toLowerCase();
+        const q = debouncedSearch.trim().toLowerCase();
         const name = (p.name || '').toLowerCase();
         const nameAr = (p.name_ar || '').toLowerCase();
         const nameEn = (p.name_en || '').toLowerCase();
@@ -59,7 +89,7 @@ export default function ProductGallery({ products, storeCategories }: {
     all: lang === 'ar' ? 'الكل' : 'All',
     emptyMsg: lang === 'ar' ? 'لا توجد منتجات في هذا التصنيف حالياً ✨' : 'No products available in this category ✨',
     noResults: lang === 'ar' ? 'لا توجد نتائج لـ' : 'No results for',
-    loadMore: lang === 'ar' ? 'عرض المزيد ⬇️' : 'Load More ⬇️',
+    loadingMore: lang === 'ar' ? 'جاري التحميل...' : 'Loading...',
     showing: lang === 'ar' ? 'عرض' : 'Showing',
     outOf: lang === 'ar' ? 'من أصل' : 'out of',
     searchPlaceholder: lang === 'ar' ? 'ابحث عن منتج...' : 'Search products...',
@@ -163,7 +193,7 @@ export default function ProductGallery({ products, storeCategories }: {
         </div>
         {/* عداد النتائج عند البحث */}
         <AnimatePresence>
-          {searchQuery.trim() && (
+          {debouncedSearch.trim() && (
             <motion.p
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -197,7 +227,7 @@ export default function ProductGallery({ products, storeCategories }: {
 
       {/* ─── شبكة المنتجات ─── */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8 w-full" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-        {filteredProducts.slice(0, visibleCount).map((product: any, i: number) => (
+        {filteredProducts.map((product: any, i: number) => (
           <ProductCard
             key={product.id}
             product={product}
@@ -207,25 +237,28 @@ export default function ProductGallery({ products, storeCategories }: {
         ))}
       </div>
 
-      {filteredProducts.length > visibleCount && (
-        <div className="flex flex-col items-center mt-12 gap-4">
-          <p className="text-xs font-bold text-[var(--text-muted)]">
-            {t.showing} {Math.min(visibleCount, filteredProducts.length)} {t.outOf} {filteredProducts.length}
-          </p>
-          <button
-            onClick={() => setVisibleCount(prev => prev + 24)}
-            className="bg-white border-2 border-[var(--gold)] text-[var(--gold)] hover:bg-[var(--gold)] hover:text-white px-8 py-3 rounded-full font-black shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1"
-          >
-            {t.loadMore}
-          </button>
+      {/* ✅ #5 Infinite Scroll — sentinel + loading indicator */}
+      {hasMore && !debouncedSearch.trim() && activeCategory === 'all' && (
+        <div ref={sentinelRef} className="flex flex-col items-center mt-12 gap-4">
+          {totalCount !== null && (
+            <p className="text-xs font-bold text-[var(--text-muted)]">
+              {t.showing} {products.length} {t.outOf} {totalCount}
+            </p>
+          )}
+          {isLoadingMore && (
+            <div className="flex items-center gap-2 text-sm font-bold text-[var(--text-muted)]">
+              <span className="w-5 h-5 border-2 border-[var(--cream-dark)] border-t-[var(--pink)] rounded-full animate-spin" />
+              {t.loadingMore}
+            </div>
+          )}
         </div>
       )}
 
       {/* رسالة فارغة — تختلف بين البحث والتصنيف */}
       {filteredProducts.length === 0 && !showLoading && !error && (
         <div className="text-center text-[var(--text-muted)] font-bold pt-36 pb-20 text-lg">
-          {searchQuery.trim()
-            ? `${t.noResults} "${searchQuery}" 🔍`
+          {debouncedSearch.trim()
+            ? `${t.noResults} "${debouncedSearch}" 🔍`
             : t.emptyMsg
           }
         </div>
