@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" className="scroll-smooth" suppressHydrationWarning>
       {/* ─── #4 Preconnect — يبدأ المتصفح DNS+TLS قبل ما يحتاجهم ─── */}
       <head>
         <link rel="preconnect" href="https://ghjefvviapljgwyujwak.supabase.co" />
