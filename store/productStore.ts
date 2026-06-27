@@ -23,7 +23,6 @@ interface ProductStore {
   error: string | null;
   lastFetchedAt: number | null;
   hasMore: boolean;
-  totalCount: number | null;
   _channel: RealtimeChannel | null;
 
   fetchProducts: () => Promise<void>;
@@ -42,7 +41,6 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
   error: null,
   lastFetchedAt: null,
   hasMore: true,
-  totalCount: null,
   _channel: null,
 
   // ─── جلب الصفحة الأولى من المنتجات ───
@@ -162,7 +160,7 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
         { event: '*', schema: 'public', table: 'products' },
         (payload) => {
           const { eventType, new: newRow, old: oldRow } = payload;
-          const { products, totalCount } = get();
+          const { products } = get();
 
           if (eventType === 'UPDATE') {
             set({
@@ -173,12 +171,10 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
           } else if (eventType === 'INSERT') {
             set({
               products: [newRow, ...products],
-              totalCount: (totalCount ?? 0) + 1,
             });
           } else if (eventType === 'DELETE') {
             set({
               products: products.filter((p) => p.id !== oldRow.id),
-              totalCount: Math.max(0, (totalCount ?? 1) - 1),
             });
           }
         }

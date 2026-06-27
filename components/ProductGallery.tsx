@@ -25,7 +25,7 @@ export default function ProductGallery({ products, storeCategories }: {
   storeCategories: string[];
 }) {
   const { lang } = useLanguageStore();
-  const { isLoading, isLoadingMore, error, retry, lastFetchedAt, hasMore, fetchMore, totalCount } = useProductStore();
+  const { isLoading, isLoadingMore, error, retry, lastFetchedAt, hasMore, fetchMore } = useProductStore();
   const searchParams = useSearchParams();
 
   const isInitialLoad = products.length === 0 && lastFetchedAt === null && !error;
