@@ -46,7 +46,6 @@ body {
   color: var(--text-primary);
   /* Soft animated gradient background */
   background: linear-gradient(135deg, #FFFBFE 0%, #FDF5F8 50%, #F5FAFF 100%);
-  background-attachment: fixed;
 }
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }

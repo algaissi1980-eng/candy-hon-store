@@ -14,12 +14,6 @@ export default function Home() {
   const menuRef = useRef<HTMLDivElement>(null);
   const menuInView = useInView(menuRef, { once: true, margin: '-100px' });
 
-  // Parallax على الـ Hero
-  const { scrollY } = useScroll();
-  const heroImgY = useTransform(scrollY, [0, 600], [0, 150]);
-  const heroContentY = useTransform(scrollY, [0, 400], [0, -50]);
-  const heroOpacity = useTransform(scrollY, [0, 350], [1, 0]);
-
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -61,8 +55,8 @@ export default function Home() {
           =============================================== */}
       <section className="relative w-full h-[100vh] flex items-center justify-center overflow-hidden">
 
-        {/* ─── خلفية Gradient غزل البنات مع Parallax ─── */}
-        <motion.div className="absolute inset-0 z-0 scale-110" style={{ y: heroImgY, willChange: 'transform' }}>
+        {/* ─── خلفية Gradient غزل البنات ─── */}
+        <div className="absolute inset-0 z-0">
           <div className="absolute inset-0" style={{
             background: `
               radial-gradient(ellipse 80% 60% at 20% 30%, rgba(248,187,208,0.6) 0%, transparent 60%),
@@ -74,71 +68,10 @@ export default function Home() {
           }} />
           {/* طبقة نعومة إضافية */}
           <div className="absolute inset-0" style={{ background: 'rgba(255,251,254,0.15)' }} />
-        </motion.div>
-
-        {/* ─── فقاعات ملونة — مخفّضة لـ 2 فقط ─── */}
-        <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
-          {[
-            { size: 14, left: '15%', color: '#E91E90', delay: '0s',  dur: '14s' },
-            { size: 18, left: '65%', color: '#4FC3F7', delay: '3s',  dur: '16s' },
-          ].map((b, i) => (
-            <div
-              key={`bubble-${i}`}
-              className="absolute rounded-full"
-              style={{
-                width: b.size, height: b.size,
-                left: b.left, bottom: '-20px',
-                background: `radial-gradient(circle at 35% 35%, ${b.color}80, ${b.color}30)`,
-                boxShadow: `inset -2px -2px 4px ${b.color}20, 0 0 8px ${b.color}15`,
-                animation: `hero-bubble-rise ${b.dur} ease-in infinite`,
-                animationDelay: b.delay,
-              }}
-            />
-          ))}
         </div>
 
-        {/* ─── غيوم غزل بنات SVG — مخفّضة لـ 2 ─── */}
-        <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
-          {/* غيمة يسار */}
-          <svg className="absolute -left-10 top-[15%] w-48 md:w-64 opacity-25" viewBox="0 0 200 100" style={{ animation: 'hero-cloud-drift 10s ease-in-out infinite' }}>
-            <ellipse cx="70" cy="60" rx="60" ry="30" fill="#F8BBD0" />
-            <ellipse cx="110" cy="50" rx="45" ry="28" fill="#FCE4EC" />
-            <ellipse cx="50" cy="50" rx="35" ry="22" fill="#F48FB1" />
-            <ellipse cx="90" cy="65" rx="50" ry="25" fill="#F8BBD0" />
-          </svg>
-          {/* غيمة يمين */}
-          <svg className="absolute -right-8 top-[10%] w-40 md:w-56 opacity-20" viewBox="0 0 200 100" style={{ animation: 'hero-cloud-drift 13s ease-in-out infinite', animationDelay: '3s' }}>
-            <ellipse cx="80" cy="55" rx="55" ry="28" fill="#B3E5FC" />
-            <ellipse cx="120" cy="48" rx="40" ry="25" fill="#E1F5FE" />
-            <ellipse cx="60" cy="48" rx="30" ry="20" fill="#81D4FA" />
-            <ellipse cx="100" cy="60" rx="48" ry="22" fill="#B3E5FC" />
-          </svg>
-        </div>
-
-        {/* ─── نجوم صغيرة — مخفّضة لـ 2 ─── */}
-        <div className="absolute inset-0 z-[3] pointer-events-none">
-          {[
-            { x: '12%', y: '18%', s: 12, color: '#E91E90', d: '0s',   dur: '3s'   },
-            { x: '75%', y: '22%', s: 10, color: '#F8BBD0', d: '1.5s', dur: '3.5s' },
-          ].map((star, i) => (
-            <svg
-              key={`star-${i}`}
-              className="absolute"
-              width={star.s} height={star.s}
-              viewBox="0 0 24 24"
-              style={{
-                left: star.x, top: star.y,
-                animation: `hero-star-twinkle ${star.dur} ease-in-out infinite`,
-                animationDelay: star.d,
-              }}
-            >
-              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z" fill={star.color} opacity="0.6" />
-            </svg>
-          ))}
-        </div>
-
-        {/* ─── المحتوى الرئيسي مع Parallax + Fade ─── */}
-        <motion.div className="relative z-10 max-w-5xl mx-auto px-4 w-full text-center" style={{ y: heroContentY, opacity: heroOpacity, willChange: 'transform, opacity' }}>
+        {/* ─── المحتوى الرئيسي ─── */}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 w-full text-center">
 
           {/* اللوقو الكبير */}
           <motion.div
@@ -213,7 +146,7 @@ export default function Home() {
               {t.menuBtn}
             </a>
           </motion.div>
-        </motion.div>
+        </div>
 
         {/* ─── الموجة السفلية (زجاجية) ─── */}
         <div className="absolute bottom-0 w-full overflow-hidden leading-[0] z-20">
