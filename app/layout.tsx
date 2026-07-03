@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fredoka, Tajawal } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
@@ -29,6 +29,14 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: "Candy Hon | كاندي هون",
   description: "منتجات فريدة وغريبة — Unique & Fun Products",
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // يمنع التكبير العشوائي على الموبايل
+  themeColor: '#FDF5F8',
 };
 
 export default function RootLayout({
