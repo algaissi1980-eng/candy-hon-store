@@ -4,13 +4,12 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useLanguageStore } from '../store/languageStore';
 import { useProductStore } from '../store/productStore';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 
 // ✅ Dynamic import — ProductModal لا يتم تحميله إلا عند النقر على منتج
 const ProductModal = dynamic(() => import('./ProductModal'), { ssr: false });
 
-// ✅ #2 Debounce hook — يأخر التنفيذ حتى يتوقف المستخدم عن الكتابة
+// ✅ Debounce hook — يأخر التنفيذ حتى يتوقف المستخدم عن الكتابة
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -25,7 +24,7 @@ export default function ProductGallery({ products, storeCategories }: {
   storeCategories: string[];
 }) {
   const { lang } = useLanguageStore();
-  const { isLoading, isLoadingMore, error, retry, lastFetchedAt, hasMore, fetchMore } = useProductStore();
+  const { isLoading, isLoadingMore, error, retry, lastFetchedAt, hasMore, fetchMore, filteredResults, isFiltering, fetchFiltered } = useProductStore();
   const searchParams = useSearchParams();
 
   const isInitialLoad = products.length === 0 && lastFetchedAt === null && !error;
@@ -46,10 +45,9 @@ export default function ProductGallery({ products, storeCategories }: {
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // ✅ #2 Debounce — ينتظر 300ms بعد ما يوقف المستخدم كتابة
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  // ✅ #5 Infinite Scroll — Callback Ref (أكثر موثوقية من useEffect)
+  // ✅ Infinite Scroll — Callback Ref
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinelRef = useCallback((node: HTMLDivElement | null) => {
     if (isLoadingMore) return;
@@ -65,26 +63,34 @@ export default function ProductGallery({ products, storeCategories }: {
     }
   }, [isLoadingMore, hasMore, debouncedSearch, activeCategory, fetchMore]);
 
-  // تصفية حسب التصنيف أولاً
-  const categoryFiltered = activeCategory === 'all'
-    ? products
-    : products.filter(p => p.category === activeCategory);
+  // ✅ البحث والتصنيف يستعلمان السيرفر (كامل الكتالوج)
+  const hasActiveFilter = !!debouncedSearch.trim() || activeCategory !== 'all';
 
-  // ✅ تصفية حسب البحث — يستخدم القيمة المُؤجلة (debounced)
-  const filteredProducts = debouncedSearch.trim()
-    ? categoryFiltered.filter(p => {
-        const q = debouncedSearch.trim().toLowerCase();
-        const name = (p.name || '').toLowerCase();
-        const nameAr = (p.name_ar || '').toLowerCase();
-        const nameEn = (p.name_en || '').toLowerCase();
-        const desc = (p.description || '').toLowerCase();
-        return name.includes(q) || nameAr.includes(q) || nameEn.includes(q) || desc.includes(q);
-      })
-    : categoryFiltered;
+  useEffect(() => {
+    fetchFiltered(debouncedSearch.trim(), activeCategory);
+  }, [debouncedSearch, activeCategory, fetchFiltered]);
+
+  // فلترة محلية فورية — تُعرض كنتيجة مبدئية حتى يصل رد السيرفر
+  const localFiltered = (() => {
+    const categoryFiltered = activeCategory === 'all'
+      ? products
+      : products.filter(p => p.category === activeCategory);
+    if (!debouncedSearch.trim()) return categoryFiltered;
+    const q = debouncedSearch.trim().toLowerCase();
+    return categoryFiltered.filter(p =>
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.name_ar || '').toLowerCase().includes(q) ||
+      (p.name_en || '').toLowerCase().includes(q) ||
+      (p.description || '').toLowerCase().includes(q)
+    );
+  })();
+
+  // نتائج السيرفر لها الأولوية عند وجود فلتر نشط
+  const filteredProducts = hasActiveFilter && filteredResults !== null ? filteredResults : localFiltered;
 
   const t = {
     all: lang === 'ar' ? 'الكل' : 'All',
-    emptyMsg: lang === 'ar' ? 'لا توجد منتجات في هذا التصنيف حالياً ✨' : 'No products available in this category ✨',
+    emptyMsg: lang === 'ar' ? 'لا توجد منتجات في هذا التصنيف حالياً' : 'No products in this category yet',
     noResults: lang === 'ar' ? 'لا توجد نتائج لـ' : 'No results for',
     loadingMore: lang === 'ar' ? 'جاري التحميل...' : 'Loading...',
     showing: lang === 'ar' ? 'عرض' : 'Showing',
@@ -100,25 +106,22 @@ export default function ProductGallery({ products, storeCategories }: {
       const parts = cat.split(' / ');
       return lang === 'ar' ? parts[0].trim() : parts[1].trim();
     }
-    if (lang === 'ar') return cat;
-    if (cat.includes('كيك')) return 'Cakes 🍰';
-    if (cat.includes('تارت')) return 'Tarts 🥧';
-    if (cat.includes('ماكارون')) return 'Macarons 🍪';
-    if (cat.includes('مشروبات')) return 'Drinks ☕';
-    if (cat.includes('الكل')) return 'All';
     return cat;
   };
 
-  // ─── حالة الخطأ — عرض رسالة مع زر إعادة محاولة ───
+  const chipBase = 'shrink-0 h-10 md:h-11 px-5 rounded-full font-bold text-[13px] md:text-sm transition-colors duration-150 cursor-pointer';
+  const chipActive = 'bg-[var(--pink-600)] text-white';
+  const chipIdle = 'bg-[var(--surface)] text-[var(--ink-700)] border border-[var(--border)] hover:border-[var(--pink-400)]';
+
+  // ─── حالة الخطأ ───
   if (error && products.length === 0) {
     return (
       <div className="text-center py-20" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="text-5xl mb-6 opacity-40">⚠️</div>
-        <h3 className="text-xl font-black text-[var(--dark)] mb-3">{t.errorTitle}</h3>
-        <p className="text-sm text-[var(--text-muted)] mb-6 max-w-md mx-auto font-medium">{error}</p>
+        <h3 className="text-xl font-extrabold text-[var(--ink-900)] mb-3">{t.errorTitle}</h3>
+        <p className="text-sm text-[var(--ink-500)] mb-6 max-w-md mx-auto font-medium">{error}</p>
         <button
           onClick={retry}
-          className="bg-[var(--dark)] text-white font-bold px-8 py-3 rounded-2xl hover:bg-[var(--pink)] transition-all shadow-lg text-sm"
+          className="h-12 px-8 bg-[var(--pink-600)] hover:bg-[var(--pink-700)] text-white font-bold rounded-[var(--radius-md)] transition-colors duration-150 text-sm"
         >
           {t.retryBtn}
         </button>
@@ -126,87 +129,75 @@ export default function ProductGallery({ products, storeCategories }: {
     );
   }
 
-  // ─── حالة التحميل — عرض skeleton ───
+  // ─── حالة التحميل — skeleton ───
   if (showLoading) {
     return (
       <div dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8 w-full">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5 w-full">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="glass-card overflow-hidden animate-pulse">
-              <div className="aspect-square md:aspect-[4/5] bg-[var(--cream-dark)]" />
-              <div className="p-3 md:p-5 space-y-3">
-                <div className="h-4 bg-[var(--cream-dark)] rounded-lg w-3/4" />
-                <div className="h-3 bg-[var(--cream-dark)] rounded-lg w-1/2" />
+            <div key={i} className="bg-[var(--surface)] rounded-[var(--radius-lg)] shadow-[var(--shadow-card)] overflow-hidden animate-pulse">
+              <div className="aspect-square bg-[var(--pink-50)]" />
+              <div className="p-3 md:p-4 space-y-2.5">
+                <div className="h-4 bg-[var(--pink-50)] rounded-lg w-3/4" />
+                <div className="h-3 bg-[var(--pink-50)] rounded-lg w-1/2" />
                 <div className="flex justify-between items-center pt-2">
-                  <div className="h-6 bg-[var(--cream-dark)] rounded-lg w-20" />
-                  <div className="h-8 bg-[var(--cream-dark)] rounded-xl w-20" />
+                  <div className="h-6 bg-[var(--pink-50)] rounded-lg w-16" />
+                  <div className="h-11 w-11 bg-[var(--pink-50)] rounded-full" />
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <p className="text-center text-[var(--text-muted)] font-bold text-sm mt-8">{t.loadingMsg}</p>
+        <p className="text-center text-[var(--ink-500)] font-bold text-sm mt-8">{t.loadingMsg}</p>
       </div>
     );
   }
 
   return (
     <div>
-      {/* ─── شريط البحث ─── */}
-      <div className="max-w-xl mx-auto mb-10" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="relative group">
-          {/* أيقونة البحث */}
-          <div className={`absolute top-1/2 -translate-y-1/2 ${lang === 'ar' ? 'right-5' : 'left-5'} pointer-events-none text-[var(--pink)]/60 group-focus-within:text-[var(--pink)] transition-colors`}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+      {/* ─── شريط البحث — 48px ─── */}
+      <div className="max-w-xl mx-auto mb-5 md:mb-8" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="relative">
+          <span className="absolute top-1/2 -translate-y-1/2 start-4 pointer-events-none text-[var(--ink-500)]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
-          </div>
+          </span>
           <input
             ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className={`w-full bg-white border-2 border-[var(--pink)]/25 rounded-2xl ${lang === 'ar' ? 'pr-14 pl-14' : 'pl-14 pr-14'} py-4 md:py-5 text-base font-bold text-[var(--dark)] placeholder:text-[var(--text-muted)]/50 placeholder:font-medium outline-none focus:border-[var(--pink)] focus:ring-4 focus:ring-[var(--pink)]/10 transition-all shadow-md hover:shadow-lg hover:border-[var(--pink)]/40`}
+            className="w-full h-12 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-md)] ps-12 pe-12 text-[15px] font-medium text-[var(--ink-900)] placeholder:text-[var(--ink-500)] outline-none focus:border-[var(--pink-400)] focus:ring-2 focus:ring-[var(--pink-100)] transition-[border-color,box-shadow] duration-150"
           />
-          {/* زر المسح — يظهر فقط عند وجود نص */}
-          <AnimatePresence>
-            {searchQuery && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                onClick={() => { setSearchQuery(''); searchInputRef.current?.focus(); }}
-                className={`absolute top-1/2 -translate-y-1/2 ${lang === 'ar' ? 'left-5' : 'right-5'} w-8 h-8 rounded-full bg-[var(--pink)]/10 hover:bg-[var(--pink)]/20 flex items-center justify-center transition-colors`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-[var(--pink)]">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </div>
-        {/* عداد النتائج عند البحث */}
-        <AnimatePresence>
-          {debouncedSearch.trim() && (
-            <motion.p
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              className="text-center text-xs font-bold text-[var(--text-muted)] mt-2"
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(''); searchInputRef.current?.focus(); }}
+              aria-label="Clear search"
+              className="absolute top-1/2 -translate-y-1/2 end-2 w-9 h-9 rounded-full hover:bg-[var(--pink-50)] flex items-center justify-center transition-colors duration-150 fade-in"
             >
-              {filteredProducts.length} {t.resultsCount}
-            </motion.p>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-[var(--pink-600)]">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
           )}
-        </AnimatePresence>
+        </div>
+        {debouncedSearch.trim() && (
+          <p className="text-center text-xs font-bold text-[var(--ink-500)] mt-2 fade-in">
+            {filteredProducts.length} {t.resultsCount}
+          </p>
+        )}
       </div>
 
-      {/* ─── أزرار التصنيفات ─── */}
-      <div className="flex flex-wrap justify-center gap-3 mb-12" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      {/* ─── التصنيفات — pills بتمرير أفقي على الموبايل ─── */}
+      <div
+        className="flex md:flex-wrap md:justify-center gap-2 md:gap-3 mb-6 md:mb-10 overflow-x-auto hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0 pb-1"
+        dir={lang === 'ar' ? 'rtl' : 'ltr'}
+      >
         <button
           onClick={() => setActiveCategory('all')}
-          className={`px-6 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${activeCategory === 'all' ? 'bg-[var(--gold)] text-white shadow-md' : 'bg-white text-[var(--text-muted)] border border-[var(--gold-light)] hover:border-[var(--gold)] hover:text-[var(--gold)]'}`}
+          className={`${chipBase} ${activeCategory === 'all' ? chipActive : chipIdle}`}
         >
           {t.all}
         </button>
@@ -214,7 +205,7 @@ export default function ProductGallery({ products, storeCategories }: {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-6 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${activeCategory === cat ? 'bg-[var(--gold)] text-white shadow-md' : 'bg-white text-[var(--text-muted)] border border-[var(--gold-light)] hover:border-[var(--gold)] hover:text-[var(--gold)]'}`}
+            className={`${chipBase} ${activeCategory === cat ? chipActive : chipIdle}`}
           >
             {translateCategory(cat)}
           </button>
@@ -222,7 +213,7 @@ export default function ProductGallery({ products, storeCategories }: {
       </div>
 
       {/* ─── شبكة المنتجات ─── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8 w-full" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5 w-full" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
         {filteredProducts.map((product: any, i: number) => (
           <ProductCard
             key={product.id}
@@ -233,27 +224,34 @@ export default function ProductGallery({ products, storeCategories }: {
         ))}
       </div>
 
-      {/* ✅ #5 Infinite Scroll — sentinel + loading indicator */}
+      {/* ✅ Infinite Scroll — sentinel + مؤشر تحميل */}
       {hasMore && !debouncedSearch.trim() && activeCategory === 'all' && (
-        <div ref={sentinelRef} className="flex flex-col items-center mt-12 gap-4 h-20 justify-center">
+        <div ref={sentinelRef} className="flex flex-col items-center mt-10 gap-4 h-20 justify-center">
           {isLoadingMore ? (
-            <div className="flex items-center gap-2 text-sm font-bold text-[var(--text-muted)]">
-              <span className="w-5 h-5 border-2 border-[var(--cream-dark)] border-t-[var(--pink)] rounded-full animate-spin" />
+            <div className="flex items-center gap-2 text-sm font-bold text-[var(--ink-500)]">
+              <span className="w-5 h-5 border-2 border-[var(--border)] border-t-[var(--pink-600)] rounded-full animate-spin" />
               {t.loadingMore}
             </div>
           ) : (
-             <div className="text-xs font-bold text-[var(--text-muted)] opacity-50">
-               {t.showing} {products.length} ...
-             </div>
+            <div className="text-xs font-bold text-[var(--ink-500)]">
+              {t.showing} {products.length} ...
+            </div>
           )}
         </div>
       )}
 
+      {/* مؤشر انتظار نتائج السيرفر — يظهر فقط إذا الفلترة المحلية فارغة */}
+      {isFiltering && filteredProducts.length === 0 && (
+        <div className="flex justify-center pt-24 pb-16">
+          <span className="w-6 h-6 border-2 border-[var(--border)] border-t-[var(--pink-600)] rounded-full animate-spin" />
+        </div>
+      )}
+
       {/* رسالة فارغة — تختلف بين البحث والتصنيف */}
-      {filteredProducts.length === 0 && !showLoading && !error && (
-        <div className="text-center text-[var(--text-muted)] font-bold pt-36 pb-20 text-lg">
+      {filteredProducts.length === 0 && !showLoading && !error && !isFiltering && (
+        <div className="text-center text-[var(--ink-500)] font-bold pt-28 pb-16 text-base">
           {debouncedSearch.trim()
-            ? `${t.noResults} "${debouncedSearch}" 🔍`
+            ? `${t.noResults} "${debouncedSearch}"`
             : t.emptyMsg
           }
         </div>

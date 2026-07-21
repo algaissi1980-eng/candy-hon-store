@@ -34,9 +34,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false, // يمنع التكبير العشوائي على الموبايل
-  themeColor: '#FDF5F8',
+  // ✅ pinch-zoom مسموح — قيد إلزامي في الـ handoff (إتاحة الوصول)
+  themeColor: '#FFF9F5',
 };
 
 export default function RootLayout({
@@ -54,7 +53,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://images.weserv.nl" />
       </head>
       <body
-        className={`${fredoka.variable} ${tajawal.variable} min-w-[320px] antialiased bg-[var(--cream)] text-[var(--text-primary)] flex flex-col min-h-screen font-[var(--font-tajawal)]`}
+        className={`${fredoka.variable} ${tajawal.variable} min-w-[320px] antialiased bg-[var(--bg)] text-[var(--ink-700)] flex flex-col min-h-screen font-[var(--font-tajawal)]`}
       >
         <Navbar />
         <main className="flex-grow w-full">
@@ -62,13 +61,26 @@ export default function RootLayout({
         </main>
         <FloatingCart />
         <Footer />
+        {/* توست الهوية الجديدة: حبة plum داكنة، أسفل المنتصف فوق الـ FAB،
+            واحد فقط في كل مرة (استبدال لا تكديس) */}
         <Toaster
-          position="top-center"
-          richColors
-          closeButton
-          duration={3000}
+          position="bottom-center"
+          duration={2500}
+          visibleToasts={1}
+          offset={96}
           toastOptions={{
-            style: { fontFamily: 'inherit', direction: 'rtl' },
+            style: {
+              fontFamily: 'inherit',
+              direction: 'rtl',
+              background: '#3A2A33',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '999px',
+              padding: '12px 20px',
+              fontWeight: 700,
+              fontSize: '14px',
+              justifyContent: 'center',
+            },
           }}
         />
         <PageTracker />

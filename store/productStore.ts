@@ -12,6 +12,9 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 // حجم الصفحة — كم منتج نجلب من Supabase في كل طلب
 const PAGE_SIZE = 24;
 
+// أقصى عدد نتائج للبحث/التصنيف — كافٍ لأي تصنيف حالي
+const FILTER_LIMIT = 100;
+
 // مدة صلاحية الكاش: 5 دقائق (بالمللي ثانية)
 const CACHE_DURATION = 5 * 60 * 1000;
 
@@ -25,13 +28,25 @@ interface ProductStore {
   hasMore: boolean;
   _channel: RealtimeChannel | null;
 
+  // ─── نتائج البحث/التصنيف من السيرفر ───
+  // null = لا يوجد فلتر نشط (نعرض قائمة التصفح العادية)
+  filteredResults: any[] | null;
+  isFiltering: boolean;
+  _filterKey: string | null;
+
   fetchProducts: () => Promise<void>;
   fetchMore: () => Promise<void>;
+  fetchFiltered: (query: string, category: string) => Promise<void>;
+  clearFiltered: () => void;
+  hydrateFromServer: (products: any[], categories: string[], hasMore: boolean) => void;
   invalidate: () => void;
   retry: () => Promise<void>;
   subscribeRealtime: () => void;
   unsubscribeRealtime: () => void;
 }
+
+// تنظيف نص البحث من محارف PostgREST الخاصة لتجنب كسر الاستعلام
+const sanitizeSearch = (q: string) => q.replace(/[%,()\\]/g, ' ').trim();
 
 export const useProductStore = create<ProductStore>()((set, get) => ({
   products: [],
@@ -42,6 +57,9 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
   lastFetchedAt: null,
   hasMore: true,
   _channel: null,
+  filteredResults: null,
+  isFiltering: false,
+  _filterKey: null,
 
   // ─── جلب الصفحة الأولى من المنتجات ───
   // ✅ Stale-While-Revalidate: إذا عندنا بيانات قديمة، نعرضها فوراً ونحدّث بالخلفية
@@ -67,6 +85,10 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
           .select(
             'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
           )
+          // ✅ ترتيب ثابت — بدونه Postgres لا يضمن نفس الترتيب بين الطلبات
+          // فتتكرر منتجات وتختفي أخرى بين صفحات الـ infinite scroll
+          .order('created_at', { ascending: false })
+          .order('id', { ascending: true })
           .range(0, PAGE_SIZE), // نجلب 25 عنصر
         supabase.from('store_settings').select('categories').eq('id', 1).single(),
       ]);
@@ -116,6 +138,9 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
         .select(
           'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
         )
+        // ✅ نفس ترتيب الصفحة الأولى — إلزامي لصحة الـ pagination
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: true })
         .range(from, to);
 
       if (error) {
@@ -140,8 +165,75 @@ export const useProductStore = create<ProductStore>()((set, get) => ({
     }
   },
 
+  // ─── البحث/التصنيف من السيرفر ──────────────────────────────────────
+  // ✅ يستعلم كامل الكتالوج (230+ منتج) بدل الفلترة على الصفحات المحمّلة فقط
+  fetchFiltered: async (query: string, category: string) => {
+    const q = sanitizeSearch(query);
+    const key = `${q.toLowerCase()}::${category}`;
+
+    // لا فلتر نشط — نرجع لوضع التصفح العادي
+    if (!q && category === 'all') {
+      set({ filteredResults: null, isFiltering: false, _filterKey: null });
+      return;
+    }
+
+    // نفس الفلتر السابق — لا نعيد الطلب
+    if (get()._filterKey === key && get().filteredResults !== null) return;
+
+    set({ isFiltering: true, _filterKey: key });
+
+    try {
+      let request = supabase
+        .from('products')
+        .select(
+          'id, name, name_ar, name_en, description, price, original_price, image_url, images, is_available, category, stock, allow_preorder, restock_date'
+        );
+
+      if (category !== 'all') {
+        request = request.eq('category', category);
+      }
+      if (q) {
+        request = request.or(
+          `name.ilike.%${q}%,name_ar.ilike.%${q}%,name_en.ilike.%${q}%,description.ilike.%${q}%`
+        );
+      }
+
+      const { data, error } = await request
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: true })
+        .limit(FILTER_LIMIT);
+
+      if (error) throw new Error(error.message);
+
+      // نتجاهل النتيجة إذا تغيّر الفلتر أثناء انتظار الرد (race condition)
+      if (get()._filterKey !== key) return;
+
+      set({ filteredResults: data || [], isFiltering: false });
+    } catch (err) {
+      console.error('[ProductStore] Error fetching filtered products:', err);
+      if (get()._filterKey === key) {
+        // fallback: نعرض الفلترة المحلية على المنتجات المحمّلة بدل لا شيء
+        set({ filteredResults: null, isFiltering: false, _filterKey: null });
+      }
+    }
+  },
+
+  clearFiltered: () => set({ filteredResults: null, isFiltering: false, _filterKey: null }),
+
+  // ─── تهيئة المخزن ببيانات SSR ────────────────────────────────────────
+  // تُستدعى من الصفحة الرئيسية عند وصول المنتجات مع الـ HTML
+  hydrateFromServer: (products, categories, hasMore) => {
+    if (get().products.length > 0) return; // عندنا بيانات أحدث — لا نستبدلها
+    set({
+      products,
+      categories,
+      hasMore,
+      lastFetchedAt: Date.now(),
+    });
+  },
+
   // إبطال الكاش — يُستخدم بعد تعديل المنتجات من لوحة الإدارة
-  invalidate: () => set({ lastFetchedAt: null, hasMore: true }),
+  invalidate: () => set({ lastFetchedAt: null, hasMore: true, filteredResults: null, _filterKey: null }),
 
   // ✅ إعادة المحاولة — يمسح الخطأ والكاش ويعيد الجلب
   retry: async () => {

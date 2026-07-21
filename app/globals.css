@@ -1,46 +1,149 @@
 @import "tailwindcss";
 
-/* ===============================================
-   🫧 Candy Hon — Glassmorphism / Dreamy Pastel Theme
-   Soft, Elegant, and Dreamy
-   =============================================== */
+/* ==========================================================================
+   🍬 Candy Hon — Rebrand "Boutique candy shop, grown up"
+   Direction 1a "Airy boutique pastel"
+   Tokens from design_handoff_candy_hon_rebrand/tokens.css
+   ========================================================================== */
 
 :root {
   color-scheme: light;
 
-  /* Dreamy Pastel Colors */
-  --pink: #F48FB1;
-  --pink-light: #FCE4EC;
-  --pink-dark: #D81B60;
-  --pink-hover: #F06292;
-  --pink-soft: rgba(244, 143, 177, 0.15);
+  /* ---- Primary: raspberry pink (derived from logo pink, AA-safe) ---- */
+  --pink-50:  #FDF2F7;
+  --pink-100: #FBE3EE;
+  --pink-200: #F6C7DC;
+  --pink-300: #EFA3C4;
+  --pink-400: #E56FA4;
+  --pink-500: #DC4A86;
+  --pink-600: #C22B65;   /* ★ anchor — CTAs, prices, active states. 5.9:1 on white */
+  --pink-700: #A21E52;   /* hover / press */
+  --pink-800: #7E1740;
+  --pink-900: #55102C;
 
-  --blue: #81D4FA;
-  --blue-light: #E1F5FE;
-  --blue-dark: #0288D1;
+  /* ---- Sky blue (pre-order, info) ---- */
+  --blue-100: #E4F3FC;
+  --blue-300: #A9D9F3;
+  --blue-500: #3E97CF;
+  --blue-700: #1B6899;   /* AA text on white & on blue-100 */
 
-  --mint: #80CBC4;
-  --mint-light: #E0F2F1;
+  /* ---- Mint (success accents, freshness) ---- */
+  --mint-100: #E2F4EE;
+  --mint-300: #A9DFCE;
+  --mint-500: #34A183;
+  --mint-700: #147259;   /* AA text */
 
-  /* Mapped legacy variables */
-  --gold: var(--pink);
-  --gold-light: var(--pink-light);
-  --gold-dark: var(--pink-dark);
-  --gold-hover: var(--pink-hover);
+  /* ---- Warm plum neutrals ---- */
+  --ink-900: #3A2A33;    /* headings, primary text — 12.6:1 */
+  --ink-700: #5D4A55;    /* body — 7.6:1 */
+  --ink-500: #7D6873;    /* secondary/muted — 4.9:1 AA */
+  --ink-300: #B9A8B1;    /* decorative only, never text */
+  --border:  #F1E3EA;
+  --bg:      #FFF9F5;    /* page base — warm off-white */
+  --bg-warm: #FDF3EB;    /* scrapbook base / alt sections */
+  --surface: #FFFFFF;
 
-  /* Backgrounds */
-  --cream: #FFFBFE;
-  --cream-dark: #FDF5F8;
+  /* ---- Semantic ---- */
+  --success:    #1E7A4A;
+  --success-bg: #E4F5EB;
+  --warning:    #8F5400;
+  --warning-bg: #FFF3DE;
+  --error:      #BE2F44;
+  --error-bg:   #FCE9EC;
 
-  /* Text & Borders */
-  --text-primary: #37474F;
-  --text-secondary: #607D8B;
-  --text-muted: #B0BEC5;
-  --dark: #263238;
+  /* ---- State mapping ---- */
+  --state-sale:     var(--pink-600);
+  --state-preorder: var(--blue-700);
+  --state-preorder-bg: var(--blue-100);
+  --state-oos:      var(--ink-500);
+
+  /* ---- Radii ---- */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-pill: 999px;
+
+  /* ---- Shadows (no blur-heavy glass) ---- */
+  --shadow-card:  0 1px 2px rgba(58,42,51,.05), 0 4px 12px rgba(58,42,51,.06);
+  --shadow-hover: 0 2px 4px rgba(58,42,51,.06), 0 10px 24px rgba(58,42,51,.10);
+  --shadow-sheet: 0 -8px 32px rgba(58,42,51,.14);
+  --shadow-fab:   0 6px 16px rgba(194,43,101,.32);
+
+  /* ---- Type ---- */
+  --font-display-en: var(--font-fredoka), 'Fredoka', sans-serif;
+  --font-display-ar: var(--font-tajawal), 'Tajawal', sans-serif;
+  --font-body: var(--font-tajawal), 'Tajawal', sans-serif;
+
+  /* ---- Motion (perf budget: opacity/transform only) ---- */
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-enter: 240ms;
+
+  /* ======================================================================
+     Legacy aliases — الصفحات غير المُعاد تصميمها (orders/success/login/
+     not-found/admin/Footer) تستخدم الأسماء القديمة؛ نوجهها للتوكنز الجديدة
+     فتتبنى الهوية الجديدة تلقائياً بدون تعديل ملفاتها.
+     ====================================================================== */
+  --pink: var(--pink-400);
+  --pink-light: var(--pink-100);
+  --pink-dark: var(--pink-700);
+  --pink-hover: var(--pink-500);
+  --pink-soft: rgba(220, 74, 134, 0.15);
+
+  --blue: var(--blue-300);
+  --blue-light: var(--blue-100);
+  --blue-dark: var(--blue-700);
+
+  --mint: var(--mint-300);
+  --mint-light: var(--mint-100);
+
+  --gold: var(--pink-600);
+  --gold-light: var(--pink-200);
+  --gold-dark: var(--pink-700);
+  --gold-hover: var(--pink-500);
+
+  --cream: var(--bg);
+  --cream-dark: var(--border);
+
+  --text-primary: var(--ink-700);
+  --text-secondary: var(--ink-700);
+  --text-muted: var(--ink-500);
+  --dark: var(--ink-900);
 }
 
-html { 
-  scroll-behavior: smooth; 
+/* ===== Direction 1b — "Sticker & scrapbook" (تُفعَّل بـ data-theme على html) ===== */
+[data-theme="scrapbook"] {
+  --bg: var(--bg-warm);
+  --border: #EAD3DD;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-card:  0 3px 0 #EDD6DE;
+  --shadow-hover: 0 5px 0 #E7C9D6;
+  --shadow-fab:   0 4px 0 #7E1740;
+}
+
+/* ===== Tailwind 4 theme mapping ===== */
+@theme inline {
+  --color-pink-50: var(--pink-50);
+  --color-pink-100: var(--pink-100);
+  --color-pink-200: var(--pink-200);
+  --color-pink-300: var(--pink-300);
+  --color-pink-400: var(--pink-400);
+  --color-pink-500: var(--pink-500);
+  --color-pink-600: var(--pink-600);
+  --color-pink-700: var(--pink-700);
+  --color-pink-800: var(--pink-800);
+  --color-pink-900: var(--pink-900);
+  --color-ink-900: var(--ink-900);
+  --color-ink-700: var(--ink-700);
+  --color-ink-500: var(--ink-500);
+  --color-ink-300: var(--ink-300);
+}
+
+html {
+  scroll-behavior: smooth;
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -48,161 +151,97 @@ html {
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--cream);
-  color: var(--text-primary);
-  /* Soft animated gradient background */
-  background: linear-gradient(135deg, #FFFBFE 0%, #FDF5F8 50%, #F5FAFF 100%);
+  background-color: var(--bg);
+  color: var(--ink-700);
+}
+
+::selection {
+  background: var(--pink-100);
+  color: var(--ink-900);
 }
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-::selection {
-  background: var(--pink-light);
-  color: var(--dark);
-}
-
-/* ===============================================
-   🫧 Glassmorphism Utility Classes
-   =============================================== */
-
-.glass-card {
-  /* backdrop-filter removed — was causing GPU freeze on mid-range phones
-     with many cards rendered simultaneously. Solid bg looks nearly identical. */
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 24px;
-}
-
-.glass-card-hover {
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.glass-card-hover:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.65);
-  box-shadow: 0 15px 45px 0 rgba(31, 38, 135, 0.1);
-  border: 1px solid rgba(255, 255, 255, 1);
-}
-
-.glass-button {
-  /* Removed backdrop-filter — not needed on a button, hurts perf */
-  background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 15px rgba(244, 143, 177, 0.3);
-  color: white;
-  transition: all 0.3s ease;
-  border-radius: 9999px;
-}
-
-.glass-button:hover {
-  background: linear-gradient(135deg, var(--pink-hover) 0%, var(--blue-dark) 100%);
-  box-shadow: 0 6px 20px rgba(244, 143, 177, 0.5);
-  transform: translateY(-2px);
-}
-
-.glass-badge {
-  /* Removed backdrop-filter — badges are small, solid bg is fine */
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  color: var(--dark);
-  border-radius: 12px;
-}
-
-/* Overriding old legacy animations to fit Glassmorphism */
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-.gold-shimmer {
-  background: linear-gradient(
-    110deg,
-    var(--pink-dark) 0%,
-    var(--pink-hover) 25%,
-    var(--blue-dark) 50%,
-    var(--pink-hover) 75%,
-    var(--pink-dark) 100%
+/* ==========================================================================
+   Scallop edge — زخرفة الحافة المموجة المستوحاة من إطار اللوقو
+   تُستخدم أسفل الـ Navbar وأسفل hero band على سطح المكتب
+   --scallop-color = لون "الأصداف" (لون السطح الذي فوق الحافة)
+   ========================================================================== */
+.scallop-edge {
+  height: 10px;
+  background-image: radial-gradient(
+    circle 9px at 50% -3px,
+    var(--scallop-color, var(--surface)) 0 7.5px,
+    transparent 8.5px
   );
-  background-size: 200% auto;
+  background-size: 18px 10px;
+  background-repeat: repeat-x;
+  background-position: center top;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Compat utilities — أسماء قديمة تستخدمها صفحات لم يشملها الـ handoff.
+   أُعيد تعريفها بالهوية الجديدة (بدون أي حركة لا نهائية أو توهج).
+   ========================================================================== */
+
+/* كانت: تدرج ذهبي متحرك لا نهائي بقصّ نصي — الآن: نص وردي ثابت */
+.gold-shimmer {
+  background: linear-gradient(110deg, var(--pink-700), var(--pink-500));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 5s linear infinite;
 }
 
+/* كانت: خلفية متدرجة متحركة — الآن: خلفية CTA وردية صلبة */
 .gold-shimmer-bg {
-  background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 50%, var(--pink-hover) 100%);
-  background-size: 200% auto;
-  animation: shimmer 5s linear infinite;
+  background: var(--pink-600);
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
+.gold-shimmer-bg:hover { background: var(--pink-700); }
 
 .gold-glow {
-  box-shadow: 0 4px 20px rgba(244, 143, 177, 0.35), 0 2px 8px rgba(129, 212, 250, 0.2);
-  transition: box-shadow 0.3s ease;
+  box-shadow: var(--shadow-fab);
 }
 
-.gold-glow:hover {
-  box-shadow: 0 6px 28px rgba(244, 143, 177, 0.5), 0 4px 12px rgba(129, 212, 250, 0.3);
-}
-
-/* ===============================================
-   ✅ Price gradient — static (no animation)
-   Replaces gold-shimmer on product card prices
-   to eliminate 24 infinite CSS gradient animations
-   =============================================== */
+/* كانت gradient — الآن سعر وردي ثابت */
 .price-gradient {
-  background: linear-gradient(110deg, var(--pink-dark), var(--pink-hover));
+  background: linear-gradient(110deg, var(--pink-600), var(--pink-500));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* ===============================================
-   ✅ Card fade-in — CSS animation
-   Replaces Framer Motion whileInView on ProductCard
-   to eliminate 24 IntersectionObserver instances
-   =============================================== */
+/* ==========================================================================
+   Motion — ضمن ميزانية الأداء: opacity/transform فقط، لا loops
+   ========================================================================== */
 @keyframes card-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 .card-fade-in {
-  animation: card-fade-in 0.3s ease-out both;
+  animation: card-fade-in var(--dur-enter) var(--ease-out) both;
 }
 
-/* ===============================================
-   🫧 Hero — عناصر زخرفية متحركة
-   (Optimized: removed hero-sprinkle-fall and
-   hero-candy-float — no longer used)
-   =============================================== */
-@keyframes hero-bubble-rise {
-  0%   { transform: translateY(0) scale(1); opacity: 0.5; }
-  50%  { opacity: 0.8; }
-  100% { transform: translateY(-110vh) scale(1.15); opacity: 0; }
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.sheet-up {
+  animation: sheet-up var(--dur-enter) var(--ease-out) both;
 }
 
-@keyframes hero-star-twinkle {
-  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
-  50%      { opacity: 1;   transform: scale(1.1) rotate(15deg); }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fade-in {
+  animation: fade-in var(--dur-base) var(--ease-out) both;
 }
 
-@keyframes hero-cloud-drift {
-  0%   { transform: translateX(0) translateY(0); }
-  50%  { transform: translateX(25px) translateY(-8px); }
-  100% { transform: translateX(0) translateY(0); }
-}
-
-/* ✅ Scroll arrow bounce — replaces Framer Motion infinite bounce */
-@keyframes hero-scroll-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(8px); }
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  .card-fade-in, .sheet-up, .fade-in { animation: none; }
+  html { scroll-behavior: auto; }
 }

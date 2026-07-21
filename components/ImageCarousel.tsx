@@ -31,6 +31,9 @@ export default function ImageCarousel({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [imageLoading, setImageLoading] = useState(true);
+  // ✅ Fallback: إذا فشل تحميل الصورة عبر weserv (CDN محجوب/بطيء عند بعض
+  // مزودي الإنترنت) نتحول تلقائياً للرابط الأصلي من Supabase
+  const [proxyFailed, setProxyFailed] = useState(false);
   const pointerStartX = useRef(0);
   const pointerStartY = useRef(0);
   const isDragging = useRef(false);
@@ -140,13 +143,22 @@ export default function ImageCarousel({
           className="absolute inset-0"
         >
           <Image
-            src={isCard ? optimizeCardImage(images[currentIndex]) : optimizeFullImage(images[currentIndex])}
+            src={proxyFailed
+              ? images[currentIndex]
+              : (isCard ? optimizeCardImage(images[currentIndex]) : optimizeFullImage(images[currentIndex]))}
             alt={`${alt} — ${currentIndex + 1}`}
             fill
             className={`object-contain bg-white transition-all duration-300 ${isUnavailable ? 'grayscale opacity-70' : ''}`}
             sizes={isCard ? '(max-width: 768px) 50vw, 300px' : '(max-width: 768px) 100vw, 50vw'}
             draggable={false}
             onLoad={() => setImageLoading(false)}
+            onError={() => {
+              if (!proxyFailed) {
+                setProxyFailed(true); // جرّب الرابط الأصلي
+              } else {
+                setImageLoading(false); // الرابط الأصلي فشل أيضاً — أوقف الـ spinner
+              }
+            }}
           />
         </motion.div>
       </AnimatePresence>
@@ -185,7 +197,7 @@ export default function ImageCarousel({
           </div>
 
           {!isCard && (
-            <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full z-20">
+            <div className="absolute top-3 right-3 bg-black/60 text-white text-xs font-bold px-2.5 py-1 rounded-full z-20">
               {currentIndex + 1} / {count}
             </div>
           )}

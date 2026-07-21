@@ -2,33 +2,31 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase/client';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useLanguageStore } from '../store/languageStore';
 import { useCartStore } from '../store/cartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
+// =============================================
+// Navbar — الهوية الجديدة (1a "Airy boutique pastel")
+// شريط أبيض ثابت بعرض كامل + فاصل scallop سفلي
+// أهداف لمس ≥ 44px، بدون تحولات تمرير أو حركات دخول
+// =============================================
+
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { lang, toggleLanguage, _hasHydrated: langHydrated } = useLanguageStore();
   const clearCart = useCartStore((state: any) => state.clearCart);
+  const toggleCart = useCartStore((state: any) => state.toggleCart);
+  const items = useCartStore((state: any) => state.items);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  // تتبع التمرير لتغيير مظهر Navbar
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -39,13 +37,11 @@ export default function Navbar() {
       setIsAdmin(data === true);
     };
 
-    // الفحص الأولي
     supabase.auth.getUser().then(({ data: { user: u } }) => {
       setUser(u);
       syncAdmin(!!u);
     });
 
-    // الاستماع لتغييرات Auth (بعد Google redirect مثلاً)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       syncAdmin(!!session?.user);
@@ -64,135 +60,192 @@ export default function Navbar() {
     window.location.href = '/';
   };
 
+  const totalItems = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+
   const t = {
     welcome: lang === 'ar' ? 'مرحباً،' : 'Hello,',
     friend: lang === 'ar' ? 'يا صديقي' : 'Friend',
-    admin: lang === 'ar' ? '👑 الطلبات' : '👑 Orders',
+    admin: lang === 'ar' ? 'الإدارة' : 'Admin',
     orders: lang === 'ar' ? 'طلباتي' : 'My Orders',
     logout: lang === 'ar' ? 'خروج' : 'Logout',
-    login: lang === 'ar' ? 'تسجيل الدخول' : 'Login'
+    login: lang === 'ar' ? 'تسجيل الدخول' : 'Login',
+    cart: lang === 'ar' ? 'السلة' : 'Cart',
   };
 
   return (
-    <div className="fixed top-0 inset-x-0 z-50 flex justify-center px-3 pt-3 md:px-4 md:pt-4 pointer-events-none" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`pointer-events-auto w-full max-w-6xl rounded-3xl transition-all duration-500 flex justify-between items-center relative ${
-          scrolled
-            ? 'bg-white/90 border border-white/70 shadow-lg px-4 md:px-6 py-2'
-            : 'bg-white/60 border border-white/50 shadow-md px-4 md:px-8 py-3'
-        }`}
-      >
+    <div className="fixed top-0 inset-x-0 z-50" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <nav className="bg-[var(--surface)] border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-[72px] flex items-center justify-between gap-3">
 
-        {/* الشعار — اللوقو كبير ونظيف بدون حواف سوداء */}
-        <Link href="/" className="hover:scale-[1.03] transition-transform flex items-center gap-3 shrink-0">
-          <motion.div
-            className={`relative transition-all duration-500 ${
-              scrolled ? 'w-10 h-10 md:w-12 md:h-12' : 'w-12 h-12 md:w-16 md:h-16'
-            }`}
-            style={{
-              filter: 'drop-shadow(0 2px 8px rgba(212,175,55,0.15))',
-              background: 'white',
-              padding: '2px',
-              borderRadius: '9999px',
-            }}
-            whileHover={{ rotate: [0, -3, 3, 0], transition: { duration: 0.5 } }}
-          >
-            <Image
-              src="/logo.webp"
-              alt="Candy Hon"
-              fill
-              priority
-              className="object-contain rounded-full"
-              sizes="(max-width: 768px) 64px, 64px"
-            />
-          </motion.div>
-          <div className={`flex flex-col transition-all duration-500 ${scrolled ? 'gap-0' : 'gap-0.5'}`}>
-            <span className={`font-black text-[var(--dark)] leading-none transition-all duration-500 ${scrolled ? 'text-sm md:text-base' : 'text-base md:text-xl'}`} style={{ fontFamily: 'var(--font-fredoka), sans-serif' }}>
-              <span className="gold-shimmer">Candy</span> Hon
+          {/* الشعار + الاسم */}
+          <Link href="/" className="flex items-center gap-2.5 shrink-0 min-w-0">
+            <span className="relative w-[42px] h-[42px] md:w-[52px] md:h-[52px] rounded-full bg-white border border-[var(--border)] p-0.5 shrink-0">
+              <Image
+                src="/logo.webp"
+                alt="Candy Hon"
+                fill
+                priority
+                className="object-contain rounded-full"
+                sizes="52px"
+              />
             </span>
-            {!scrolled && (
-              <span className="text-[9px] md:text-[10px] text-[var(--text-muted)] font-bold tracking-[0.15em] uppercase">كاندي هون</span>
-            )}
-          </div>
-        </Link>
+            <span className="flex flex-col leading-none min-w-0">
+              <span
+                className="text-[15px] md:text-lg font-semibold text-[var(--ink-900)] tracking-tight truncate"
+                style={{ fontFamily: 'var(--font-display-en)' }}
+                dir="ltr"
+              >
+                Candy Hon
+              </span>
+              <span className="text-[11px] md:text-xs font-bold text-[var(--ink-500)] truncate">
+                كاندي هون
+              </span>
+            </span>
+          </Link>
 
-        {/* Desktop — أزرار الشاشات الكبيرة */}
-        <div className="hidden md:flex items-center gap-4">
-          <button onClick={toggleLanguage} className="flex items-center justify-center w-9 h-9 rounded-full bg-white/50 hover:bg-white text-[var(--dark)] font-bold shadow-sm transition-all text-xs border border-white/60">
-            {lang === 'ar' ? 'EN' : 'AR'}
-          </button>
-
-          <div className="w-px h-5 bg-[var(--gold-light)]/60"></div>
-
-          {user ? (
-            <div className="flex items-center gap-2.5">
-              <span className="text-[var(--text-secondary)] font-bold text-xs">
+          {/* أزرار — سطح المكتب */}
+          <div className="hidden md:flex items-center gap-2.5">
+            {user && (
+              <span className="text-[var(--ink-700)] font-bold text-xs whitespace-nowrap">
                 {t.welcome} {user.user_metadata?.full_name?.split(' ')[0] || t.friend}
               </span>
-              {isAdmin && (
-                <Link href="/admin" className="text-xs font-bold text-white bg-[var(--dark)] hover:bg-[var(--pink)] px-3.5 py-1.5 rounded-full shadow-sm transition-all duration-300">
-                  {t.admin}
-                </Link>
-              )}
-              <Link href="/orders" className="text-xs font-bold text-[var(--dark)] bg-[var(--cream-dark)] border border-[var(--gold-light)]/50 hover:border-[var(--gold)] px-3.5 py-1.5 rounded-xl transition-all">
-                {t.orders}
-              </Link>
-              <button onClick={signOut} className="text-xs text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all">
-                {t.logout}
-              </button>
-            </div>
-          ) : (
-            <Link href="/login" className="glass-button px-6 py-2 font-bold shadow-sm text-sm">
-              {t.login}
-            </Link>
-          )}
-        </div>
+            )}
 
-        {/* Mobile — أزرار الهاتف */}
-        <div className="flex md:hidden items-center gap-2">
-          <button onClick={toggleLanguage} className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--cream-dark)] text-[var(--dark)] font-black text-[10px]">
-            {lang === 'ar' ? 'EN' : 'AR'}
-          </button>
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="w-9 h-9 flex items-center justify-center bg-white rounded-xl shadow-sm border border-[var(--gold-light)]/40 text-sm"
-          >
-            {isMobileMenuOpen ? '✕' : '☰'}
-          </button>
+            {user && isAdmin && (
+              <Link
+                href="/admin"
+                className="h-11 flex items-center text-xs font-bold text-white bg-[var(--ink-900)] hover:bg-[var(--pink-700)] px-4 rounded-full transition-colors duration-150"
+              >
+                {t.admin}
+              </Link>
+            )}
+
+            {user ? (
+              <>
+                <Link
+                  href="/orders"
+                  className="h-11 flex items-center text-xs font-bold text-[var(--ink-700)] bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--pink-400)] hover:text-[var(--pink-600)] px-4 rounded-full transition-colors duration-150"
+                >
+                  {t.orders}
+                </Link>
+                <button
+                  onClick={signOut}
+                  className="h-11 text-xs text-[var(--error)] font-bold px-3.5 rounded-full hover:bg-[var(--error-bg)] transition-colors duration-150"
+                >
+                  {t.logout}
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="h-11 flex items-center bg-[var(--pink-600)] hover:bg-[var(--pink-700)] text-white px-5 rounded-full font-bold text-sm transition-colors duration-150"
+              >
+                {t.login}
+              </Link>
+            )}
+
+            {/* تبديل اللغة — 44px */}
+            <button
+              onClick={toggleLanguage}
+              aria-label={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+              className="w-11 h-11 rounded-full bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--pink-400)] text-[var(--ink-900)] font-bold text-xs transition-colors duration-150"
+            >
+              {lang === 'ar' ? 'EN' : 'ع'}
+            </button>
+
+            {/* السلة — 44px مع عداد */}
+            <button
+              onClick={toggleCart}
+              aria-label={t.cart}
+              className="relative w-11 h-11 rounded-full bg-[var(--pink-50)] border border-[var(--pink-200)] hover:border-[var(--pink-400)] flex items-center justify-center transition-colors duration-150"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--pink-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -end-1 min-w-5 h-5 px-1 bg-[var(--pink-600)] text-white text-[10px] font-black rounded-full flex items-center justify-center" dir="ltr">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* أزرار — الموبايل */}
+          <div className="flex md:hidden items-center gap-1.5">
+            <button
+              onClick={toggleLanguage}
+              aria-label={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+              className="w-11 h-11 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-900)] font-bold text-xs"
+            >
+              {lang === 'ar' ? 'EN' : 'ع'}
+            </button>
+
+            <button
+              onClick={toggleCart}
+              aria-label={t.cart}
+              className="relative w-11 h-11 rounded-full bg-[var(--pink-50)] border border-[var(--pink-200)] flex items-center justify-center"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--pink-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -end-1 min-w-5 h-5 px-1 bg-[var(--pink-600)] text-white text-[10px] font-black rounded-full flex items-center justify-center" dir="ltr">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Menu"
+              className="w-11 h-11 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-900)] text-sm font-bold"
+            >
+              {isMobileMenuOpen ? '✕' : '☰'}
+            </button>
+          </div>
         </div>
 
         {/* القائمة المنسدلة للموبايل */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-[120%] left-2 right-2 bg-white/95 backdrop-blur-xl border border-[var(--gold-light)]/30 rounded-2xl shadow-2xl p-4 flex flex-col gap-2.5 md:hidden"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-full inset-x-3 mt-2 bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-[var(--shadow-hover)] p-4 flex flex-col gap-2.5 md:hidden"
             >
               {user ? (
                 <>
-                  <span className="text-[var(--dark)] font-bold text-sm text-center mb-1 pb-2 border-b border-[var(--cream-dark)]">
+                  <span className="text-[var(--ink-900)] font-bold text-sm text-center mb-1 pb-2 border-b border-[var(--border)]">
                     {t.welcome} {user.user_metadata?.full_name || t.friend}
                   </span>
-                  {isAdmin && <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-center text-sm font-black text-white bg-[var(--dark)] py-2.5 rounded-xl">{t.admin}</Link>}
-                  <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="text-center text-sm font-bold text-[var(--dark)] bg-[var(--cream)] border border-[var(--gold-light)]/50 py-2.5 rounded-xl">{t.orders}</Link>
-                  <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="text-center text-sm text-red-500 font-bold py-2.5 bg-red-50 rounded-xl">{t.logout}</button>
+                  {isAdmin && (
+                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="h-11 flex items-center justify-center text-sm font-black text-white bg-[var(--ink-900)] rounded-xl">
+                      {t.admin}
+                    </Link>
+                  )}
+                  <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="h-11 flex items-center justify-center text-sm font-bold text-[var(--ink-700)] bg-[var(--bg)] border border-[var(--border)] rounded-xl">
+                    {t.orders}
+                  </Link>
+                  <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="h-11 text-sm text-[var(--error)] font-bold bg-[var(--error-bg)] rounded-xl">
+                    {t.logout}
+                  </button>
                 </>
               ) : (
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center gold-shimmer-bg text-white py-2.5 rounded-xl font-bold shadow-md">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="h-11 flex items-center justify-center bg-[var(--pink-600)] text-white rounded-xl font-bold">
                   {t.login}
                 </Link>
               )}
             </motion.div>
           )}
         </AnimatePresence>
+      </nav>
 
-      </motion.nav>
+      {/* فاصل الـ scallop — أصداف بيضاء بلون الشريط فوق محتوى الصفحة */}
+      <div className="scallop-edge" style={{ '--scallop-color': 'var(--surface)' } as React.CSSProperties} />
     </div>
   );
 }

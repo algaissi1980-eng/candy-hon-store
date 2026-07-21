@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1E9E3}
+a{color:#C22B65;text-decoration:none}a:hover{color:#A21E52}
+</style>
+</helmet>
+
+<section style="display:flex;flex-direction:column;gap:24px;padding:48px;font-family:Tajawal,sans-serif">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:900px">
+    <h1 style="margin:0;font:700 26px Fredoka,sans-serif;color:#3A2A33">Candy Hon — rebrand directions</h1>
+    <p style="margin:0;font:500 14px Tajawal,sans-serif;color:#7D6873">Two directions, same token backbone. <a href="#1a">1a</a> Airy boutique pastel · <a href="#1b">1b</a> Sticker &amp; scrapbook. Every screen is Arabic-RTL first; EN mirrors shown on Home. All prices LTR, all touch targets ≥ 44px, no blur/infinite animation anywhere.</p>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:72px">
+
+    <!-- ============ OPTION 1A — AIRY BOUTIQUE PASTEL ============ -->
+    <div id="1a" style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="background:#C22B65;color:#fff;font:700 13px Fredoka,sans-serif;padding:5px 12px;border-radius:999px">1a</span>
+        <div>
+          <div style="font:600 18px Fredoka,sans-serif;color:#3A2A33">Airy boutique pastel</div>
+          <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">White space, hairline borders, motifs only as dividers &amp; badges. Fredoka + Tajawal refined.</div>
+        </div>
+      </div>
+      <div data-screen-label="1a Tokens" style="width:820px;background:#fff;border:1px solid #EBDDE4;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:20px">
+        <div style="font:600 15px Fredoka,sans-serif;color:#3A2A33">Design tokens <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">— shared backbone (tokens.css) · all text colors AA on white</span></div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#7D6873;margin-bottom:8px">PRIMARY — raspberry pink · ★ 600 anchors CTAs &amp; prices (5.9:1)</div>
+          <div style="display:flex;gap:6px">
+            <sc-for list="{{ pinkRamp }}" as="c" hint-placeholder-count="10">
+              <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+                <div style="width:66px;height:44px;border-radius:10px;border:1px solid rgba(58,42,51,.08);background:{{ c.h }}"></div>
+                <span style="font:700 10px Fredoka,sans-serif;color:#7D6873">{{ c.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;gap:32px">
+          <div>
+            <div style="font:700 11px Tajawal,sans-serif;color:#7D6873;margin-bottom:8px">SKY BLUE (pre-order) · MINT (success)</div>
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ support }}" as="c" hint-placeholder-count="8">
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+                  <div style="width:44px;height:36px;border-radius:8px;border:1px solid rgba(58,42,51,.08);background:{{ c.h }}"></div>
+                  <span style="font:700 9px Fredoka,sans-serif;color:#7D6873">{{ c.n }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="font:700 11px Tajawal,sans-serif;color:#7D6873;margin-bottom:8px">SEMANTIC</div>
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ semantics }}" as="c" hint-placeholder-count="6">
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+                  <div style="width:44px;height:36px;border-radius:8px;border:1px solid rgba(58,42,51,.08);background:{{ c.h }}"></div>
+                  <span style="font:700 9px Fredoka,sans-serif;color:#7D6873">{{ c.n }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#7D6873;margin-bottom:8px">WARM PLUM NEUTRALS — replaces cool grey #B0BEC5 (ink-500 = 4.9:1, the new muted)</div>
+          <div style="display:flex;gap:6px">
+            <sc-for list="{{ neutrals }}" as="c" hint-placeholder-count="7">
+              <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+                <div style="width:66px;height:36px;border-radius:8px;border:1px solid rgba(58,42,51,.08);background:{{ c.h }}"></div>
+                <span style="font:700 9px Fredoka,sans-serif;color:#7D6873">{{ c.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;gap:28px;align-items:flex-start;border-top:1px solid #F1E3EA;padding-top:18px">
+          <div style="flex:1">
+            <div style="font:700 11px Tajawal,sans-serif;color:#7D6873;margin-bottom:10px">TYPE — Fredoka (EN display) + Tajawal (AR display 800 / body) · mobile → desktop</div>
+            <div style="display:flex;flex-direction:column;gap:8px" dir="rtl">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:800 28px Tajawal,sans-serif;color:#3A2A33">عنوان رئيسي</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">Display · 28→40 · 800</span></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:800 24px Tajawal,sans-serif;color:#3A2A33">عنوان قسم</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">H1 · 24→32 · 800</span></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:700 20px Tajawal,sans-serif;color:#3A2A33">عنوان فرعي</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">H2 · 20→26 · 700</span></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:700 17px Tajawal,sans-serif;color:#3A2A33">اسم المنتج</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">H3 · 17→20 · 700</span></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:500 15px/1.6 Tajawal,sans-serif;color:#5D4A55">نص أساسي للوصف والفقرات</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">Body · 15→16 · 500 · lh 1.6</span></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:500 13px Tajawal,sans-serif;color:#7D6873">نص ثانوي</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">Small · 13→14 · 500</span></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px"><span style="font:700 12px Tajawal,sans-serif;color:#7D6873">تسمية / شارة</span><span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873">Caption · 12 · 700</span></div>
+            </div>
+          </div>
+          <div style="width:250px;display:flex;flex-direction:column;gap:10px">
+            <div style="font:700 11px Tajawal,sans-serif;color:#7D6873">RADII &amp; SHADOWS (A)</div>
+            <div style="display:flex;gap:8px">
+              <div style="width:52px;height:44px;background:#FDF2F7;border:1px solid #F6C7DC;border-radius:8px;display:grid;place-items:center;font:700 10px Fredoka,sans-serif;color:#A21E52">8</div>
+              <div style="width:52px;height:44px;background:#FDF2F7;border:1px solid #F6C7DC;border-radius:12px;display:grid;place-items:center;font:700 10px Fredoka,sans-serif;color:#A21E52">12</div>
+              <div style="width:52px;height:44px;background:#FDF2F7;border:1px solid #F6C7DC;border-radius:16px;display:grid;place-items:center;font:700 10px Fredoka,sans-serif;color:#A21E52">16</div>
+              <div style="width:52px;height:44px;background:#FDF2F7;border:1px solid #F6C7DC;border-radius:22px;display:grid;place-items:center;font:700 10px Fredoka,sans-serif;color:#A21E52">24</div>
+            </div>
+            <div style="height:56px;background:#fff;border:1px solid #F1E3EA;border-radius:16px;box-shadow:0 1px 2px rgba(58,42,51,.05),0 4px 12px rgba(58,42,51,.06);display:grid;place-items:center;font:500 11px Fredoka,sans-serif;color:#7D6873">shadow-card</div>
+            <div style="height:56px;background:#fff;border:1px solid #F1E3EA;border-radius:16px;box-shadow:0 2px 4px rgba(58,42,51,.06),0 10px 24px rgba(58,42,51,.10);display:grid;place-items:center;font:500 11px Fredoka,sans-serif;color:#7D6873">shadow-hover</div>
+            <div style="font:500 11px/1.5 Tajawal,sans-serif;color:#7D6873">Spacing rhythm: 4px base — 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">HOME · الجوال · عربي RTL · 380</div>
+          <div data-screen-label="1a Home mobile AR" dir="rtl" style="position:relative;width:380px;background:#FFF9F5;border:1px solid #EBDDE4;border-radius:28px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+            <!-- announcement -->
+            <div style="background:#FDF2F7;border-bottom:1px dashed #F6C7DC;padding:8px 16px;text-align:center;font:700 12px Tajawal,sans-serif;color:#7E1740">توصيل مجاني للطلبات فوق <span dir="ltr">25 JOD</span> — لجميع محافظات الأردن</div>
+            <!-- header -->
+            <div style="background:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="assets/logo.webp" alt="Candy Hon" style="width:42px;height:42px;border-radius:999px"></img>
+                <div style="display:flex;flex-direction:column">
+                  <span style="font:600 16px Fredoka,sans-serif;color:#3A2A33;line-height:1">Candy Hon</span>
+                  <span style="font:700 11px Tajawal,sans-serif;color:#7D6873">كاندي هون</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;font:600 12px Fredoka,sans-serif;color:#5D4A55;cursor:pointer">EN</button>
+                <button style="position:relative;width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;display:grid;place-items:center;cursor:pointer">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                  <span style="position:absolute;top:-2px;inset-inline-start:-2px;background:#C22B65;color:#fff;font:700 10px Fredoka,sans-serif;width:18px;height:18px;border-radius:999px;display:grid;place-items:center">3</span>
+                </button>
+              </div>
+            </div>
+            <!-- scallop divider -->
+            <div style="height:10px;background:radial-gradient(circle at 10px -3px, #ffffff 9px, transparent 10px);background-size:20px 10px;background-repeat:repeat-x"></div>
+            <!-- compact hero -->
+            <div style="padding:14px 16px 6px">
+              <h2 style="margin:0 0 4px;font:800 24px/1.35 Tajawal,sans-serif;color:#3A2A33">منتجات فريدة ومرحة،<br>توصلك لباب البيت 🍭</h2>
+              <p style="margin:0 0 12px;font:500 13px/1.6 Tajawal,sans-serif;color:#7D6873">أكثر من 230 منتجاً · توصيل خلال 24–48 ساعة</p>
+              <div style="position:relative">
+                <svg style="position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:14px" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input placeholder="ابحث عن منتج…" style="width:100%;box-sizing:border-box;height:48px;border-radius:14px;border:1px solid #EBDDE4;background:#fff;padding:0 42px 0 16px;font:500 14px Tajawal,sans-serif;color:#3A2A33;outline:none"></input>
+              </div>
+            </div>
+            <!-- category chips -->
+            <div style="display:flex;gap:8px;padding:12px 16px;overflow:hidden">
+              <button style="height:40px;padding:0 18px;border-radius:999px;border:none;background:#C22B65;color:#fff;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer">الكل</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer">ألعاب</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer">حلويات</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer">إكسسوارات</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer">قرطاسية</button>
+            </div>
+            <!-- product grid 2col -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 16px 90px">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+                <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(58,42,51,.05),0 4px 12px rgba(58,42,51,.06)">
+                  <div style="position:relative;aspect-ratio:1;background:#fff">
+                    <img src="{{ p.img }}" alt="{{ p.nameAr }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ p.imgFilter }}"></img>
+                    <sc-if value="{{ p.isSale }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:8px;background:#C22B65;color:#fff;font:700 11px Tajawal,sans-serif;padding:4px 10px;border-radius:999px">عرض</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:8px;background:#E4F3FC;color:#1B6899;font:700 11px Tajawal,sans-serif;padding:4px 10px;border-radius:999px;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1B6899" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>طلب مسبق</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;display:grid;place-items:center">
+                        <span style="background:#3A2A33;color:#fff;font:700 11px Tajawal,sans-serif;padding:6px 14px;border-radius:999px">نفذت الكمية</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;flex:1">
+                    <span style="font:700 13px/1.4 Tajawal,sans-serif;color:#3A2A33;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameAr }}</span>
+                    <span dir="ltr" style="font:500 10px Fredoka,sans-serif;color:#7D6873;text-align:end;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameEn }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
+                      <div dir="ltr" style="display:flex;flex-direction:column;line-height:1.1">
+                        <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
+                          <span style="font:600 10px Fredoka,sans-serif;color:#7D6873;text-decoration:line-through">{{ p.old }} JOD</span>
+                        </sc-if>
+                        <span style="font:600 15px Fredoka,sans-serif;color:{{ p.priceColor }}">{{ p.price }} <span style="font-size:10px">JOD</span></span>
+                      </div>
+                      <sc-if value="{{ p.canAdd }}" hint-placeholder-val="{{ true }}">
+                        <button style="width:44px;height:44px;border-radius:999px;border:none;background:#C22B65;display:grid;place-items:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+                      </sc-if>
+                      <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #1B6899;background:#fff;color:#1B6899;font:700 11px Tajawal,sans-serif;cursor:pointer;flex-shrink:0">اطلب مسبقاً</button>
+                      </sc-if>
+                      <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #EBDDE4;background:#fff;color:#7D6873;font:700 11px Tajawal,sans-serif;cursor:pointer;flex-shrink:0">أعلمني</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <!-- floating cart -->
+            <div style="position:absolute;bottom:16px;inset-inline-start:16px;display:flex;align-items:center;gap:10px;background:#C22B65;color:#fff;height:52px;padding:0 18px;border-radius:999px;box-shadow:0 6px 16px rgba(194,43,101,.32)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span style="font:700 14px Tajawal,sans-serif">السلة · 3</span>
+              <span dir="ltr" style="font:600 13px Fredoka,sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">20.00 JOD</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">HOME · MOBILE · EN LTR MIRROR · 380</div>
+          <div data-screen-label="1a Home mobile EN" dir="ltr" style="position:relative;width:380px;background:#FFF9F5;border:1px solid #EBDDE4;border-radius:28px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Fredoka,sans-serif">
+            <div style="background:#FDF2F7;border-bottom:1px dashed #F6C7DC;padding:8px 16px;text-align:center;font:600 12px Fredoka,sans-serif;color:#7E1740">Free delivery on orders over <span dir="ltr">25 JOD</span> — all of Jordan</div>
+            <div style="background:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="assets/logo.webp" alt="Candy Hon" style="width:42px;height:42px;border-radius:999px"></img>
+                <div style="display:flex;flex-direction:column">
+                  <span style="font:600 16px Fredoka,sans-serif;color:#3A2A33;line-height:1">Candy Hon</span>
+                  <span style="font:700 11px Tajawal,sans-serif;color:#7D6873">كاندي هون</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;font:700 12px Tajawal,sans-serif;color:#5D4A55;cursor:pointer">ع</button>
+                <button style="position:relative;width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;display:grid;place-items:center;cursor:pointer">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                  <span style="position:absolute;top:-2px;inset-inline-start:-2px;background:#C22B65;color:#fff;font:700 10px Fredoka,sans-serif;width:18px;height:18px;border-radius:999px;display:grid;place-items:center">3</span>
+                </button>
+              </div>
+            </div>
+            <div style="height:10px;background:radial-gradient(circle at 10px -3px, #ffffff 9px, transparent 10px);background-size:20px 10px;background-repeat:repeat-x"></div>
+            <div style="padding:14px 16px 6px">
+              <h2 style="margin:0 0 4px;font:600 23px/1.3 Fredoka,sans-serif;color:#3A2A33">Unique &amp; fun finds,<br>delivered to your door 🍭</h2>
+              <p style="margin:0 0 12px;font:400 13px/1.5 Fredoka,sans-serif;color:#7D6873">230+ products · delivered in 24–48h</p>
+              <div style="position:relative">
+                <svg style="position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:14px" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input placeholder="Search products…" style="width:100%;box-sizing:border-box;height:48px;border-radius:14px;border:1px solid #EBDDE4;background:#fff;padding:0 16px 0 42px;font:400 14px Fredoka,sans-serif;color:#3A2A33;outline:none"></input>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;padding:12px 16px;overflow:hidden">
+              <button style="height:40px;padding:0 18px;border-radius:999px;border:none;background:#C22B65;color:#fff;font:500 13px Fredoka,sans-serif;white-space:nowrap;cursor:pointer">All</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:500 13px Fredoka,sans-serif;white-space:nowrap;cursor:pointer">Toys</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:500 13px Fredoka,sans-serif;white-space:nowrap;cursor:pointer">Sweets</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:500 13px Fredoka,sans-serif;white-space:nowrap;cursor:pointer">Accessories</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 16px 90px">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+                <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(58,42,51,.05),0 4px 12px rgba(58,42,51,.06)">
+                  <div style="position:relative;aspect-ratio:1;background:#fff">
+                    <img src="{{ p.img }}" alt="{{ p.nameEn }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ p.imgFilter }}"></img>
+                    <sc-if value="{{ p.isSale }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:8px;background:#C22B65;color:#fff;font:600 10px Fredoka,sans-serif;padding:4px 10px;border-radius:999px;letter-spacing:.04em">SALE</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:8px;background:#E4F3FC;color:#1B6899;font:600 10px Fredoka,sans-serif;padding:4px 10px;border-radius:999px;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1B6899" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>PRE-ORDER</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;display:grid;place-items:center">
+                        <span style="background:#3A2A33;color:#fff;font:600 10px Fredoka,sans-serif;padding:6px 14px;border-radius:999px;letter-spacing:.04em">OUT OF STOCK</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;flex:1">
+                    <span style="font:500 13px/1.3 Fredoka,sans-serif;color:#3A2A33;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameEn }}</span>
+                    <span dir="rtl" style="font:500 10px Tajawal,sans-serif;color:#7D6873;text-align:end;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameAr }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
+                      <div dir="ltr" style="display:flex;flex-direction:column;line-height:1.1">
+                        <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
+                          <span style="font:600 10px Fredoka,sans-serif;color:#7D6873;text-decoration:line-through">{{ p.old }} JOD</span>
+                        </sc-if>
+                        <span style="font:600 15px Fredoka,sans-serif;color:{{ p.priceColor }}">{{ p.price }} <span style="font-size:10px">JOD</span></span>
+                      </div>
+                      <sc-if value="{{ p.canAdd }}" hint-placeholder-val="{{ true }}">
+                        <button style="width:44px;height:44px;border-radius:999px;border:none;background:#C22B65;display:grid;place-items:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+                      </sc-if>
+                      <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #1B6899;background:#fff;color:#1B6899;font:600 10px Fredoka,sans-serif;cursor:pointer;flex-shrink:0">Pre-order</button>
+                      </sc-if>
+                      <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #EBDDE4;background:#fff;color:#7D6873;font:600 10px Fredoka,sans-serif;cursor:pointer;flex-shrink:0">Notify me</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute;bottom:16px;inset-inline-start:16px;display:flex;align-items:center;gap:10px;background:#C22B65;color:#fff;height:52px;padding:0 18px;border-radius:999px;box-shadow:0 6px 16px rgba(194,43,101,.32)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span style="font:500 14px Fredoka,sans-serif">Cart · 3</span>
+              <span dir="ltr" style="font:600 13px Fredoka,sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">20.00 JOD</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">تفاصيل المنتج · Bottom sheet · 380</div>
+          <div data-screen-label="1a Product modal mobile" dir="rtl" style="width:380px;background:rgba(58,42,51,.4);border-radius:28px;padding:44px 0 0;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08)">
+            <div style="background:#fff;border-radius:24px 24px 28px 28px;overflow:hidden;font-family:Tajawal,sans-serif;box-shadow:0 -8px 32px rgba(58,42,51,.14)">
+              <div style="display:grid;place-items:center;padding:10px 0 4px"><div style="width:40px;height:4px;border-radius:999px;background:#EBDDE4"></div></div>
+              <!-- carousel -->
+              <div style="position:relative;margin:8px 16px 0;border-radius:16px;overflow:hidden;aspect-ratio:1;background:#FFF9F5">
+                <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=800&auto=format&fit=crop" alt="أضواء نيون LED قوس قزح" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></img>
+                <span style="position:absolute;top:10px;inset-inline-start:10px;background:#C22B65;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px;border-radius:999px">خصم 25%</span>
+                <button style="position:absolute;top:10px;inset-inline-end:10px;width:44px;height:44px;border-radius:999px;border:none;background:rgba(255,255,255,.94);display:grid;place-items:center;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+                <div style="position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px">
+                  <span style="width:18px;height:6px;border-radius:999px;background:#C22B65"></span>
+                  <span style="width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.85)"></span>
+                  <span style="width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.85)"></span>
+                  <span style="width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.85)"></span>
+                </div>
+              </div>
+              <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <h3 style="margin:0;font:700 18px/1.4 Tajawal,sans-serif;color:#3A2A33">أضواء نيون LED قوس قزح</h3>
+                  <span dir="ltr" style="font:500 12px Fredoka,sans-serif;color:#7D6873;display:block;text-align:end">Rainbow Neon LED Light</span>
+                </div>
+                <div dir="ltr" style="display:flex;align-items:baseline;gap:10px;justify-content:flex-end">
+                  <span style="font:600 13px Fredoka,sans-serif;color:#7D6873;text-decoration:line-through">16.00 JOD</span>
+                  <span style="font:600 22px Fredoka,sans-serif;color:#C22B65">12.00 JOD</span>
+                </div>
+                <p style="margin:0;font:500 13px/1.6 Tajawal,sans-serif;color:#5D4A55">إضاءة نيون بألوان قوس قزح مع مقاس مثالي لغرفة النوم أو المكتب — تعمل بمنفذ USB.</p>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="font:700 13px Tajawal,sans-serif;color:#5D4A55">الكمية</span>
+                  <div style="display:flex;align-items:center;border:1px solid #EBDDE4;border-radius:12px;overflow:hidden;height:48px">
+                    <button style="width:46px;height:48px;border:none;background:#fff;color:#C22B65;font:700 20px Fredoka,sans-serif;cursor:pointer">+</button>
+                    <span style="width:44px;text-align:center;font:600 15px Fredoka,sans-serif;color:#3A2A33;background:#FFF9F5;height:48px;display:grid;place-items:center">1</span>
+                    <button style="width:46px;height:48px;border:none;background:#fff;color:#7D6873;font:700 20px Fredoka,sans-serif;cursor:pointer">−</button>
+                  </div>
+                  <span style="font:500 12px Tajawal,sans-serif;color:#7D6873;margin-inline-start:auto">المتوفر: 8</span>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات إضافية (اختياري)</label>
+                  <div style="height:64px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;padding:10px 12px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">مثال: لون التغليف…</div>
+                </div>
+                <button style="height:52px;border:none;border-radius:14px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(194,43,101,.32)">
+                  أضف إلى السلة
+                  <span dir="ltr" style="font:600 13px Fredoka,sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">12.00 JOD</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">درج السلة · Drawer · 380</div>
+          <div data-screen-label="1a Cart drawer" dir="rtl" style="width:380px;background:#fff;border:1px solid #EBDDE4;border-radius:28px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif;display:flex;flex-direction:column">
+            <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F1E3EA">
+              <h3 style="margin:0;font:800 18px Tajawal,sans-serif;color:#3A2A33">سلة التسوق <span style="color:#7D6873;font-weight:700;font-size:14px">(3)</span></h3>
+              <button style="width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;display:grid;place-items:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5D4A55" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+            </div>
+            <!-- free shipping progress -->
+            <div style="margin:14px 16px 0;padding:12px 14px;background:#FDF2F7;border-radius:14px">
+              <div style="font:700 12px Tajawal,sans-serif;color:#7E1740;margin-bottom:8px">أضف <span dir="ltr">5.00 JOD</span> لتحصل على توصيل مجاني 🎀</div>
+              <div style="height:6px;border-radius:999px;background:#F6C7DC;overflow:hidden"><div style="width:80%;height:100%;border-radius:999px;background:#C22B65"></div></div>
+            </div>
+            <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;align-items:center;background:#FFF9F5;border:1px solid #F5EAF0;border-radius:16px;padding:10px">
+                  <img src="{{ it.img }}" alt="{{ it.nameAr }}" style="width:56px;height:56px;border-radius:12px;object-fit:cover;flex-shrink:0"></img>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ it.nameAr }}</span>
+                      <sc-if value="{{ it.isPre }}" hint-placeholder-val="{{ false }}">
+                        <span style="background:#E4F3FC;color:#1B6899;font:700 10px Tajawal,sans-serif;padding:2px 8px;border-radius:999px;white-space:nowrap">طلب مسبق</span>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ it.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="font:500 11px Tajawal,sans-serif;color:#1B6899">يتوفر خلال ~10 أيام</span>
+                    </sc-if>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                      <div style="display:flex;align-items:center;border:1px solid #EBDDE4;border-radius:10px;overflow:hidden;background:#fff">
+                        <button style="width:36px;height:40px;border:none;background:#fff;color:#C22B65;font:700 16px Fredoka,sans-serif;cursor:pointer">+</button>
+                        <span style="width:28px;text-align:center;font:600 13px Fredoka,sans-serif;color:#3A2A33">{{ it.qty }}</span>
+                        <button style="width:36px;height:40px;border:none;background:#fff;color:#7D6873;font:700 16px Fredoka,sans-serif;cursor:pointer">−</button>
+                      </div>
+                      <span dir="ltr" style="font:600 14px Fredoka,sans-serif;color:#3A2A33">{{ it.line }} JOD</span>
+                    </div>
+                  </div>
+                  <button style="width:36px;height:36px;border-radius:999px;border:none;background:transparent;display:grid;place-items:center;cursor:pointer;align-self:flex-start"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B9A8B1" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:auto;border-top:1px solid #F1E3EA;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>المجموع الفرعي</span><span dir="ltr" style="font:600 13px Fredoka,sans-serif">20.00 JOD</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 12px Tajawal,sans-serif;color:#7D6873"><span>رسوم التوصيل تُحسب عند إتمام الطلب</span></div>
+              <button style="height:52px;border:none;border-radius:14px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(194,43,101,.32)">
+                إتمام الطلب
+                <span dir="ltr" style="font:600 13px Fredoka,sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">20.00 JOD</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">إتمام الطلب · الجوال · 380</div>
+          <div data-screen-label="1a Checkout mobile" dir="rtl" style="position:relative;width:380px;background:#FFF9F5;border:1px solid #EBDDE4;border-radius:28px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+            <div style="background:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1E3EA">
+              <button style="width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;display:grid;place-items:center;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+              <h3 style="margin:0;font:800 18px Tajawal,sans-serif;color:#3A2A33">إتمام الطلب</h3>
+            </div>
+            <!-- trust strip -->
+            <div style="display:flex;justify-content:center;gap:18px;padding:10px 16px;background:#E4F5EB">
+              <span style="display:flex;align-items:center;gap:6px;font:700 11px Tajawal,sans-serif;color:#1E7A4A"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E7A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>الدفع عند الاستلام</span>
+              <span style="display:flex;align-items:center;gap:6px;font:700 11px Tajawal,sans-serif;color:#1E7A4A"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E7A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>توصيل 24–48 ساعة</span>
+            </div>
+            <div style="padding:14px 16px 96px;display:flex;flex-direction:column;gap:14px">
+              <!-- collapsed order summary -->
+              <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+                <div style="display:flex">
+                  <img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=200&auto=format&fit=crop" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;border:2px solid #fff"></img>
+                  <img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?q=80&w=200&auto=format&fit=crop" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;border:2px solid #fff;margin-inline-start:-12px"></img>
+                  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=200&auto=format&fit=crop" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;border:2px solid #fff;margin-inline-start:-12px"></img>
+                </div>
+                <div style="flex:1"><span style="font:700 13px Tajawal,sans-serif;color:#3A2A33">3 منتجات</span> <span dir="ltr" style="font:600 12px Fredoka,sans-serif;color:#7D6873">· 20.00 JOD</span></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+              <!-- form -->
+              <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">الاسم الكامل</label>
+                  <div style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:500 14px Tajawal,sans-serif;color:#3A2A33">سارة الخطيب</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">رقم الهاتف</label>
+                  <div dir="ltr" style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:500 14px Fredoka,sans-serif;color:#B9A8B1">07X XXX XXXX</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">منطقة التوصيل</label>
+                  <div style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;justify-content:space-between;padding:0 14px">
+                    <span style="font:500 14px Tajawal,sans-serif;color:#3A2A33">عمّان <span dir="ltr" style="font:600 12px Fredoka,sans-serif;color:#7D6873">— 3 JOD</span></span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+                  </div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">تفاصيل العنوان</label>
+                  <div style="height:64px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;padding:10px 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">الحي، الشارع، رقم البناية…</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات (اختياري)</label>
+                  <div style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">أي تعليمات للتوصيل؟</div>
+                </div>
+              </div>
+              <!-- payment -->
+              <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                <span style="font:800 14px Tajawal,sans-serif;color:#3A2A33">طريقة الدفع</span>
+                <div style="border:2px solid #C22B65;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#FDF2F7">
+                  <span style="width:20px;height:20px;border-radius:999px;border:6px solid #C22B65;background:#fff;flex-shrink:0"></span>
+                  <div style="flex:1">
+                    <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">الدفع عند الاستلام</div>
+                    <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">ادفع كاش عند وصول طلبك</div>
+                  </div>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C22B65" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle></svg>
+                </div>
+                <div style="border:1px solid #EBDDE4;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#fff">
+                  <span style="width:20px;height:20px;border-radius:999px;border:2px solid #B9A8B1;background:#fff;flex-shrink:0;box-sizing:border-box"></span>
+                  <div style="flex:1">
+                    <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">Cliq — تحويل فوري</div>
+                    <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">يُؤكد طلبك فور استلام الحوالة</div>
+                  </div>
+                  <span dir="ltr" style="font:600 12px Fredoka,sans-serif;color:#1B6899;background:#E4F3FC;padding:4px 10px;border-radius:999px">CliQ</span>
+                </div>
+                <!-- promo -->
+                <div style="display:flex;gap:8px;margin-top:2px">
+                  <div dir="ltr" style="flex:1;height:48px;border:1px dashed #EFA3C4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:600 13px Fredoka,sans-serif;color:#B9A8B1;letter-spacing:.12em">PROMO CODE</div>
+                  <button style="height:48px;padding:0 18px;border:none;border-radius:12px;background:#3A2A33;color:#fff;font:700 13px Tajawal,sans-serif;cursor:pointer">تطبيق</button>
+                </div>
+              </div>
+              <!-- totals -->
+              <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>مجموع المنتجات</span><span dir="ltr" style="font:600 13px Fredoka,sans-serif">20.00 JOD</span></div>
+                <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>رسوم التوصيل — عمّان</span><span dir="ltr" style="font:600 13px Fredoka,sans-serif">3.00 JOD</span></div>
+                <div style="display:flex;justify-content:space-between;border-top:1px solid #F1E3EA;padding-top:10px;margin-top:2px;font:800 16px Tajawal,sans-serif;color:#3A2A33"><span>المجموع الكلي</span><span dir="ltr" style="font:600 18px Fredoka,sans-serif;color:#C22B65">23.00 JOD</span></div>
+              </div>
+            </div>
+            <!-- sticky confirm bar -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #F1E3EA;padding:12px 16px;display:flex;align-items:center;gap:12px">
+              <div style="display:flex;flex-direction:column;line-height:1.2">
+                <span style="font:500 11px Tajawal,sans-serif;color:#7D6873">المجموع</span>
+                <span dir="ltr" style="font:600 16px Fredoka,sans-serif;color:#3A2A33">23.00 JOD</span>
+              </div>
+              <button style="flex:1;height:52px;border:none;border-radius:14px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(194,43,101,.32)">تأكيد الطلب</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">HOME · سطح المكتب · 1280</div>
+        <div data-screen-label="1a Home desktop" dir="rtl" style="width:1280px;background:#FFF9F5;border:1px solid #EBDDE4;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+          <div style="background:#FDF2F7;border-bottom:1px dashed #F6C7DC;padding:8px;text-align:center;font:700 13px Tajawal,sans-serif;color:#7E1740">توصيل مجاني للطلبات فوق <span dir="ltr">25 JOD</span> — لجميع محافظات الأردن</div>
+          <div style="background:#fff;padding:12px 40px;display:flex;align-items:center;gap:24px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <img src="assets/logo.webp" alt="Candy Hon" style="width:48px;height:48px;border-radius:999px"></img>
+              <div style="display:flex;flex-direction:column">
+                <span style="font:600 18px Fredoka,sans-serif;color:#3A2A33;line-height:1">Candy Hon</span>
+                <span style="font:700 12px Tajawal,sans-serif;color:#7D6873">كاندي هون</span>
+              </div>
+            </div>
+            <div style="position:relative;flex:1;max-width:460px;margin:0 auto">
+              <svg style="position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:14px" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input placeholder="ابحث عن منتج…" style="width:100%;box-sizing:border-box;height:46px;border-radius:999px;border:1px solid #EBDDE4;background:#FFF9F5;padding:0 42px 0 18px;font:500 14px Tajawal,sans-serif;color:#3A2A33;outline:none"></input>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button style="height:44px;padding:0 16px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;font:700 13px Tajawal,sans-serif;color:#5D4A55;cursor:pointer">طلباتي</button>
+              <button style="width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;font:600 12px Fredoka,sans-serif;color:#5D4A55;cursor:pointer">EN</button>
+              <button style="position:relative;height:44px;padding:0 18px;border-radius:999px;border:none;background:#C22B65;color:#fff;display:flex;align-items:center;gap:8px;font:700 13px Tajawal,sans-serif;cursor:pointer">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                السلة · 3
+              </button>
+            </div>
+          </div>
+          <!-- hero band -->
+          <div style="position:relative;background:#FDF2F7;padding:36px 40px 44px;display:flex;align-items:center;gap:40px">
+            <div style="flex:1">
+              <h1 style="margin:0 0 8px;font:800 38px/1.35 Tajawal,sans-serif;color:#3A2A33">منتجات فريدة ومرحة،<br>توصلك لباب البيت</h1>
+              <p style="margin:0 0 20px;font:500 16px/1.6 Tajawal,sans-serif;color:#5D4A55">أكثر من 230 منتجاً مختاراً بعناية · توصيل لجميع محافظات الأردن خلال 24–48 ساعة</p>
+              <div style="display:flex;gap:12px">
+                <button style="height:52px;padding:0 32px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 16px Tajawal,sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(194,43,101,.32)">تسوّق الآن</button>
+                <button style="height:52px;padding:0 28px;border:1.5px solid #C22B65;border-radius:999px;background:transparent;color:#C22B65;font:700 16px Tajawal,sans-serif;cursor:pointer">العروض</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:-10px">
+              <img src="assets/logo.webp" alt="Candy Hon" style="width:170px;height:170px;border-radius:999px;box-shadow:0 10px 28px rgba(194,43,101,.18)"></img>
+            </div>
+            <div style="position:absolute;bottom:-1px;left:0;right:0;height:14px;background:radial-gradient(circle at 14px -4px, #FDF2F7 13px, transparent 14px);background-size:28px 14px;background-repeat:repeat-x;transform:rotate(180deg)"></div>
+          </div>
+          <!-- chips + grid -->
+          <div style="padding:28px 40px 40px">
+            <div style="display:flex;gap:10px;margin-bottom:22px">
+              <button style="height:44px;padding:0 22px;border-radius:999px;border:none;background:#C22B65;color:#fff;font:700 14px Tajawal,sans-serif;cursor:pointer">الكل</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer">ألعاب</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer">حلويات</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer">إكسسوارات</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer">قرطاسية</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1px solid #EBDDE4;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer">ديكور</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+                <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(58,42,51,.05),0 4px 12px rgba(58,42,51,.06);transition:transform 150ms ease-out,box-shadow 150ms ease-out" style-hover="transform:translateY(-2px);box-shadow:0 2px 4px rgba(58,42,51,.06),0 10px 24px rgba(58,42,51,.10)">
+                  <div style="position:relative;aspect-ratio:4/4.4;background:#fff">
+                    <img src="{{ p.img }}" alt="{{ p.nameAr }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ p.imgFilter }}"></img>
+                    <sc-if value="{{ p.isSale }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:10px;inset-inline-start:10px;background:#C22B65;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px;border-radius:999px">عرض</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:10px;inset-inline-start:10px;background:#E4F3FC;color:#1B6899;font:700 12px Tajawal,sans-serif;padding:5px 12px;border-radius:999px;display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1B6899" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>طلب مسبق</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;display:grid;place-items:center">
+                        <span style="background:#3A2A33;color:#fff;font:700 12px Tajawal,sans-serif;padding:7px 16px;border-radius:999px">نفذت الكمية</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding:14px 16px 16px;flex:1">
+                    <span style="font:700 15px/1.4 Tajawal,sans-serif;color:#3A2A33">{{ p.nameAr }}</span>
+                    <span dir="ltr" style="font:500 11px Fredoka,sans-serif;color:#7D6873;text-align:end">{{ p.nameEn }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px">
+                      <div dir="ltr" style="display:flex;align-items:baseline;gap:8px">
+                        <span style="font:600 17px Fredoka,sans-serif;color:{{ p.priceColor }}">{{ p.price }} <span style="font-size:11px">JOD</span></span>
+                        <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
+                          <span style="font:600 12px Fredoka,sans-serif;color:#7D6873;text-decoration:line-through">{{ p.old }}</span>
+                        </sc-if>
+                      </div>
+                      <sc-if value="{{ p.canAdd }}" hint-placeholder-val="{{ true }}">
+                        <button style="width:44px;height:44px;border-radius:999px;border:none;background:#C22B65;display:grid;place-items:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+                      </sc-if>
+                      <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 14px;border-radius:999px;border:1.5px solid #1B6899;background:#fff;color:#1B6899;font:700 12px Tajawal,sans-serif;cursor:pointer;flex-shrink:0">اطلب مسبقاً</button>
+                      </sc-if>
+                      <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 14px;border-radius:999px;border:1.5px solid #EBDDE4;background:#fff;color:#7D6873;font:700 12px Tajawal,sans-serif;cursor:pointer;flex-shrink:0">أعلمني</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border-top:1px solid #F1E3EA;padding:20px 40px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">© كاندي هون 2026 — صُنع بحب في الأردن</span>
+            <span dir="ltr" style="font:500 12px Fredoka,sans-serif;color:#7D6873">Instagram · WhatsApp · Facebook</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">تفاصيل المنتج · سطح المكتب · 880</div>
+          <div data-screen-label="1a Product modal desktop" dir="rtl" style="width:880px;background:rgba(58,42,51,.4);border-radius:24px;padding:36px;box-sizing:border-box">
+            <div style="background:#fff;border-radius:20px;overflow:hidden;display:flex;font-family:Tajawal,sans-serif;box-shadow:0 24px 64px rgba(58,42,51,.25);position:relative">
+              <button style="position:absolute;top:14px;inset-inline-end:14px;width:44px;height:44px;border-radius:999px;border:1px solid #F1E3EA;background:#fff;display:grid;place-items:center;cursor:pointer;z-index:2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+              <div style="width:400px;flex-shrink:0;padding:20px;display:flex;flex-direction:column;gap:10px">
+                <div style="position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1;background:#FFF9F5">
+                  <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=800&auto=format&fit=crop" alt="أضواء نيون LED قوس قزح" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></img>
+                  <span style="position:absolute;top:10px;inset-inline-start:10px;background:#C22B65;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px;border-radius:999px">خصم 25%</span>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <div style="width:64px;height:64px;border-radius:12px;overflow:hidden;border:2px solid #C22B65"><img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                  <div style="width:64px;height:64px;border-radius:12px;overflow:hidden;border:1px solid #F1E3EA;opacity:.75"><img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                  <div style="width:64px;height:64px;border-radius:12px;overflow:hidden;border:1px solid #F1E3EA;opacity:.75"><img src="https://images.unsplash.com/photo-1563170351-be82bc888aa4?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                  <div style="width:64px;height:64px;border-radius:12px;overflow:hidden;border:1px solid #F1E3EA;opacity:.75"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                </div>
+              </div>
+              <div style="flex:1;padding:28px 8px 24px 28px;display:flex;flex-direction:column;gap:14px">
+                <div>
+                  <h3 style="margin:0;font:800 24px/1.4 Tajawal,sans-serif;color:#3A2A33">أضواء نيون LED قوس قزح</h3>
+                  <span dir="ltr" style="font:500 13px Fredoka,sans-serif;color:#7D6873;display:block;text-align:end">Rainbow Neon LED Light</span>
+                </div>
+                <div dir="ltr" style="display:flex;align-items:baseline;gap:12px;justify-content:flex-end">
+                  <span style="font:600 14px Fredoka,sans-serif;color:#7D6873;text-decoration:line-through">16.00 JOD</span>
+                  <span style="font:600 26px Fredoka,sans-serif;color:#C22B65">12.00 JOD</span>
+                </div>
+                <p style="margin:0;font:500 14px/1.7 Tajawal,sans-serif;color:#5D4A55">إضاءة نيون بألوان قوس قزح، مقاس مثالي لغرفة النوم أو المكتب — تعمل بمنفذ USB مع مفتاح تحكم.</p>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="font:700 13px Tajawal,sans-serif;color:#5D4A55">الكمية</span>
+                  <div style="display:flex;align-items:center;border:1px solid #EBDDE4;border-radius:12px;overflow:hidden;height:48px">
+                    <button style="width:46px;height:48px;border:none;background:#fff;color:#C22B65;font:700 20px Fredoka,sans-serif;cursor:pointer">+</button>
+                    <span style="width:44px;text-align:center;font:600 15px Fredoka,sans-serif;color:#3A2A33;background:#FFF9F5;height:48px;display:grid;place-items:center">1</span>
+                    <button style="width:46px;height:48px;border:none;background:#fff;color:#7D6873;font:700 20px Fredoka,sans-serif;cursor:pointer">−</button>
+                  </div>
+                  <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">المتوفر: 8</span>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات إضافية (اختياري)</label>
+                  <div style="height:60px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;padding:10px 12px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">مثال: لون التغليف…</div>
+                </div>
+                <button style="height:52px;border:none;border-radius:14px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(194,43,101,.32);margin-top:auto">
+                  أضف إلى السلة
+                  <span dir="ltr" style="font:600 13px Fredoka,sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">12.00 JOD</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">إتمام الطلب · سطح المكتب · 1280</div>
+        <div data-screen-label="1a Checkout desktop" dir="rtl" style="width:1280px;background:#FFF9F5;border:1px solid #EBDDE4;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+          <div style="background:#fff;padding:12px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F1E3EA">
+            <div style="display:flex;align-items:center;gap:12px">
+              <img src="assets/logo.webp" alt="Candy Hon" style="width:44px;height:44px;border-radius:999px"></img>
+              <span style="font:600 17px Fredoka,sans-serif;color:#3A2A33">Candy Hon</span>
+            </div>
+            <div style="display:flex;gap:18px">
+              <span style="display:flex;align-items:center;gap:6px;font:700 12px Tajawal,sans-serif;color:#1E7A4A"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E7A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>الدفع عند الاستلام</span>
+              <span style="display:flex;align-items:center;gap:6px;font:700 12px Tajawal,sans-serif;color:#1E7A4A"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E7A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>توصيل 24–48 ساعة</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 420px;gap:32px;padding:32px 40px 40px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <h2 style="margin:0;font:800 26px Tajawal,sans-serif;color:#3A2A33">إتمام الطلب</h2>
+              <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">الاسم الكامل</label>
+                  <div style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:500 14px Tajawal,sans-serif;color:#3A2A33">سارة الخطيب</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">رقم الهاتف</label>
+                  <div dir="ltr" style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:500 14px Fredoka,sans-serif;color:#B9A8B1">07X XXX XXXX</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">منطقة التوصيل</label>
+                  <div style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;justify-content:space-between;padding:0 14px">
+                    <span style="font:500 14px Tajawal,sans-serif;color:#3A2A33">عمّان <span dir="ltr" style="font:600 12px Fredoka,sans-serif;color:#7D6873">— 3 JOD</span></span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+                  </div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات (اختياري)</label>
+                  <div style="height:48px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">أي تعليمات للتوصيل؟</div>
+                </div>
+                <div style="grid-column:1/-1">
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">تفاصيل العنوان</label>
+                  <div style="height:64px;border:1px solid #EBDDE4;border-radius:12px;background:#FFF9F5;padding:10px 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">الحي، الشارع، رقم البناية…</div>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px">
+                <span style="font:800 15px Tajawal,sans-serif;color:#3A2A33">طريقة الدفع</span>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div style="border:2px solid #C22B65;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;background:#FDF2F7">
+                    <span style="width:20px;height:20px;border-radius:999px;border:6px solid #C22B65;background:#fff;flex-shrink:0"></span>
+                    <div>
+                      <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">الدفع عند الاستلام</div>
+                      <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">ادفع كاش عند وصول طلبك</div>
+                    </div>
+                  </div>
+                  <div style="border:1px solid #EBDDE4;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;background:#fff">
+                    <span style="width:20px;height:20px;border-radius:999px;border:2px solid #B9A8B1;background:#fff;flex-shrink:0;box-sizing:border-box"></span>
+                    <div>
+                      <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">Cliq — تحويل فوري</div>
+                      <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">يُؤكد فور استلام الحوالة</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #F1E3EA;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;position:sticky;top:24px">
+              <span style="font:800 16px Tajawal,sans-serif;color:#3A2A33">ملخص الطلب</span>
+              <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;align-items:center">
+                  <img src="{{ it.img }}" alt="{{ it.nameAr }}" style="width:44px;height:44px;border-radius:10px;object-fit:cover"></img>
+                  <div style="flex:1;min-width:0">
+                    <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ it.nameAr }}</span>
+                    <span style="font:500 11px Tajawal,sans-serif;color:#7D6873">الكمية: {{ it.qty }}</span>
+                  </div>
+                  <span dir="ltr" style="font:600 13px Fredoka,sans-serif;color:#3A2A33">{{ it.line }} JOD</span>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px;border-top:1px solid #F1E3EA;padding-top:12px">
+                <div dir="ltr" style="flex:1;height:44px;border:1px dashed #EFA3C4;border-radius:12px;background:#FFF9F5;display:flex;align-items:center;padding:0 14px;font:600 12px Fredoka,sans-serif;color:#B9A8B1;letter-spacing:.12em">PROMO CODE</div>
+                <button style="height:44px;padding:0 16px;border:none;border-radius:12px;background:#3A2A33;color:#fff;font:700 12px Tajawal,sans-serif;cursor:pointer">تطبيق</button>
+              </div>
+              <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>مجموع المنتجات</span><span dir="ltr" style="font:600 13px Fredoka,sans-serif">20.00 JOD</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>رسوم التوصيل — عمّان</span><span dir="ltr" style="font:600 13px Fredoka,sans-serif">3.00 JOD</span></div>
+              <div style="display:flex;justify-content:space-between;border-top:1px solid #F1E3EA;padding-top:10px;font:800 16px Tajawal,sans-serif;color:#3A2A33"><span>المجموع الكلي</span><span dir="ltr" style="font:600 18px Fredoka,sans-serif;color:#C22B65">23.00 JOD</span></div>
+              <button style="height:52px;border:none;border-radius:14px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(194,43,101,.32)">تأكيد الطلب</button>
+              <span style="text-align:center;font:500 11px Tajawal,sans-serif;color:#7D6873">الحد الأدنى للطلب <span dir="ltr">5 JOD</span> · بالضغط أنت توافق على شروط الاستخدام</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-screen-label="1a Micro-interactions" style="width:820px;background:#fff;border:1px solid #EBDDE4;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:18px;font-family:Tajawal,sans-serif">
+        <div style="font:600 15px Fredoka,sans-serif;color:#3A2A33">Micro-interactions <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">— shared spec, both directions · opacity/transform only, no loops</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="border:1px solid #F1E3EA;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px">
+            <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33">Card hover / press</span>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Hover (desktop): <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">translateY(-2px)</code> + shadow-hover, 150ms ease-out. Press (mobile): <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">scale(.98)</code>, 120ms. No image zoom — GPU budget.</span>
+          </div>
+          <div style="border:1px solid #F1E3EA;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px">
+            <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33">Add-to-cart feedback</span>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Button: + icon → ✓ for 800ms (icon crossfade 120ms), bg stays pink-600. Cart FAB counter bumps <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">scale 1→1.2→1</code> in 200ms. No flying-item animation.</span>
+          </div>
+          <div style="border:1px solid #F1E3EA;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px">
+            <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33">Toast</span>
+            <div dir="rtl" style="display:flex;align-items:center;gap:10px;background:#3A2A33;color:#fff;border-radius:14px;padding:12px 16px;width:fit-content">
+              <span style="width:22px;height:22px;border-radius:999px;background:#34A183;display:grid;place-items:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+              <span style="font:700 13px Tajawal,sans-serif">أُضيف إلى السلة</span>
+              <span dir="ltr" style="font:600 12px Fredoka,sans-serif;color:#F6C7DC">12.00 JOD</span>
+            </div>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Bottom-center, above FAB. Enter: <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">translateY(12px)+fade</code> 200ms; auto-dismiss 2.5s; exit fade 150ms. One at a time — replace, don't stack.</span>
+          </div>
+          <div style="border:1px solid #F1E3EA;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px">
+            <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33">Sheets, entrances & focus</span>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Modal/drawer: slide 240ms ease-out + scrim fade 200ms (flat rgba, no blur). Grid entrance: rows fade+8px rise 240ms, stagger 40ms capped at 120ms total; hero renders instantly with zero animation. Inputs focus: border pink-400 + 2px pink-100 ring, 120ms. Buttons press: <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">scale(.97)</code>.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ OPTION 1B — STICKER & SCRAPBOOK ============ -->
+    <div id="1b" style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="background:#1B6899;color:#fff;font:700 13px Fredoka,sans-serif;padding:5px 12px;border-radius:999px">1b</span>
+        <div>
+          <div style="font:600 18px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">Sticker &amp; scrapbook</div>
+          <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">Warmer cream, sticker cards with offset shadows, ribbons &amp; dotted frames. Baloo Bhaijaan 2 display (AR+EN) + Tajawal body.</div>
+        </div>
+      </div>
+      <div data-screen-label="1b Tokens" style="width:820px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 3px 0 #EDD6DE">
+        <div style="font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">Token overrides <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">— same color scales as 1a; only surface, radii, shadow &amp; display font change</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;box-shadow:0 3px 0 #EDD6DE;display:flex;flex-direction:column;gap:6px">
+            <span style="font:700 12px Tajawal,sans-serif;color:#7D6873">SURFACE &amp; BORDER</span>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Base <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">#FDF3EB</code> warm cream · borders <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">1.5px #EAD3DD</code> · radii lg 20 / xl 28.</span>
+          </div>
+          <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;box-shadow:0 3px 0 #EDD6DE;display:flex;flex-direction:column;gap:6px">
+            <span style="font:700 12px Tajawal,sans-serif;color:#7D6873">STICKER SHADOW</span>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Hard offset <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">0 3px 0 #EDD6DE</code> (hover 5px) — zero blur radius, cheapest possible paint.</span>
+          </div>
+          <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;box-shadow:0 3px 0 #EDD6DE;display:flex;flex-direction:column;gap:6px">
+            <span style="font:700 12px Tajawal,sans-serif;color:#7D6873">DISPLAY TYPE — one face, both scripts</span>
+            <span style="font:700 20px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">كاندي هون · Candy Hon</span>
+            <span style="font:500 12px/1.6 Tajawal,sans-serif;color:#5D4A55">Baloo Bhaijaan 2 — rounded Arabic-native display; Tajawal stays for body.</span>
+          </div>
+          <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;box-shadow:0 3px 0 #EDD6DE;display:flex;flex-direction:column;gap:8px">
+            <span style="font:700 12px Tajawal,sans-serif;color:#7D6873">MOTIFS — ribbon · dotted frame · scallop</span>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="position:relative;background:#C22B65;color:#fff;font:700 11px Tajawal,sans-serif;padding:5px 12px">عرض<span style="position:absolute;top:0;bottom:0;inset-inline-end:-8px;width:0;border-top:12px solid #C22B65;border-bottom:12px solid #C22B65;border-inline-end:8px solid transparent"></span></span>
+              <span style="width:56px;height:36px;border:2px dotted #EFA3C4;border-radius:12px"></span>
+              <span style="width:80px;height:10px;background:radial-gradient(circle at 8px -2px, #EFA3C4 7px, transparent 8px);background-size:16px 10px;background-repeat:repeat-x"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">HOME · الجوال · عربي RTL · 380</div>
+          <div data-screen-label="1b Home mobile AR" dir="rtl" style="position:relative;width:380px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:32px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+            <!-- announcement ribbon -->
+            <div style="background:#C22B65;padding:8px 16px;text-align:center;font:700 12px Tajawal,sans-serif;color:#fff">🎀 توصيل مجاني للطلبات فوق <span dir="ltr">25 JOD</span> — لجميع محافظات الأردن</div>
+            <!-- header -->
+            <div style="background:#FDF3EB;padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="assets/logo.webp" alt="Candy Hon" style="width:46px;height:46px;border-radius:999px;border:2px solid #fff;box-shadow:0 2px 0 #EDD6DE"></img>
+                <div style="display:flex;flex-direction:column">
+                  <span style="font:700 17px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;line-height:1.2">كاندي هون</span>
+                  <span style="font:600 10px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;letter-spacing:.06em">CANDY HON</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#5D4A55;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">EN</button>
+                <button style="position:relative;width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                  <span style="position:absolute;top:-3px;inset-inline-start:-3px;background:#C22B65;color:#fff;font:700 10px Fredoka,sans-serif;width:19px;height:19px;border-radius:999px;display:grid;place-items:center;border:2px solid #FDF3EB;box-sizing:border-box">3</span>
+                </button>
+              </div>
+            </div>
+            <!-- compact hero: sticker card -->
+            <div style="margin:8px 16px 0;background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;box-shadow:0 3px 0 #EDD6DE;padding:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:6px;border:2px dotted #F6C7DC;border-radius:14px;pointer-events:none"></div>
+              <h2 style="margin:0 0 4px;font:700 22px/1.4 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;position:relative">منتجات فريدة ومرحة، توصلك لباب البيت 🍭</h2>
+              <p style="margin:0;font:500 13px/1.6 Tajawal,sans-serif;color:#7D6873;position:relative">أكثر من 230 منتجاً · توصيل خلال 24–48 ساعة</p>
+            </div>
+            <!-- search -->
+            <div style="padding:12px 16px 0;position:relative">
+              <svg style="position:absolute;top:50%;transform:translateY(-25%);inset-inline-start:32px" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input placeholder="ابحث عن منتج…" style="width:100%;box-sizing:border-box;height:48px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;padding:0 44px 0 16px;font:500 14px Tajawal,sans-serif;color:#3A2A33;outline:none;box-shadow:0 2px 0 #EDD6DE"></input>
+            </div>
+            <!-- category chips -->
+            <div style="display:flex;gap:8px;padding:12px 16px;overflow:hidden">
+              <button style="height:40px;padding:0 18px;border-radius:999px;border:none;background:#C22B65;color:#fff;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #7E1740">الكل</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">ألعاب</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">حلويات</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 13px Tajawal,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">إكسسوارات</button>
+            </div>
+            <!-- product grid 2col : sticker cards -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:4px 16px 90px">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+                <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 0 #EDD6DE">
+                  <div style="position:relative;aspect-ratio:1;background:#fff;margin:8px 8px 0;border-radius:14px;overflow:hidden">
+                    <img src="{{ p.img }}" alt="{{ p.nameAr }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ p.imgFilter }}"></img>
+                    <sc-if value="{{ p.isSale }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:0;background:#C22B65;color:#fff;font:700 11px Tajawal,sans-serif;padding:4px 10px 4px 14px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 50%,100% 100%,0 100%)">عرض</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:0;background:#1B6899;color:#fff;font:700 11px Tajawal,sans-serif;padding:4px 10px 4px 14px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 50%,100% 100%,0 100%)">طلب مسبق</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;display:grid;place-items:center">
+                        <span style="background:#3A2A33;color:#fff;font:700 11px Tajawal,sans-serif;padding:6px 14px;border-radius:999px;transform:rotate(-4deg)">نفذت الكمية</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;flex:1">
+                    <span style="font:700 13px/1.4 Tajawal,sans-serif;color:#3A2A33;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameAr }}</span>
+                    <span dir="ltr" style="font:600 10px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-align:end;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameEn }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
+                      <div dir="ltr" style="display:flex;flex-direction:column;line-height:1.1">
+                        <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
+                          <span style="font:600 10px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-decoration:line-through">{{ p.old }} JOD</span>
+                        </sc-if>
+                        <span style="font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:{{ p.priceColor }}">{{ p.price }} <span style="font-size:10px">JOD</span></span>
+                      </div>
+                      <sc-if value="{{ p.canAdd }}" hint-placeholder-val="{{ true }}">
+                        <button style="width:44px;height:44px;border-radius:999px;border:none;background:#C22B65;display:grid;place-items:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 0 #7E1740"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+                      </sc-if>
+                      <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #1B6899;background:#fff;color:#1B6899;font:700 11px Tajawal,sans-serif;cursor:pointer;flex-shrink:0;box-shadow:0 2px 0 #A9D9F3">اطلب مسبقاً</button>
+                      </sc-if>
+                      <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#7D6873;font:700 11px Tajawal,sans-serif;cursor:pointer;flex-shrink:0">أعلمني</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <!-- floating cart -->
+            <div style="position:absolute;bottom:16px;inset-inline-start:16px;display:flex;align-items:center;gap:10px;background:#C22B65;color:#fff;height:52px;padding:0 18px;border-radius:999px;box-shadow:0 4px 0 #7E1740">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span style="font:700 14px Tajawal,sans-serif">السلة · 3</span>
+              <span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">20.00 JOD</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">HOME · MOBILE · EN LTR MIRROR · 380</div>
+          <div data-screen-label="1b Home mobile EN" dir="ltr" style="position:relative;width:380px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:32px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:'Baloo Bhaijaan 2',sans-serif">
+            <div style="background:#C22B65;padding:8px 16px;text-align:center;font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#fff">🎀 Free delivery over <span dir="ltr">25 JOD</span> — all of Jordan</div>
+            <div style="background:#FDF3EB;padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="assets/logo.webp" alt="Candy Hon" style="width:46px;height:46px;border-radius:999px;border:2px solid #fff;box-shadow:0 2px 0 #EDD6DE"></img>
+                <div style="display:flex;flex-direction:column">
+                  <span style="font:700 17px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;line-height:1.2">Candy Hon</span>
+                  <span style="font:700 10px Tajawal,sans-serif;color:#7D6873">كاندي هون</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;font:700 12px Tajawal,sans-serif;color:#5D4A55;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">ع</button>
+                <button style="position:relative;width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                  <span style="position:absolute;top:-3px;inset-inline-start:-3px;background:#C22B65;color:#fff;font:700 10px Fredoka,sans-serif;width:19px;height:19px;border-radius:999px;display:grid;place-items:center;border:2px solid #FDF3EB;box-sizing:border-box">3</span>
+                </button>
+              </div>
+            </div>
+            <div style="margin:8px 16px 0;background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;box-shadow:0 3px 0 #EDD6DE;padding:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:6px;border:2px dotted #F6C7DC;border-radius:14px;pointer-events:none"></div>
+              <h2 style="margin:0 0 4px;font:600 21px/1.3 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;position:relative">Unique &amp; fun finds, delivered to your door 🍭</h2>
+              <p style="margin:0;font:500 13px/1.5 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;position:relative">230+ products · delivered in 24–48h</p>
+            </div>
+            <div style="padding:12px 16px 0;position:relative">
+              <svg style="position:absolute;top:50%;transform:translateY(-25%);inset-inline-start:32px" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input placeholder="Search products…" style="width:100%;box-sizing:border-box;height:48px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;padding:0 16px 0 44px;font:500 14px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;outline:none;box-shadow:0 2px 0 #EDD6DE"></input>
+            </div>
+            <div style="display:flex;gap:8px;padding:12px 16px;overflow:hidden">
+              <button style="height:40px;padding:0 18px;border-radius:999px;border:none;background:#C22B65;color:#fff;font:600 13px 'Baloo Bhaijaan 2',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #7E1740">All</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:600 13px 'Baloo Bhaijaan 2',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">Toys</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:600 13px 'Baloo Bhaijaan 2',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">Sweets</button>
+              <button style="height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:600 13px 'Baloo Bhaijaan 2',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">Accessories</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:4px 16px 90px">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+                <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 0 #EDD6DE">
+                  <div style="position:relative;aspect-ratio:1;background:#fff;margin:8px 8px 0;border-radius:14px;overflow:hidden">
+                    <img src="{{ p.img }}" alt="{{ p.nameEn }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ p.imgFilter }}"></img>
+                    <sc-if value="{{ p.isSale }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:0;background:#C22B65;color:#fff;font:600 10px 'Baloo Bhaijaan 2',sans-serif;padding:4px 14px 4px 10px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 50%,100% 100%,0 100%);letter-spacing:.04em">SALE</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;inset-inline-start:0;background:#1B6899;color:#fff;font:600 10px 'Baloo Bhaijaan 2',sans-serif;padding:4px 14px 4px 10px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 50%,100% 100%,0 100%);letter-spacing:.04em">PRE-ORDER</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;display:grid;place-items:center">
+                        <span style="background:#3A2A33;color:#fff;font:600 10px 'Baloo Bhaijaan 2',sans-serif;padding:6px 14px;border-radius:999px;transform:rotate(-4deg);letter-spacing:.04em">OUT OF STOCK</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;flex:1">
+                    <span style="font:500 13px/1.3 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameEn }}</span>
+                    <span dir="rtl" style="font:500 10px Tajawal,sans-serif;color:#7D6873;text-align:end;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ p.nameAr }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px">
+                      <div dir="ltr" style="display:flex;flex-direction:column;line-height:1.1">
+                        <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
+                          <span style="font:600 10px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-decoration:line-through">{{ p.old }} JOD</span>
+                        </sc-if>
+                        <span style="font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:{{ p.priceColor }}">{{ p.price }} <span style="font-size:10px">JOD</span></span>
+                      </div>
+                      <sc-if value="{{ p.canAdd }}" hint-placeholder-val="{{ true }}">
+                        <button style="width:44px;height:44px;border-radius:999px;border:none;background:#C22B65;display:grid;place-items:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 0 #7E1740"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+                      </sc-if>
+                      <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #1B6899;background:#fff;color:#1B6899;font:600 10px 'Baloo Bhaijaan 2',sans-serif;cursor:pointer;flex-shrink:0;box-shadow:0 2px 0 #A9D9F3">Pre-order</button>
+                      </sc-if>
+                      <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 12px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#7D6873;font:600 10px 'Baloo Bhaijaan 2',sans-serif;cursor:pointer;flex-shrink:0">Notify me</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute;bottom:16px;inset-inline-start:16px;display:flex;align-items:center;gap:10px;background:#C22B65;color:#fff;height:52px;padding:0 18px;border-radius:999px;box-shadow:0 4px 0 #7E1740">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span style="font:600 14px 'Baloo Bhaijaan 2',sans-serif">Cart · 3</span>
+              <span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">20.00 JOD</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">تفاصيل المنتج · Bottom sheet · 380</div>
+          <div data-screen-label="1b Product modal mobile" dir="rtl" style="width:380px;background:rgba(58,42,51,.4);border-radius:32px;padding:44px 0 0;overflow:hidden">
+            <div style="background:#FDF3EB;border-radius:28px 28px 32px 32px;overflow:hidden;font-family:Tajawal,sans-serif;box-shadow:0 -8px 32px rgba(58,42,51,.14)">
+              <div style="display:grid;place-items:center;padding:10px 0 4px"><div style="width:40px;height:4px;border-radius:999px;background:#EAD3DD"></div></div>
+              <!-- carousel: dotted sticker frame -->
+              <div style="position:relative;margin:8px 16px 0;border-radius:20px;overflow:hidden;aspect-ratio:1;background:#fff;border:1.5px solid #EAD3DD;box-shadow:0 3px 0 #EDD6DE">
+                <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=800&auto=format&fit=crop" alt="أضواء نيون LED قوس قزح" style="position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:cover;border-radius:14px"></img>
+                <div style="position:absolute;inset:6px;border:2px dotted rgba(255,255,255,.9);border-radius:14px;pointer-events:none"></div>
+                <span style="position:absolute;top:14px;inset-inline-start:0;background:#C22B65;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px 5px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%)">خصم 25%</span>
+                <button style="position:absolute;top:12px;inset-inline-end:12px;width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 #EDD6DE"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+                <div style="position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:6px">
+                  <span style="width:18px;height:6px;border-radius:999px;background:#C22B65"></span>
+                  <span style="width:6px;height:6px;border-radius:999px;background:#F6C7DC"></span>
+                  <span style="width:6px;height:6px;border-radius:999px;background:#F6C7DC"></span>
+                  <span style="width:6px;height:6px;border-radius:999px;background:#F6C7DC"></span>
+                </div>
+              </div>
+              <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <h3 style="margin:0;font:700 19px/1.4 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">أضواء نيون LED قوس قزح</h3>
+                  <span dir="ltr" style="font:500 12px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;display:block;text-align:end">Rainbow Neon LED Light</span>
+                </div>
+                <div dir="ltr" style="display:flex;align-items:baseline;gap:10px;justify-content:flex-end">
+                  <span style="font:600 13px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-decoration:line-through">16.00 JOD</span>
+                  <span style="font:700 22px 'Baloo Bhaijaan 2',sans-serif;color:#C22B65">12.00 JOD</span>
+                </div>
+                <p style="margin:0;font:500 13px/1.6 Tajawal,sans-serif;color:#5D4A55">إضاءة نيون بألوان قوس قزح مع مقاس مثالي لغرفة النوم أو المكتب — تعمل بمنفذ USB.</p>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="font:700 13px Tajawal,sans-serif;color:#5D4A55">الكمية</span>
+                  <div style="display:flex;align-items:center;border:1.5px solid #EAD3DD;border-radius:999px;overflow:hidden;height:48px;background:#fff;box-shadow:0 2px 0 #EDD6DE">
+                    <button style="width:46px;height:48px;border:none;background:#fff;color:#C22B65;font:700 20px Fredoka,sans-serif;cursor:pointer">+</button>
+                    <span style="width:40px;text-align:center;font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">1</span>
+                    <button style="width:46px;height:48px;border:none;background:#fff;color:#7D6873;font:700 20px Fredoka,sans-serif;cursor:pointer">−</button>
+                  </div>
+                  <span style="font:500 12px Tajawal,sans-serif;color:#7D6873;margin-inline-start:auto">المتوفر: 8</span>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات إضافية (اختياري)</label>
+                  <div style="height:64px;border:1.5px solid #EAD3DD;border-radius:16px;background:#fff;padding:10px 12px;font:500 13px Tajawal,sans-serif;color:#B9A8B1;box-shadow:0 2px 0 #EDD6DE">مثال: لون التغليف…</div>
+                </div>
+                <button style="height:52px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 0 #7E1740">
+                  أضف إلى السلة
+                  <span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">12.00 JOD</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">درج السلة · Drawer · 380</div>
+          <div data-screen-label="1b Cart drawer" dir="rtl" style="width:380px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:32px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif;display:flex;flex-direction:column">
+            <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dotted #EAD3DD">
+              <h3 style="margin:0;font:700 19px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">سلة التسوق <span style="color:#7D6873;font-size:14px">(3)</span></h3>
+              <button style="width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 #EDD6DE"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5D4A55" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+            </div>
+            <div style="margin:14px 16px 0;padding:12px 14px;background:#fff;border:1.5px solid #EAD3DD;border-radius:16px;box-shadow:0 2px 0 #EDD6DE">
+              <div style="font:700 12px Tajawal,sans-serif;color:#7E1740;margin-bottom:8px">أضف <span dir="ltr">5.00 JOD</span> لتحصل على توصيل مجاني 🎀</div>
+              <div style="height:8px;border-radius:999px;background:#FBE3EE;overflow:hidden"><div style="width:80%;height:100%;border-radius:999px;background:#C22B65"></div></div>
+            </div>
+            <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;align-items:center;background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:10px;box-shadow:0 3px 0 #EDD6DE">
+                  <img src="{{ it.img }}" alt="{{ it.nameAr }}" style="width:56px;height:56px;border-radius:14px;object-fit:cover;flex-shrink:0;border:1.5px solid #F5EAF0"></img>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ it.nameAr }}</span>
+                      <sc-if value="{{ it.isPre }}" hint-placeholder-val="{{ false }}">
+                        <span style="background:#1B6899;color:#fff;font:700 10px Tajawal,sans-serif;padding:2px 8px 2px 11px;clip-path:polygon(0 0,100% 0,calc(100% - 6px) 50%,100% 100%,0 100%);white-space:nowrap">طلب مسبق</span>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ it.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="font:500 11px Tajawal,sans-serif;color:#1B6899">يتوفر خلال ~10 أيام</span>
+                    </sc-if>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                      <div style="display:flex;align-items:center;border:1.5px solid #EAD3DD;border-radius:999px;overflow:hidden;background:#FDF3EB">
+                        <button style="width:36px;height:40px;border:none;background:transparent;color:#C22B65;font:700 16px Fredoka,sans-serif;cursor:pointer">+</button>
+                        <span style="width:26px;text-align:center;font:700 13px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">{{ it.qty }}</span>
+                        <button style="width:36px;height:40px;border:none;background:transparent;color:#7D6873;font:700 16px Fredoka,sans-serif;cursor:pointer">−</button>
+                      </div>
+                      <span dir="ltr" style="font:700 14px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">{{ it.line }} JOD</span>
+                    </div>
+                  </div>
+                  <button style="width:36px;height:36px;border-radius:999px;border:none;background:transparent;display:grid;place-items:center;cursor:pointer;align-self:flex-start"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B9A8B1" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:auto;border-top:2px dotted #EAD3DD;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fff">
+              <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>المجموع الفرعي</span><span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif">20.00 JOD</span></div>
+              <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">رسوم التوصيل تُحسب عند إتمام الطلب</div>
+              <button style="height:52px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 0 #7E1740">
+                إتمام الطلب
+                <span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">20.00 JOD</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">إتمام الطلب · الجوال · 380</div>
+          <div data-screen-label="1b Checkout mobile" dir="rtl" style="position:relative;width:380px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:32px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+            <div style="background:#FDF3EB;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:2px dotted #EAD3DD">
+              <button style="width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 #EDD6DE"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+              <h3 style="margin:0;font:700 19px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">إتمام الطلب</h3>
+            </div>
+            <div style="display:flex;justify-content:center;gap:18px;padding:10px 16px;background:#E2F4EE">
+              <span style="display:flex;align-items:center;gap:6px;font:700 11px Tajawal,sans-serif;color:#147259"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#147259" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>الدفع عند الاستلام</span>
+              <span style="display:flex;align-items:center;gap:6px;font:700 11px Tajawal,sans-serif;color:#147259"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#147259" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>توصيل 24–48 ساعة</span>
+            </div>
+            <div style="padding:14px 16px 96px;display:flex;flex-direction:column;gap:14px">
+              <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 0 #EDD6DE">
+                <div style="display:flex">
+                  <img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=200&auto=format&fit=crop" alt="" style="width:36px;height:36px;border-radius:12px;object-fit:cover;border:2px solid #fff"></img>
+                  <img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?q=80&w=200&auto=format&fit=crop" alt="" style="width:36px;height:36px;border-radius:12px;object-fit:cover;border:2px solid #fff;margin-inline-start:-12px"></img>
+                  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=200&auto=format&fit=crop" alt="" style="width:36px;height:36px;border-radius:12px;object-fit:cover;border:2px solid #fff;margin-inline-start:-12px"></img>
+                </div>
+                <div style="flex:1"><span style="font:700 13px Tajawal,sans-serif;color:#3A2A33">3 منتجات</span> <span dir="ltr" style="font:700 12px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873">· 20.00 JOD</span></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+              <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 3px 0 #EDD6DE">
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">الاسم الكامل</label>
+                  <div style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:500 14px Tajawal,sans-serif;color:#3A2A33">سارة الخطيب</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">رقم الهاتف</label>
+                  <div dir="ltr" style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:500 14px 'Baloo Bhaijaan 2',sans-serif;color:#B9A8B1">07X XXX XXXX</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">منطقة التوصيل</label>
+                  <div style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;justify-content:space-between;padding:0 14px">
+                    <span style="font:500 14px Tajawal,sans-serif;color:#3A2A33">عمّان <span dir="ltr" style="font:700 12px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873">— 3 JOD</span></span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+                  </div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">تفاصيل العنوان</label>
+                  <div style="height:64px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;padding:10px 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">الحي، الشارع، رقم البناية…</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات (اختياري)</label>
+                  <div style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">أي تعليمات للتوصيل؟</div>
+                </div>
+              </div>
+              <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 3px 0 #EDD6DE">
+                <span style="font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">طريقة الدفع</span>
+                <div style="border:2px solid #C22B65;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#FDF2F7;box-shadow:0 2px 0 #EDD6DE">
+                  <span style="width:20px;height:20px;border-radius:999px;border:6px solid #C22B65;background:#fff;flex-shrink:0"></span>
+                  <div style="flex:1">
+                    <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">الدفع عند الاستلام</div>
+                    <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">ادفع كاش عند وصول طلبك</div>
+                  </div>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C22B65" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle></svg>
+                </div>
+                <div style="border:1.5px solid #EAD3DD;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#fff">
+                  <span style="width:20px;height:20px;border-radius:999px;border:2px solid #B9A8B1;background:#fff;flex-shrink:0;box-sizing:border-box"></span>
+                  <div style="flex:1">
+                    <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">Cliq — تحويل فوري</div>
+                    <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">يُؤكد طلبك فور استلام الحوالة</div>
+                  </div>
+                  <span dir="ltr" style="font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#1B6899;background:#E4F3FC;padding:4px 10px;border-radius:999px">CliQ</span>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:2px">
+                  <div dir="ltr" style="flex:1;height:48px;border:2px dashed #EFA3C4;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:600 13px 'Baloo Bhaijaan 2',sans-serif;color:#B9A8B1;letter-spacing:.12em">PROMO CODE</div>
+                  <button style="height:48px;padding:0 18px;border:none;border-radius:14px;background:#3A2A33;color:#fff;font:700 13px Tajawal,sans-serif;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">تطبيق</button>
+                </div>
+              </div>
+              <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 3px 0 #EDD6DE">
+                <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>مجموع المنتجات</span><span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif">20.00 JOD</span></div>
+                <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>رسوم التوصيل — عمّان</span><span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif">3.00 JOD</span></div>
+                <div style="display:flex;justify-content:space-between;border-top:2px dotted #EAD3DD;padding-top:10px;margin-top:2px;font:700 16px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33"><span>المجموع الكلي</span><span dir="ltr" style="font:700 18px 'Baloo Bhaijaan 2',sans-serif;color:#C22B65">23.00 JOD</span></div>
+              </div>
+            </div>
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:2px dotted #EAD3DD;padding:12px 16px;display:flex;align-items:center;gap:12px">
+              <div style="display:flex;flex-direction:column;line-height:1.2">
+                <span style="font:500 11px Tajawal,sans-serif;color:#7D6873">المجموع</span>
+                <span dir="ltr" style="font:700 16px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">23.00 JOD</span>
+              </div>
+              <button style="flex:1;height:52px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;box-shadow:0 4px 0 #7E1740">تأكيد الطلب</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">HOME · سطح المكتب · 1280</div>
+        <div data-screen-label="1b Home desktop" dir="rtl" style="width:1280px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+          <div style="background:#C22B65;padding:8px;text-align:center;font:700 13px Tajawal,sans-serif;color:#fff">🎀 توصيل مجاني للطلبات فوق <span dir="ltr">25 JOD</span> — لجميع محافظات الأردن</div>
+          <div style="padding:14px 40px;display:flex;align-items:center;gap:24px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <img src="assets/logo.webp" alt="Candy Hon" style="width:52px;height:52px;border-radius:999px;border:2px solid #fff;box-shadow:0 2px 0 #EDD6DE"></img>
+              <div style="display:flex;flex-direction:column">
+                <span style="font:700 19px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33;line-height:1.2">كاندي هون</span>
+                <span style="font:600 10px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;letter-spacing:.08em">CANDY HON</span>
+              </div>
+            </div>
+            <div style="position:relative;flex:1;max-width:460px;margin:0 auto">
+              <svg style="position:absolute;top:50%;transform:translateY(-50%);inset-inline-start:16px" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input placeholder="ابحث عن منتج…" style="width:100%;box-sizing:border-box;height:46px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;padding:0 44px 0 18px;font:500 14px Tajawal,sans-serif;color:#3A2A33;outline:none;box-shadow:0 2px 0 #EDD6DE"></input>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button style="height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;font:700 13px Tajawal,sans-serif;color:#5D4A55;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">طلباتي</button>
+              <button style="width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#5D4A55;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">EN</button>
+              <button style="height:44px;padding:0 18px;border-radius:999px;border:none;background:#C22B65;color:#fff;display:flex;align-items:center;gap:8px;font:700 13px Tajawal,sans-serif;cursor:pointer;box-shadow:0 3px 0 #7E1740">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                السلة · 3
+              </button>
+            </div>
+          </div>
+          <!-- hero sticker band -->
+          <div style="margin:8px 40px 0;background:#fff;border:1.5px solid #EAD3DD;border-radius:24px;box-shadow:0 4px 0 #EDD6DE;padding:32px 36px;position:relative;overflow:hidden;display:flex;align-items:center;gap:36px">
+            <div style="position:absolute;inset:10px;border:2px dotted #F6C7DC;border-radius:18px;pointer-events:none"></div>
+            <div style="flex:1;position:relative">
+              <h1 style="margin:0 0 8px;font:700 36px/1.4 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">منتجات فريدة ومرحة، توصلك لباب البيت 🍭</h1>
+              <p style="margin:0 0 20px;font:500 16px/1.6 Tajawal,sans-serif;color:#5D4A55">أكثر من 230 منتجاً مختاراً بعناية · توصيل لجميع محافظات الأردن خلال 24–48 ساعة</p>
+              <div style="display:flex;gap:12px">
+                <button style="height:52px;padding:0 32px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 16px Tajawal,sans-serif;cursor:pointer;box-shadow:0 4px 0 #7E1740">تسوّق الآن</button>
+                <button style="height:52px;padding:0 28px;border:1.5px solid #C22B65;border-radius:999px;background:#fff;color:#C22B65;font:700 16px Tajawal,sans-serif;cursor:pointer;box-shadow:0 3px 0 #EDD6DE">العروض</button>
+              </div>
+            </div>
+            <img src="assets/logo.webp" alt="Candy Hon" style="width:160px;height:160px;border-radius:999px;position:relative;transform:rotate(4deg);box-shadow:0 4px 0 #EDD6DE"></img>
+          </div>
+          <div style="padding:24px 40px 40px">
+            <div style="display:flex;gap:10px;margin-bottom:22px">
+              <button style="height:44px;padding:0 22px;border-radius:999px;border:none;background:#C22B65;color:#fff;font:700 14px Tajawal,sans-serif;cursor:pointer;box-shadow:0 2px 0 #7E1740">الكل</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">ألعاب</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">حلويات</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">إكسسوارات</button>
+              <button style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#5D4A55;font:700 14px Tajawal,sans-serif;cursor:pointer;box-shadow:0 2px 0 #EDD6DE">قرطاسية</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+              <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+                <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 0 #EDD6DE;transition:transform 150ms ease-out,box-shadow 150ms ease-out" style-hover="transform:translateY(-2px);box-shadow:0 5px 0 #E7C9D6">
+                  <div style="position:relative;aspect-ratio:1;background:#fff;margin:8px 8px 0;border-radius:14px;overflow:hidden">
+                    <img src="{{ p.img }}" alt="{{ p.nameAr }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ p.imgFilter }}"></img>
+                    <sc-if value="{{ p.isSale }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:10px;inset-inline-start:0;background:#C22B65;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px 5px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%)">عرض</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:10px;inset-inline-start:0;background:#1B6899;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px 5px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%)">طلب مسبق</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;display:grid;place-items:center">
+                        <span style="background:#3A2A33;color:#fff;font:700 12px Tajawal,sans-serif;padding:7px 16px;border-radius:999px;transform:rotate(-4deg)">نفذت الكمية</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding:12px 14px 14px;flex:1">
+                    <span style="font:700 15px/1.4 Tajawal,sans-serif;color:#3A2A33">{{ p.nameAr }}</span>
+                    <span dir="ltr" style="font:600 11px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-align:end">{{ p.nameEn }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px">
+                      <div dir="ltr" style="display:flex;align-items:baseline;gap:8px">
+                        <span style="font:700 17px 'Baloo Bhaijaan 2',sans-serif;color:{{ p.priceColor }}">{{ p.price }} <span style="font-size:11px">JOD</span></span>
+                        <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
+                          <span style="font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-decoration:line-through">{{ p.old }}</span>
+                        </sc-if>
+                      </div>
+                      <sc-if value="{{ p.canAdd }}" hint-placeholder-val="{{ true }}">
+                        <button style="width:44px;height:44px;border-radius:999px;border:none;background:#C22B65;display:grid;place-items:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 0 #7E1740"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+                      </sc-if>
+                      <sc-if value="{{ p.isPre }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 14px;border-radius:999px;border:1.5px solid #1B6899;background:#fff;color:#1B6899;font:700 12px Tajawal,sans-serif;cursor:pointer;flex-shrink:0;box-shadow:0 2px 0 #A9D9F3">اطلب مسبقاً</button>
+                      </sc-if>
+                      <sc-if value="{{ p.isOos }}" hint-placeholder-val="{{ false }}">
+                        <button style="height:44px;padding:0 14px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;color:#7D6873;font:700 12px Tajawal,sans-serif;cursor:pointer;flex-shrink:0">أعلمني</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="border-top:2px dotted #EAD3DD;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;background:#fff">
+            <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">© كاندي هون 2026 — صُنع بحب في الأردن 🎀</span>
+            <span dir="ltr" style="font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873">Instagram · WhatsApp · Facebook</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">تفاصيل المنتج · سطح المكتب · 880</div>
+        <div data-screen-label="1b Product modal desktop" dir="rtl" style="width:880px;background:rgba(58,42,51,.4);border-radius:24px;padding:36px;box-sizing:border-box">
+          <div style="background:#FDF3EB;border-radius:24px;overflow:hidden;display:flex;font-family:Tajawal,sans-serif;box-shadow:0 24px 64px rgba(58,42,51,.25);position:relative;border:1.5px solid #EAD3DD">
+            <button style="position:absolute;top:14px;inset-inline-end:14px;width:44px;height:44px;border-radius:999px;border:1.5px solid #EAD3DD;background:#fff;display:grid;place-items:center;cursor:pointer;z-index:2;box-shadow:0 2px 0 #EDD6DE"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3A2A33" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+            <div style="width:400px;flex-shrink:0;padding:20px;display:flex;flex-direction:column;gap:10px">
+              <div style="position:relative;border-radius:20px;overflow:hidden;aspect-ratio:1;background:#fff;border:1.5px solid #EAD3DD;box-shadow:0 3px 0 #EDD6DE">
+                <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=800&auto=format&fit=crop" alt="أضواء نيون LED قوس قزح" style="position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:cover;border-radius:14px"></img>
+                <div style="position:absolute;inset:6px;border:2px dotted rgba(255,255,255,.9);border-radius:14px;pointer-events:none"></div>
+                <span style="position:absolute;top:14px;inset-inline-start:0;background:#C22B65;color:#fff;font:700 12px Tajawal,sans-serif;padding:5px 12px 5px 16px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%)">خصم 25%</span>
+              </div>
+              <div style="display:flex;gap:8px">
+                <div style="width:64px;height:64px;border-radius:14px;overflow:hidden;border:2px solid #C22B65;box-shadow:0 2px 0 #EDD6DE"><img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                <div style="width:64px;height:64px;border-radius:14px;overflow:hidden;border:1.5px solid #EAD3DD;opacity:.75"><img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                <div style="width:64px;height:64px;border-radius:14px;overflow:hidden;border:1.5px solid #EAD3DD;opacity:.75"><img src="https://images.unsplash.com/photo-1563170351-be82bc888aa4?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+                <div style="width:64px;height:64px;border-radius:14px;overflow:hidden;border:1.5px solid #EAD3DD;opacity:.75"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=200&auto=format&fit=crop" alt="" style="width:100%;height:100%;object-fit:cover"></img></div>
+              </div>
+            </div>
+            <div style="flex:1;padding:28px 8px 24px 28px;display:flex;flex-direction:column;gap:14px">
+              <div>
+                <h3 style="margin:0;font:700 25px/1.4 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">أضواء نيون LED قوس قزح</h3>
+                <span dir="ltr" style="font:500 13px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;display:block;text-align:end">Rainbow Neon LED Light</span>
+              </div>
+              <div dir="ltr" style="display:flex;align-items:baseline;gap:12px;justify-content:flex-end">
+                <span style="font:600 14px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873;text-decoration:line-through">16.00 JOD</span>
+                <span style="font:700 26px 'Baloo Bhaijaan 2',sans-serif;color:#C22B65">12.00 JOD</span>
+              </div>
+              <p style="margin:0;font:500 14px/1.7 Tajawal,sans-serif;color:#5D4A55">إضاءة نيون بألوان قوس قزح، مقاس مثالي لغرفة النوم أو المكتب — تعمل بمنفذ USB مع مفتاح تحكم.</p>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font:700 13px Tajawal,sans-serif;color:#5D4A55">الكمية</span>
+                <div style="display:flex;align-items:center;border:1.5px solid #EAD3DD;border-radius:999px;overflow:hidden;height:48px;background:#fff;box-shadow:0 2px 0 #EDD6DE">
+                  <button style="width:46px;height:48px;border:none;background:#fff;color:#C22B65;font:700 20px Fredoka,sans-serif;cursor:pointer">+</button>
+                  <span style="width:40px;text-align:center;font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">1</span>
+                  <button style="width:46px;height:48px;border:none;background:#fff;color:#7D6873;font:700 20px Fredoka,sans-serif;cursor:pointer">−</button>
+                </div>
+                <span style="font:500 12px Tajawal,sans-serif;color:#7D6873">المتوفر: 8</span>
+              </div>
+              <div>
+                <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات إضافية (اختياري)</label>
+                <div style="height:60px;border:1.5px solid #EAD3DD;border-radius:16px;background:#fff;padding:10px 12px;font:500 13px Tajawal,sans-serif;color:#B9A8B1;box-shadow:0 2px 0 #EDD6DE">مثال: لون التغليف…</div>
+              </div>
+              <button style="height:52px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 0 #7E1740;margin-top:auto">
+                أضف إلى السلة
+                <span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:999px">12.00 JOD</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 11px Tajawal,sans-serif;color:#8A7580;margin:0 0 8px">إتمام الطلب · سطح المكتب · 1280</div>
+        <div data-screen-label="1b Checkout desktop" dir="rtl" style="width:1280px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(58,42,51,.08);font-family:Tajawal,sans-serif">
+          <div style="padding:12px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dotted #EAD3DD;background:#fff">
+            <div style="display:flex;align-items:center;gap:12px">
+              <img src="assets/logo.webp" alt="Candy Hon" style="width:46px;height:46px;border-radius:999px;border:2px solid #FDF3EB;box-shadow:0 2px 0 #EDD6DE"></img>
+              <span style="font:700 18px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">كاندي هون</span>
+            </div>
+            <div style="display:flex;gap:18px">
+              <span style="display:flex;align-items:center;gap:6px;font:700 12px Tajawal,sans-serif;color:#147259"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#147259" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>الدفع عند الاستلام</span>
+              <span style="display:flex;align-items:center;gap:6px;font:700 12px Tajawal,sans-serif;color:#147259"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#147259" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>توصيل 24–48 ساعة</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 420px;gap:32px;padding:32px 40px 40px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <h2 style="margin:0;font:700 27px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">إتمام الطلب</h2>
+              <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;box-shadow:0 3px 0 #EDD6DE">
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">الاسم الكامل</label>
+                  <div style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:500 14px Tajawal,sans-serif;color:#3A2A33">سارة الخطيب</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">رقم الهاتف</label>
+                  <div dir="ltr" style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:500 14px 'Baloo Bhaijaan 2',sans-serif;color:#B9A8B1">07X XXX XXXX</div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">منطقة التوصيل</label>
+                  <div style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;justify-content:space-between;padding:0 14px">
+                    <span style="font:500 14px Tajawal,sans-serif;color:#3A2A33">عمّان <span dir="ltr" style="font:700 12px 'Baloo Bhaijaan 2',sans-serif;color:#7D6873">— 3 JOD</span></span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7D6873" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+                  </div>
+                </div>
+                <div>
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">ملاحظات (اختياري)</label>
+                  <div style="height:48px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">أي تعليمات للتوصيل؟</div>
+                </div>
+                <div style="grid-column:1/-1">
+                  <label style="display:block;font:700 12px Tajawal,sans-serif;color:#5D4A55;margin-bottom:6px">تفاصيل العنوان</label>
+                  <div style="height:64px;border:1.5px solid #EAD3DD;border-radius:14px;background:#FDF3EB;padding:10px 14px;font:500 13px Tajawal,sans-serif;color:#B9A8B1">الحي، الشارع، رقم البناية…</div>
+                </div>
+              </div>
+              <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:10px;box-shadow:0 3px 0 #EDD6DE">
+                <span style="font:700 16px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">طريقة الدفع</span>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div style="border:2px solid #C22B65;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;background:#FDF2F7;box-shadow:0 2px 0 #EDD6DE">
+                    <span style="width:20px;height:20px;border-radius:999px;border:6px solid #C22B65;background:#fff;flex-shrink:0"></span>
+                    <div>
+                      <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">الدفع عند الاستلام</div>
+                      <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">ادفع كاش عند وصول طلبك</div>
+                    </div>
+                  </div>
+                  <div style="border:1.5px solid #EAD3DD;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;background:#fff">
+                    <span style="width:20px;height:20px;border-radius:999px;border:2px solid #B9A8B1;background:#fff;flex-shrink:0;box-sizing:border-box"></span>
+                    <div>
+                      <div style="font:700 14px Tajawal,sans-serif;color:#3A2A33">Cliq — تحويل فوري</div>
+                      <div style="font:500 12px Tajawal,sans-serif;color:#7D6873">يُؤكد فور استلام الحوالة</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1.5px solid #EAD3DD;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 3px 0 #EDD6DE">
+              <span style="font:700 17px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">ملخص الطلب</span>
+              <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;align-items:center">
+                  <img src="{{ it.img }}" alt="{{ it.nameAr }}" style="width:44px;height:44px;border-radius:12px;object-fit:cover;border:1.5px solid #F5EAF0"></img>
+                  <div style="flex:1;min-width:0">
+                    <span style="font:700 13px Tajawal,sans-serif;color:#3A2A33;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ it.nameAr }}</span>
+                    <span style="font:500 11px Tajawal,sans-serif;color:#7D6873">الكمية: {{ it.qty }}</span>
+                  </div>
+                  <span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">{{ it.line }} JOD</span>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px;border-top:2px dotted #EAD3DD;padding-top:12px">
+                <div dir="ltr" style="flex:1;height:44px;border:2px dashed #EFA3C4;border-radius:14px;background:#FDF3EB;display:flex;align-items:center;padding:0 14px;font:600 12px 'Baloo Bhaijaan 2',sans-serif;color:#B9A8B1;letter-spacing:.12em">PROMO CODE</div>
+                <button style="height:44px;padding:0 16px;border:none;border-radius:14px;background:#3A2A33;color:#fff;font:700 12px Tajawal,sans-serif;cursor:pointer">تطبيق</button>
+              </div>
+              <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>مجموع المنتجات</span><span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif">20.00 JOD</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 13px Tajawal,sans-serif;color:#7D6873"><span>رسوم التوصيل — عمّان</span><span dir="ltr" style="font:700 13px 'Baloo Bhaijaan 2',sans-serif">3.00 JOD</span></div>
+              <div style="display:flex;justify-content:space-between;border-top:2px dotted #EAD3DD;padding-top:10px;font:700 16px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33"><span>المجموع الكلي</span><span dir="ltr" style="font:700 18px 'Baloo Bhaijaan 2',sans-serif;color:#C22B65">23.00 JOD</span></div>
+              <button style="height:52px;border:none;border-radius:999px;background:#C22B65;color:#fff;font:700 15px Tajawal,sans-serif;cursor:pointer;box-shadow:0 4px 0 #7E1740">تأكيد الطلب</button>
+              <span style="text-align:center;font:500 11px Tajawal,sans-serif;color:#7D6873">الحد الأدنى للطلب <span dir="ltr">5 JOD</span> · بالضغط أنت توافق على شروط الاستخدام</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-screen-label="1b Micro-interactions" style="width:820px;background:#FDF3EB;border:1.5px solid #EAD3DD;border-radius:24px;padding:24px 28px;display:flex;flex-direction:column;gap:10px;box-shadow:0 3px 0 #EDD6DE;font-family:Tajawal,sans-serif">
+        <div style="font:700 15px 'Baloo Bhaijaan 2',sans-serif;color:#3A2A33">Micro-interactions — deltas vs <a href="#1a">1a</a></div>
+        <span style="font:500 13px/1.7 Tajawal,sans-serif;color:#5D4A55">Same timing spec as 1a. Sticker twist: press pushes the card down onto its offset shadow — <code dir="ltr" style="font:600 11px Fredoka,monospace;color:#A21E52">translateY(2px)</code> + shadow 3px→1px (120ms) — feels like pressing a real sticker; zero blur repaints. Toast uses the same dark plum pill with a ribbon-notch left edge. Add-to-cart ✓ tick identical.</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const P = '#C22B65', MUTE = '#7D6873';
+    const products = [
+      { nameAr: 'مج سحابة غزل البنات', nameEn: 'Cotton Candy Cloud Mug', price: '7.50', old: '', img: 'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=600&auto=format&fit=crop', isSale: false, isPre: false, isOos: false, hasOld: false, canAdd: true, imgFilter: 'none', priceColor: P },
+      { nameAr: 'أضواء نيون LED قوس قزح', nameEn: 'Rainbow Neon LED Light', price: '12.00', old: '16.00', img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=600&auto=format&fit=crop', isSale: true, isPre: false, isOos: false, hasOld: true, canAdd: true, imgFilter: 'none', priceColor: P },
+      { nameAr: 'علبة حلوى يابانية متنوعة', nameEn: 'Japanese Candy Box', price: '9.00', old: '', img: 'https://images.unsplash.com/photo-1603532648955-039310d9ed75?q=80&w=600&auto=format&fit=crop', isSale: false, isPre: true, isOos: false, hasOld: false, canAdd: false, imgFilter: 'none', priceColor: P },
+      { nameAr: 'نظارات حفلات على شكل قلب', nameEn: 'Heart Party Glasses', price: '4.50', old: '', img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=600&auto=format&fit=crop', isSale: false, isPre: false, isOos: true, hasOld: false, canAdd: false, imgFilter: 'grayscale(30%) opacity(.55)', priceColor: MUTE },
+      { nameAr: 'دفتر ملصقات كيوت', nameEn: 'Cute Sticker Journal', price: '6.00', old: '', img: 'https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?q=80&w=600&auto=format&fit=crop', isSale: false, isPre: false, isOos: false, hasOld: false, canAdd: true, imgFilter: 'none', priceColor: P },
+      { nameAr: 'مصاصة قوس قزح عملاقة', nameEn: 'Giant Rainbow Lollipop', price: '3.50', old: '5.00', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop', isSale: true, isPre: false, isOos: false, hasOld: true, canAdd: true, imgFilter: 'none', priceColor: P },
+      { nameAr: 'برطمان حلوى بألوان الباستيل', nameEn: 'Pastel Candy Jar', price: '5.25', old: '', img: 'https://images.unsplash.com/photo-1563170351-be82bc888aa4?q=80&w=600&auto=format&fit=crop', isSale: false, isPre: false, isOos: false, hasOld: false, canAdd: true, imgFilter: 'none', priceColor: P },
+      { nameAr: 'سلسلة مفاتيح دونت', nameEn: 'Donut Keychain', price: '2.75', old: '', img: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=600&auto=format&fit=crop', isSale: false, isPre: false, isOos: false, hasOld: false, canAdd: true, imgFilter: 'none', priceColor: P }
+    ];
+    const cartItems = [
+      { nameAr: 'مج سحابة غزل البنات', qty: '1', price: '7.50', line: '7.50', img: products[0].img, isPre: false },
+      { nameAr: 'علبة حلوى يابانية متنوعة', qty: '1', price: '9.00', line: '9.00', img: products[2].img, isPre: true },
+      { nameAr: 'مصاصة قوس قزح عملاقة', qty: '1', price: '3.50', line: '3.50', img: products[5].img, isPre: false }
+    ];
+    const pinkRamp = [
+      { n: '50', h: '#FDF2F7' }, { n: '100', h: '#FBE3EE' }, { n: '200', h: '#F6C7DC' }, { n: '300', h: '#EFA3C4' },
+      { n: '400', h: '#E56FA4' }, { n: '500', h: '#DC4A86' }, { n: '600 ★', h: '#C22B65' }, { n: '700', h: '#A21E52' },
+      { n: '800', h: '#7E1740' }, { n: '900', h: '#55102C' }
+    ];
+    const support = [
+      { n: 'blue-100', h: '#E4F3FC' }, { n: 'blue-300', h: '#A9D9F3' }, { n: 'blue-500', h: '#3E97CF' }, { n: 'blue-700', h: '#1B6899' },
+      { n: 'mint-100', h: '#E2F4EE' }, { n: 'mint-300', h: '#A9DFCE' }, { n: 'mint-500', h: '#34A183' }, { n: 'mint-700', h: '#147259' }
+    ];
+    const neutrals = [
+      { n: 'ink-900', h: '#3A2A33' }, { n: 'ink-700', h: '#5D4A55' }, { n: 'ink-500', h: '#7D6873' },
+      { n: 'ink-300', h: '#B9A8B1' }, { n: 'border', h: '#F1E3EA' }, { n: 'bg', h: '#FFF9F5' }, { n: 'bg-warm', h: '#FDF3EB' }
+    ];
+    const semantics = [
+      { n: 'success', h: '#1E7A4A' }, { n: 'success-bg', h: '#E4F5EB' }, { n: 'warning', h: '#8F5400' },
+      { n: 'warning-bg', h: '#FFF3DE' }, { n: 'error', h: '#BE2F44' }, { n: 'error-bg', h: '#FCE9EC' }
+    ];
+    return { products, cartItems, pinkRamp, support, neutrals, semantics };
+  }
+}
+</script>
+</body>
+</html>
